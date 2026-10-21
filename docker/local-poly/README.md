@@ -12,8 +12,9 @@ loopback. Existing PolyStrata stays stopped. Never run the two services concurre
 The separate named volume `forgeloop-ai-strata-local-data` stores configs, profiles, chats and workspace.
 The existing `forgeloop-ai_forgeloop-ai-polystrata-data` volume is mounted **read-only** for prepared packs.
 All model directories are also read-only. Retain that legacy volume: this container depends on its packs.
-Five installed configs are registered in the native Models screen: Ornith IQ3, Ornith IQ4, MiniCPM,
-Gemma and Qwen. Only Ornith IQ3 loads at boot; model switching belongs to the UI.
+Six installed configs are registered in the native Models screen: Ornith IQ3, Ornith IQ4, MiniCPM,
+Gemma, Qwen and the downloaded Bartowski Ornith Q4_K_M. Only Ornith IQ3 loads at boot; model switching belongs to the UI.
+Bartowski Q4_K_M is currently blocked by mixed gate/up expert tensor types; see the record below.
 
 ## Prepare and run
 
@@ -56,3 +57,19 @@ starting it again will load that model unless its separate default is deliberate
 - Fixed a source-app startup incompatibility: the native controller used to pass `STRATA_API_KEY=''`,
   which the current server explicitly rejects. It now removes that environment override, so each private
   run config supplies its own key. The helper's regression test and native control/chat tests pass.
+
+## Bartowski Q4_K_M trial (2026-10-21)
+
+Downloaded `bartowski/Ornith-1.5-122B-GGUF` Q4_K_M (two shards, 78.92 GB) and its f16 mmproj
+to `/mnt/llm-models/ornith-1.5-122b-bartowski`. Both shards and mmproj passed SHA256 validation
+against the pinned Hugging Face revision. The directory is mounted read-only and a separate config
+is registered with 262144 context capacity, Q8 KV and CPU vision. No model files were re-quantized.
+
+**This model did not load.** Thirteen layers have different gate and up expert quant types, including
+Q4_K gate / Q6_K up in block 0. The current Poly engine combines gate/up under one type and rejects
+this layout. Startup was restored to IQ3; Q4 TPS and output quality were not measured. The downloaded
+model and separate config remain available for future mixed-type support. Do not select it expecting
+a working model yet. This is an engine limitation, not a failed download or a CUDA OOM.
+
+The same-day IQ3 comparison through the new app, thinking off, returned 402 tokens at 36.5 tok/s.
+See [the trial record](../../bench/results/2026-10-21-bartowski-q4/README.md) for settings and limitations.

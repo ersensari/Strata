@@ -21,6 +21,7 @@ services:
       - forgeloop-ai-strata-local-data:/data
       - forgeloop-ai-polystrata-legacy-data:/legacy-data:ro
       - /mnt/llm-models/ornith-1.5-122b-uncensored-atomicchat:/models-ornith:ro
+      - /mnt/llm-models/ornith-1.5-122b-bartowski:/models-ornith-bartowski:ro
       - /mnt/llm-models/minicpm-v-4.7-35b-a3b:/models:ro
       - /mnt/llm-models/strata-swift:/models-swift:ro
       - /mnt/llm-models/gemma-4-26b-a4b-unsloth:/models-gemma:ro

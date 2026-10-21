@@ -1,0 +1,80 @@
+[
+  {
+    "layer": 0,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 1,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 2,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 3,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 4,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q5_K"
+  },
+  {
+    "layer": 5,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q5_K"
+  },
+  {
+    "layer": 6,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q5_K"
+  },
+  {
+    "layer": 7,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 8,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q5_K"
+  },
+  {
+    "layer": 9,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q4_K"
+  },
+  {
+    "layer": 10,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q4_K"
+  },
+  {
+    "layer": 11,
+    "gate": "Q4_K",
+    "up": "Q6_K",
+    "down": "Q6_K"
+  },
+  {
+    "layer": 47,
+    "gate": "Q6_K",
+    "up": "Q8_0",
+    "down": "Q8_0"
+  }
+]

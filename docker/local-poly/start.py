@@ -6,6 +6,7 @@ import secrets
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import urllib.request
 
@@ -66,6 +67,24 @@ def seed():
             cfg['env']['STRATA_POLY_IQ_MT'] = '1'
         for key in ('before_load', 'expert_profile_save', 'calibration_report'):
             cfg.pop(key, None)
+        private_json(dest, cfg)
+    # Register an explicitly downloaded local model; never invoke a model downloader at startup.
+    bartowski = 'ornith-bartowski-q4_k_m'
+    dest = INSTALL / f'strata-{bartowski}.json'
+    model = Path('/models-ornith-bartowski/Ornith-1.5-122B-Q4_K_M/Ornith-1.5-122B-Q4_K_M-00001-of-00002.gguf')
+    mmproj = Path('/models-ornith-bartowski/mmproj-Ornith-1.5-122B-f16.gguf')
+    if model.is_file() and mmproj.is_file() and not dest.exists():
+        subprocess.run([sys.executable, str(INSTALL / 'tools/poly_import.py'),
+            '--model', str(model), '--engine', '/app/engines/strata-poly',
+            '--name', bartowski, '--config-dir', str(INSTALL), '--context', '262144',
+            '--threads', '12', '--gpu', '0', '--fast-attention',
+            '--mmproj', str(mmproj), '--vision-exe', '/app/engines/strata-vision'], check=True)
+        cfg = json.loads(dest.read_text())
+        cfg['args'] += ['--conversation-cache-mib', '2048', '--conversation-cache-slots', '2',
+                        '--conversation-cache-min-free-mib', '4096']
+        cfg['sampling'] = {'temperature': 1.0, 'top_p': .95, 'top_k': 20, 'min_p': 0.,
+                           'presence_penalty': 1.5, 'repetition_penalty': 1.0}
+        cfg['display_name'] = 'Ornith 1.5 122B Bartowski Q4_K_M'
         private_json(dest, cfg)
     if not (UI / 'native-host.json').exists():
         private_json(UI / 'native-host.json', {'repo': str(INSTALL)})

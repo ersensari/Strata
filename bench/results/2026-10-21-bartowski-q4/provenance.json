@@ -1,0 +1,24 @@
+{
+  "repository": "bartowski/Ornith-1.5-122B-GGUF",
+  "revision": "a8bc08fa33fc3a3e79380bf661a84688c7ea0a50",
+  "base_model": "ornith-ai/Ornith-1.5-122B",
+  "quantization": "Q4_K_M",
+  "files": [
+    {
+      "path": "mmproj-Ornith-1.5-122B-f16.gguf",
+      "bytes": 908724576,
+      "sha256": "f17b37e3939ea58d878cc4e7c9b3df8538255cbad5340b5b813192ce593ca6d0"
+    },
+    {
+      "path": "Ornith-1.5-122B-Q4_K_M/Ornith-1.5-122B-Q4_K_M-00001-of-00002.gguf",
+      "bytes": 40005676608,
+      "sha256": "b6947939b09c4591a85da56f552a0e59303637c861f75ebce9a594f4a3a6de46"
+    },
+    {
+      "path": "Ornith-1.5-122B-Q4_K_M/Ornith-1.5-122B-Q4_K_M-00002-of-00002.gguf",
+      "bytes": 38916060128,
+      "sha256": "86f6c767579fd93bae701fe801b7e351d3b8f89374040f9a822e734d578eb861"
+    }
+  ],
+  "sha256_verified": true
+}
