@@ -74,3 +74,18 @@ draft-on/off timing and acceptance measurements before choosing a default.
 
 References: [MiniCPM DSpark model card](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-DSpark-gguf),
 [llama.cpp speculative decoding](https://github.com/ggml-org/llama.cpp/blob/master/docs/speculative.md).
+
+## Swift 27B dense profile
+
+The same owned worker can also run the existing local Swift 1.5 Qwen 27B
+IQ3_S GGUF (`qwen35`, dense, 64 target layers plus one embedded MTP block).
+This is distinct from the native Qwen Flash Next MoE model.
+`strata-swift-27b.json` registers **Swift 1.5 Qwen 27B Dense · IQ3_S + MTP**.
+The 12,120,016,896-byte model stays in its existing `swift-1.5-27b` directory;
+only its tokenizer is extracted into Strata-data. No second model copy is made.
+
+Initial settings are GPU 1, 32K context, Q8_0 K/V, `draft-mtp` with at most three
+draft tokens and GPU layer offload requested. There is no mmproj in this local
+installation, so the profile is text-only. Header bounds, MTP tensors, argument
+parsing and registration were checked without interrupting Ornith. Actual GPU
+fit, MTP acceptance, throughput and long-context behavior remain unmeasured.

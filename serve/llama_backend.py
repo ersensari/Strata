@@ -53,7 +53,10 @@ class LlamaEngine:
         self.cfg = cfg
         self.env = env
         self.args, self.max_context = backend_args(cfg)
-        self.info = {"backend": "llama.cpp", "speculative": "none" if cfg.get("mtp") is False else "draft-dspark", "kv": "q8_0"}
+        def option(flag, default):
+            return self.args[self.args.index(flag) + 1] if flag in self.args else default
+        self.info = {"backend": "llama.cpp", "speculative": option("--spec-type", "none"),
+                     "kv": option("-ctk", "f16")}
         self.last = {}
         self.log_path = cfg["log"]
         self.supports_images = "--mmproj" in self.args

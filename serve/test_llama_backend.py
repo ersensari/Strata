@@ -131,6 +131,15 @@ class ProxyTests(unittest.TestCase):
 
 
 class ArgumentTests(unittest.TestCase):
+    def test_embedded_mtp_does_not_need_separate_draft_file(self):
+        cfg = {'args':['--max-context','32768'],
+               'llama_backend':{'context':32768,'args':['-c','32768','--spec-type','draft-mtp','--spec-draft-n-max','3']}}
+        args, _ = backend_args(cfg)
+        self.assertEqual(args[args.index('--spec-type')+1], 'draft-mtp')
+        cfg['mtp'] = False
+        args, _ = backend_args(cfg)
+        self.assertEqual(args[args.index('--spec-type')+1], 'none')
+
     def test_shared_context_and_draft_off(self):
         cfg = {'args':['--max-context','65536'], 'mtp':False, 'ui_vision_enabled':False,
                'llama_backend':{'context':32768,'args':['-c','32768','-md','draft.gguf','--spec-type','draft-dspark','--spec-draft-n-max','15','-ngld','99','--mmproj','vision.gguf']}}
