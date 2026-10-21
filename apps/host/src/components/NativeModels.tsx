@@ -90,7 +90,8 @@ export function NativeModels({ onOtherModels, onReady, onImport, onConnectEngine
     // With Run multiple models, a card another loaded model already uses starts Off for this one (while a free card exists).
     const busy = (i: number) => expert && multiple && usedBy([i]).length > 0, freeCards = roleCards.filter(c => !busy(c.index));
     const recommended = freeCards.length && freeCards.length < roleCards.length ? { ...recommendRoles(freeCards, engineVendor), roles: { ...Object.fromEntries(roleCards.map(c => [c.index, 'off'])), ...recommendRoles(freeCards, engineVendor).roles } as Roles } : recommendRoles(roleCards, engineVendor);
-    const loadedRoles = loadedSelected && roleCards.length > 1 ? fromLegacy(loadedSelected.gpus, roleCards, 'as_given') : null;
+    const savedGpus = installed?.gpu !== undefined ? (Array.isArray(installed.gpu) ? installed.gpu : [installed.gpu]) : null;
+    const loadedRoles = loadedSelected && roleCards.length > 1 ? fromLegacy(loadedSelected.gpus, roleCards, 'as_given') : savedGpus && roleCards.length > 1 ? fromLegacy(savedGpus, roleCards, 'as_given') : null;
     const effectiveRoles: Roles = roleCards.length > 1 ? (roles ? normalizeRoles(roles, roleCards) : loadedRoles ?? recommended.roles) : recommended.roles;
     const customRoles = !sameRoles(effectiveRoles, recommended.roles);
     const changeRoles = (next: Roles) => setRoles(sameRoles(next, recommended.roles) ? null : next);

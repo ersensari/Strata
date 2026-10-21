@@ -1,0 +1,36 @@
+[Unit]
+Description=Strata source fork (native Qwen and optional Poly engines)
+Wants=network-online.target forgeloop-ai-strata-access.socket
+After=network-online.target
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+Type=notify
+NotifyAccess=main
+WorkingDirectory=%h/Source/Strata
+Environment=STRATA_NODE=%h/.nvm/versions/node/v24.14.0/bin/node
+Environment=STRATA_HOME=%h/.local/share/strata-fork/ui
+Environment=STRATA_WORKSPACE=%h/.local/share/strata-fork/workspace
+Environment=STRATA_NATIVE_REPO=%h/Source/Strata
+Environment=STRATA_PYTHON=%h/Source/Strata/.venv/bin/python
+Environment=STRATA_SETTINGS_FILE=%h/.local/share/strata-fork/settings.json
+Environment=STRATA_MODELS_DIR=/mnt/llm-models
+Environment=STRATA_REAL_ENGINE=1
+Environment=STRATA_NO_BUNDLED_ENGINE=1
+Environment=STRATA_BIND=127.0.0.1
+Environment=STRATA_PORT=10104
+Environment=STRATA_APP_VERSION=0.2.2+poly.host
+Environment=DEFAULT_MODEL=ornith-iq3
+Environment=PATH=%h/Source/Strata/.venv/bin:%h/.nvm/versions/node/v24.14.0/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=%h/.config/strata-fork/service.env
+ExecStart=%h/Source/Strata/.venv/bin/python %h/Source/Strata/tools/host_service.py
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=600
+TimeoutStopSec=90
+KillMode=control-group
+UMask=0077
+
+[Install]
+WantedBy=default.target

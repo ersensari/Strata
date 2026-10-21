@@ -1,0 +1,8 @@
+[Unit]
+Description=Forward Strata compatibility sockets to the loopback web host
+Requires=forgeloop-ai-strata.service
+After=forgeloop-ai-strata.service
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:10104
+UMask=0077

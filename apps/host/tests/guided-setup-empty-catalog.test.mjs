@@ -132,3 +132,16 @@ test('imported Swift is downloaded in the original native catalog panel, with ot
  assert.doesNotMatch(html,/Installed model version/);assert.match(html,/>Load model<\/button>/);
  assert.doesNotMatch(html,/>Download &amp; load<\/button>/);
 });
+
+test('an unloaded native model shows its saved single GPU instead of recommending a second card',async()=>{
+ const m=await load();
+ const catalog={families:[{family:'swift',title:'Swift 1.5',images:true,sizes:[{id:'swift-iq3_xxs',model:'IQ3_XXS',download_gb:75.8,ram_needed_gb:60,experts_gb:42.9,on_this_pc:'fits'}]}],contexts:[32768],recommendation:{family:'swift',model:'IQ3_XXS'}};
+ const models=[{model:'qwen',catalogId:'swift-iq3_xxs',model_name:'swift-1.5-iq3_xxs',ready:true,gpu:1}];
+ globalThis.__native={...base,catalog,installed:{...base.installed,models},hardware:{ram_gb:96,engine_vendor:'nvidia',gpus:[{index:0,name:'Card A',vram_gb:16,usable:true},{index:1,name:'Card B',vram_gb:16,usable:true}]}};globalThis.__store=store(true);
+ const html=m.renderToString(m.createElement(m.NativeModels));
+ const first=html.match(/aria-label="Role of GPU 1"[\s\S]*?<\/div>/)?.[0];
+ const second=html.match(/aria-label="Role of GPU 2"[\s\S]*?<\/div>/)?.[0];
+ assert.ok(first&&second);
+ assert.match(first,/aria-checked="true"[^>]*>Off<\/button>/);
+ assert.match(second,/aria-checked="true"[^>]*>Main<\/button>/);
+});

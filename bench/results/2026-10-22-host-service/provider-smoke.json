@@ -1,0 +1,72 @@
+[
+  {
+    "alias": "ornith-1-5-122b-uncensored",
+    "backend": "ornith-iq3",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 5.82,
+    "ok": true
+  },
+  {
+    "alias": "qwen3-flash-next",
+    "backend": "qwen",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 19.57,
+    "ok": true
+  },
+  {
+    "alias": "minicpm-v-4-7",
+    "backend": "minicpm",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 15.46,
+    "ok": true
+  },
+  {
+    "alias": "minicpm-v-4-7-uncensored",
+    "backend": "minicpm-uncensored",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 12.45,
+    "ok": true
+  },
+  {
+    "alias": "gemma-4-26b",
+    "backend": "gemma",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 11.24,
+    "ok": true
+  },
+  {
+    "alias": "ornith-1-5-122b-uncensored-iq4",
+    "backend": "ornith-iq4",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 15.87,
+    "ok": true
+  },
+  {
+    "alias": "ornith-1-5-122b-uncensored",
+    "backend": "ornith-iq3",
+    "answer": "HAZIR",
+    "gpu": [
+      1
+    ],
+    "seconds": 14.77,
+    "ok": true
+  }
+]

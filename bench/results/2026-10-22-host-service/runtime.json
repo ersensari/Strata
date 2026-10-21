@@ -1,0 +1,60 @@
+{
+  "repo": "/home/ersen/Source/Strata",
+  "engine": {
+    "folder": "engine",
+    "version": "0.1.47",
+    "source": "local",
+    "backend": "cuda"
+  },
+  "capabilities": {
+    "responses": true,
+    "updates": true,
+    "rollback": false,
+    "componentUpdates": false,
+    "calibration": true
+  },
+  "models": [
+    {
+      "id": "qwen",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": "int8"
+    },
+    {
+      "id": "gemma",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": null
+    },
+    {
+      "id": "minicpm-uncensored",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": null
+    },
+    {
+      "id": "minicpm",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": null
+    },
+    {
+      "id": "ornith-iq4",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": "q8_0"
+    },
+    {
+      "id": "ornith-iq3",
+      "ready": true,
+      "gpu": 1,
+      "context": 262144,
+      "kv": "q8_0"
+    }
+  ]
+}

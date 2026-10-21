@@ -1,0 +1,11 @@
+[Unit]
+Description=Strata compatibility sockets (loopback and Docker host gateway only)
+
+[Socket]
+ListenStream=127.0.0.1:10110
+ListenStream=172.17.0.1:10110
+NoDelay=true
+FreeBind=true
+
+[Install]
+WantedBy=sockets.target
