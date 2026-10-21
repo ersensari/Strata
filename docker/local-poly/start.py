@@ -6,7 +6,6 @@ import secrets
 import shutil
 import signal
 import subprocess
-import sys
 import time
 import urllib.request
 
@@ -16,6 +15,7 @@ MODELS = {
     'ornith-iq3': 'strata-ornith122b-uncensored-ad-iq3_xxs.json',
     'ornith-iq4': 'strata-ornith122b-uncensored-ad-iq4_xs_s.json',
     'minicpm': 'strata-minicpmv-q4_k_m.json',
+    'minicpm-uncensored': 'strata-minicpmv-uncensored-23g.json',
     'gemma': 'strata-gemma4-ud-q4_k_m.json',
     'qwen': 'strata-swift-iq3_xxs.json',
 }
@@ -68,32 +68,16 @@ def seed():
         for key in ('before_load', 'expert_profile_save', 'calibration_report'):
             cfg.pop(key, None)
         private_json(dest, cfg)
-    # Register an explicitly downloaded local model; never invoke a model downloader at startup.
-    bartowski = 'ornith-bartowski-q4_k_m'
-    dest = INSTALL / f'strata-{bartowski}.json'
-    model = Path('/models-ornith-bartowski/Ornith-1.5-122B-Q4_K_M/Ornith-1.5-122B-Q4_K_M-00001-of-00002.gguf')
-    mmproj = Path('/models-ornith-bartowski/mmproj-Ornith-1.5-122B-f16.gguf')
-    if model.is_file() and mmproj.is_file() and not dest.exists():
-        subprocess.run([sys.executable, str(INSTALL / 'tools/poly_import.py'),
-            '--model', str(model), '--engine', '/app/engines/strata-poly',
-            '--name', bartowski, '--config-dir', str(INSTALL), '--context', '262144',
-            '--threads', '12', '--gpu', '0', '--fast-attention',
-            '--mmproj', str(mmproj), '--vision-exe', '/app/engines/strata-vision'], check=True)
-        cfg = json.loads(dest.read_text())
-        cfg['args'] += ['--conversation-cache-mib', '2048', '--conversation-cache-slots', '2',
-                        '--conversation-cache-min-free-mib', '4096']
-        cfg['sampling'] = {'temperature': 1.0, 'top_p': .95, 'top_k': 20, 'min_p': 0.,
-                           'presence_penalty': 1.5, 'repetition_penalty': 1.0}
-        cfg['display_name'] = 'Ornith 1.5 122B Bartowski Q4_K_M'
-        private_json(dest, cfg)
+    # The owner retired the Bartowski Q4_K_M experiment; never re-register it.
+    (INSTALL / 'strata-ornith-bartowski-q4_k_m.json').unlink(missing_ok=True)
     if not (UI / 'native-host.json').exists():
         private_json(UI / 'native-host.json', {'repo': str(INSTALL)})
 
 
-def call(path, payload=None):
+def call(path, payload=None, method=None):
     request = urllib.request.Request('http://127.0.0.1:8791' + path,
         data=json.dumps(payload).encode() if payload is not None else None,
-        headers={'Content-Type': 'application/json'})
+        headers={'Content-Type': 'application/json'}, method=method)
     with urllib.request.urlopen(request, timeout=120) as response:
         return json.load(response)
 
@@ -125,6 +109,8 @@ def main():
             time.sleep(1)
         else:
             raise RuntimeError('The Strata app did not connect to its local install')
+        if os.environ.get('STRATA_API_KEY'):
+            call('/api/serving', {'apiKey': os.environ['STRATA_API_KEY']}, method='PATCH')
         model = os.environ.get('DEFAULT_MODEL', 'ornith-iq3')
         job = call('/api/native/operations', {'kind': 'load', 'args': {'model': model, 'port': 8080}})
         print('Loading configured model:', model, flush=True)

@@ -15,18 +15,19 @@ services:
       memlock: -1
     ports:
       - "127.0.0.1:10110:8791"
+      - "127.0.0.1:10104:8791"
     environment:
-      DEFAULT_MODEL: ornith-bartowski-q4_k_m
+      DEFAULT_MODEL: ornith-iq3
+      STRATA_API_KEY: ${STRATA_API_KEY:?Set STRATA_API_KEY from the homelab env file}
     volumes:
       - forgeloop-ai-strata-local-data:/data
       - forgeloop-ai-polystrata-legacy-data:/legacy-data:ro
       - /mnt/llm-models/ornith-1.5-122b-uncensored-atomicchat:/models-ornith:ro
-      - /mnt/llm-models/ornith-1.5-122b-bartowski:/models-ornith-bartowski:ro
       - /mnt/llm-models/minicpm-v-4.7-35b-a3b:/models:ro
       - /mnt/llm-models/strata-swift:/models-swift:ro
       - /mnt/llm-models/gemma-4-26b-a4b-unsloth:/models-gemma:ro
     networks:
-      - forgeloop-ai-strata-local-network
+      - forgeloop-control
     labels:
       forgeloop.managed: "true"
       forgeloop.project: forgeloop-ai
@@ -42,9 +43,6 @@ volumes:
     external: true
     name: forgeloop-ai_forgeloop-ai-polystrata-data
 networks:
-  forgeloop-ai-strata-local-network:
-    name: forgeloop-ai-strata-local-network
-    labels:
-      forgeloop.managed: "true"
-      forgeloop.project: forgeloop-ai
-      forgeloop.resource: llm-network
+  forgeloop-control:
+    external: true
+    name: forgeloop-ai

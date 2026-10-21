@@ -166,6 +166,12 @@ export function NativeModels({ onOtherModels, onReady, onImport, onConnectEngine
     finally {
         setPending(false);
     } }
+    async function loadInstalled(model: string) { setManage(false); await perform(async () => {
+        // Local run configs already contain their context, KV and engine choices.
+        // Load them unchanged instead of applying the unrelated catalog selection.
+        const result = await nativeAction<NativeJob>('operations', { kind: 'load', args: { model } });
+        setJobId(result.id);
+    }); }
     async function download() { await perform(async () => { const result = await nativeAction<NativeJob>('operations', { kind: 'install', args: downloadValues }); setJobId(result.id); setPlan(null); }); }
     return <Screen plainHeader title={<span className="sr-only">{tr("Models")}</span>} titleDetail={<FamilySwitch families={families} selected={selectedFamily?.family} onPick={f => { setFamily(f.family); setSize((f.sizes.find(s => native?.installed?.models.some(m => m.model === s.id && m.ready)) ?? f.sizes[0])?.id ?? ''); setVision('yes'); setError(''); }}/>} actions={<Btn icon="sliders" aria-pressed={expert} aria-expanded={expert} aria-controls="native-expert-settings" onClick={() => { setExpert(v => !v); setMultiple(false); }}>{tr(expert ? 'Close expert mode' : 'Expert mode')}</Btn>}>
   <div className="native-model-layout native-model-layout--fit">
@@ -205,7 +211,7 @@ export function NativeModels({ onOtherModels, onReady, onImport, onConnectEngine
    {tr(downloaded.length ? <div className="native-manage-list" role="list">{tr(downloaded.map(m => { const v = allSizes.find(x => x.id === m.model), loaded = native?.instances.some(i => i.model === m.model && i.status === 'ready'); return <div className="native-manage-row" role="listitem" key={m.model} data-selected={selectedSize?.id === m.model || undefined}>
      <span className="native-manage-name"><strong>{tr(v ? `${catalogVersionLabel(v)}` : m.model_name ?? m.model)}</strong><small>{tr(v ? v.model : m.model)}{tr(m.diskGb ? ` · ${sizeGb(m.diskGb)}` : '')}</small></span>
      <span className={loaded ? 'st-pill st-pill--accent' : 'st-pill'}>{tr(loaded ? 'Loaded' : 'Downloaded')}</span>
-     <span className="native-manage-actions"><Btn size="sm" disabled={!!active || !v} onClick={() => { if (v) setSize(v.id); setManage(false); }}>{tr(selectedSize?.id === m.model ? 'Selected' : 'Use version')}</Btn><Btn size="sm" variant="danger" disabled={!!active} onClick={() => setDeleting(m.model)}>{tr("Delete")}</Btn></span>
+     <span className="native-manage-actions"><Btn size="sm" disabled={pending || !!active || (!v && (!m.ready || loaded))} onClick={() => { if (v) { setSize(v.id); setManage(false); } else void loadInstalled(m.model); }}>{tr(v ? selectedSize?.id === m.model ? 'Selected' : 'Use version' : loaded ? 'Loaded' : 'Load')}</Btn><Btn size="sm" variant="danger" disabled={!!active} onClick={() => setDeleting(m.model)}>{tr("Delete")}</Btn></span>
     </div>; }))}</div> : <p className="small muted native-manage-empty">{tr("No downloaded models")}</p>)}
    <div className="native-manage-foot"><Btn variant="ghost" icon="folder" onClick={() => { setManage(false); (onImport ?? onOtherModels)(); }}>{tr("Use a local GGUF…")}</Btn></div>
   </div></Dialog>

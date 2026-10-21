@@ -1,0 +1,34 @@
+[
+  {
+    "model": "ornith-iq3",
+    "engine": "/app/engines/strata-poly",
+    "context": "262144",
+    "kv": "q8_0",
+    "threads": "12",
+    "sampling": {
+      "temperature": 1,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence_penalty": 1.5,
+      "repetition_penalty": 1
+    },
+    "vision_gpu": false
+  },
+  {
+    "model": "ornith-iq4",
+    "engine": "/app/engines/strata-poly",
+    "context": "262144",
+    "kv": "q8_0",
+    "threads": "12",
+    "sampling": {
+      "temperature": 1,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0,
+      "presence_penalty": 1.5,
+      "repetition_penalty": 1
+    },
+    "vision_gpu": false
+  }
+]

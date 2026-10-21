@@ -1,3 +1,8 @@
+> Retired on 2026-10-22 at the owner’s request. The KT container is stopped; the
+> Bartowski Q4_K_M shards and their dedicated mmproj were deleted. The commands
+> below document the experiment and need those model files restored before use.
+> The live service is the original Strata fork (docker/local-poly).
+
 # Local Ornith KTransformers experiment
 
 This is an opt-in experiment, separate from Strata. Do not run it while Strata

@@ -2,19 +2,24 @@
 
 `forgeloop-ai-strata` serves the original Strata 0.2.2 app host and this fork's Poly/native engines.
 UI: **http://127.0.0.1:10110**. Only host GPU 1 is exposed; it appears as GPU 0 to the engine.
-Startup loads **Bartowski Ornith Q4_K_M**, 262144 context capacity, Q8 KV, 12 threads, one request at a time,
+Startup loads **AtomicChat Ornith IQ3_XXS**, 262144 context capacity, Q8 KV, 12 threads, one request at a time,
 1024 MiB reserve, CPU vision and fast attention enabled (CPU IQ reuse remains enabled for the Atomic IQ3/IQ4 configs).
 
-This is a standalone UI trial. No LiteLLM, Pi, router or other application was pointed at it. The
-inference worker listens only on the container's loopback; only the app host port is published to host
-loopback. Existing PolyStrata stays stopped. Never run the two services concurrently on this GPU.
+As of 2026-10-22 this is the live fork. The deployment overlay in the homelab repository,
+`/home/ersen/Source/forgeloop-ai/docker/strata/compose.strata.yml`, connects it to the shared
+network and native-aware model router. Provider traffic goes through that router. Both
+http://127.0.0.1:10104 and http://127.0.0.1:10110 serve the original Strata UI and model controls.
+The inference worker itself stays on container loopback. Existing PolyStrata and KT stay stopped.
 
 The separate named volume `forgeloop-ai-strata-local-data` stores configs, profiles, chats and workspace.
 The existing `forgeloop-ai_forgeloop-ai-polystrata-data` volume is mounted **read-only** for prepared packs.
 All model directories are also read-only. Retain that legacy volume: this container depends on its packs.
-Six installed configs are registered in the native Models screen: Ornith IQ3, Ornith IQ4, MiniCPM,
-Gemma, Qwen and the downloaded Bartowski Ornith Q4_K_M. Only Bartowski Ornith Q4_K_M loads at boot; model switching belongs to the UI.
-Bartowski Q4_K_M now loads through the mixed gate/up expert path; see the records below.
+Six configs are registered: Ornith IQ3, Ornith IQ4, MiniCPM, uncensored MiniCPM, Gemma and Qwen.
+Only Ornith IQ3 loads at boot. The UI or provider router switches the single loaded model.
+Qwen uses this fork's original native engine; the other models use its optional Poly engine.
+The Bartowski Q4_K_M experiment is retired: its two weight shards and dedicated mmproj were deleted
+at the owner's request (79,830,461,312 bytes), its model config is removed, and it is no longer mounted.
+The shared AtomicChat IQ3/IQ4 mmproj and all their shards are preserved.
 
 ## Prepare and run
 
@@ -24,11 +29,11 @@ a self-contained public build. Build the engines and CPU encoder as described in
 `docker/local-poly/artifacts/` (ignored by Git). Build the host with `npm ci && npm run build` in
 `apps/host/`. The image adds pinned Node 24.14.0 and copies the app and local binaries.
 
-From the repository root:
+For the full live deployment, use the homelab overlay README. For this container alone, from the Strata repository root:
 
 ```sh
 docker stop forgeloop-ai-polystrata
-COMPOSE_IGNORE_ORPHANS=true docker compose -p forgeloop-ai \
+COMPOSE_IGNORE_ORPHANS=true docker compose --env-file /home/ersen/Source/forgeloop-ai/.env -p forgeloop-ai \
   -f docker/local-poly/compose.yml up -d --build
 docker logs --tail 30 forgeloop-ai-strata
 ```
@@ -39,7 +44,7 @@ The entrypoint refreshes its source copy, preserves saved configs, starts the or
 asks its native controller to load exactly the configured default model. No setup downloader runs.
 The original app then owns the inference process, including unload and model switching.
 
-Stopping this trial:
+Stopping this service:
 
 ```sh
 docker stop forgeloop-ai-strata
@@ -89,3 +94,16 @@ Mixed-type layers currently use the small-group path during prompt prefill as we
 the single-quantizer tiled prompt and GPU-only-routing paths are bypassed for those layers.
 Long prompts can therefore be slower. CUDA was tested; HIP was not available for validation.
 See [the support record](../../bench/results/2026-10-22-poly-mixed-experts/README.md).
+
+## Live migration (2026-10-22)
+
+The startup helper also imports the previously omitted uncensored MiniCPM config.
+It configures the app gateway's existing API-key setting from STRATA_API_KEY,
+without changing individual engine secrets. Existing saved configs, profiles and chats
+are preserved. The homelab router translates the provider aliases to these installed
+model IDs and polls the original app's native load jobs. Model switching and chat
+continue to belong to the original app. Manage models now offers Load for installed local
+configs outside the download catalog, using the saved config without applying settings
+from the unrelated catalog selection. No upstream PR was opened.
+
+Historical Q4 trial notes above describe the earlier experiment, not the active model.
