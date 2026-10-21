@@ -39,6 +39,11 @@ test('broken JSON is reported with its line, in plain words', () => {
   assert.equal(checkRunConfig('').ok, false);
 });
 
+test('optional llama worker and display name are recognized settings', () => {
+  const result = checkRunConfig(JSON.stringify({display_name:'MiniCPM + DSpark',llama_backend:{context:262144,args:['-c','262144'],require_cuda:true}}));
+  assert.deepEqual(result, {ok:true,issues:[]});
+});
+
 test('an unknown key is a warning with the nearest real name, and does not hold the start back', () => {
   const result = checkRunConfig('{\n  "paralel": 2,\n  "idle_unload_secs": 5,\n  "totally_made_up_thing": 1\n}');
   assert.equal(result.ok, true);

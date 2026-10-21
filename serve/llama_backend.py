@@ -24,6 +24,18 @@ POST_PATHS = frozenset(("/v1/chat/completions", "/v1/completions", "/v1/messages
 GET_PATHS = frozenset(("/v1/models", "/props", "/llama-metrics"))
 
 
+def require_cuda(exe, env):
+    result = subprocess.run([exe, "--list-devices"], env=env, capture_output=True,
+                            text=True, timeout=30)
+    if result.returncode != 0 or not any(line.strip().startswith("CUDA") and ":" in line
+                                        for line in result.stdout.splitlines()):
+        raise RuntimeError("llama.cpp cannot see a CUDA device; refusing CPU fallback. "
+                           "Check libggml-cuda.so dependencies (including NCCL), "
+                           "LD_LIBRARY_PATH and CUDA_VISIBLE_DEVICES. " +
+                           (result.stdout + result.stderr)[-1200:])
+    return result.stdout.strip()
+
+
 def backend_args(cfg):
     """Honor the shared context, draft and picture switches on the next load."""
     args = list(cfg["llama_backend"]["args"])
@@ -77,6 +89,8 @@ class LlamaEngine:
             if self.alive():
                 return
             settings = self.cfg["llama_backend"]
+            if settings.get("require_cuda"):
+                self.info["devices"] = require_cuda(self.cfg["exe"], self.env)
             # The backend stays private; clients only reach the authenticated
             # Strata listener.
             with socket.socket() as sock:

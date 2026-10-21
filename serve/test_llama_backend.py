@@ -5,8 +5,10 @@ import json
 import threading
 import time
 import unittest
+from unittest.mock import patch
+import subprocess
 
-from serve.llama_backend import LlamaEngine, backend_args
+from serve.llama_backend import LlamaEngine, backend_args, require_cuda
 from serve.server import ByteTokenizer, ChatTemplate, Service, serve, ROOT
 
 
@@ -131,6 +133,13 @@ class ProxyTests(unittest.TestCase):
 
 
 class ArgumentTests(unittest.TestCase):
+    def test_cuda_required_rejects_silent_cpu_fallback(self):
+        with patch('serve.llama_backend.subprocess.run', return_value=subprocess.CompletedProcess([], 0, 'Available devices:\n', '')):
+            with self.assertRaisesRegex(RuntimeError, 'refusing CPU fallback'):
+                require_cuda('/engine/llama-server', {})
+        with patch('serve.llama_backend.subprocess.run', return_value=subprocess.CompletedProcess([], 0, 'Available devices:\n  CUDA0: NVIDIA RTX 5060 Ti\n', '')):
+            self.assertIn('CUDA0', require_cuda('/engine/llama-server', {}))
+
     def test_embedded_mtp_does_not_need_separate_draft_file(self):
         cfg = {'args':['--max-context','32768'],
                'llama_backend':{'context':32768,'args':['-c','32768','--spec-type','draft-mtp','--spec-draft-n-max','3']}}

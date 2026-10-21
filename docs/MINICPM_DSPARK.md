@@ -20,17 +20,28 @@ already installed official CUDA server image, into
 in that folder's `BUILD.json`. No new model downloads or background Docker
 services are required.
 
-Initial settings:
+Current local settings (updated after the first GPU load):
 
 - Physical GPU 1, selected by Strata's existing child environment.
-- 32768 context, Q8_0 K/V, one request slot, 12 CPU threads.
-- Target GPU layers enabled; the first 20 MoE layers keep experts on CPU.
+- 262144 context, Q8_0 K/V for target and draft, one request slot, 12 CPU threads.
+- Target GPU layers enabled; the first 32 MoE layers keep experts on CPU.
 - DSpark on GPU, `--spec-type draft-dspark --spec-draft-n-max 15`.
 - Vision projector on CPU to leave GPU room for target verification and draft.
 
 These are initial settings, **not measured optimal placement**. Fifteen is
 the maximum draft length, not a promise of fifteen accepted tokens per step.
-Full 256K context and this placement have not been validated on GPU.
+The original profile used 32K context and 20 CPU expert layers. At 256K the
+20-layer placement exhausted GPU memory before the draft loaded; 32 CPU expert
+layers loaded successfully with about 12.5 GiB GPU usage. Context allocation
+passed, but generation through a full 256K conversation has not been tested.
+
+The first real load exposed a missing dependency in the locally extracted
+runtime: `libggml-cuda.so` needs `libnccl.so.2`, although `llama-server` itself
+passes ldd without it. llama.cpp silently fell back to CPU. NCCL and the CUDA 12
+runtime/cuBLAS libraries are now copied from the same pinned container image
+into the engine folder. Validate the CUDA plugin as well as the main binary.
+Both local llama profiles now require a successful CUDA device probe before
+loading, refusing silent CPU fallback.
 
 ## Ownership and API
 
@@ -67,10 +78,14 @@ draining, and draft/context switches. A separate CPU-only fake-child smoke test
 exercised the real `serve.server` entry point, ready-file publication, telemetry,
 chat forwarding and shutdown.
 
-The active Ornith worker and host PID were preserved throughout preparation.
-**The real MiniCPM + DSpark pair has not yet been loaded or benchmarked.** Next
-checks are GPU memory, a real text request, image and tool requests, then matched
-draft-on/off timing and acceptance measurements before choosing a default.
+Ornith was preserved during initial preparation. The later CPU-fallback fix
+required restarting the host to refresh settings validation and reloading the
+DSpark worker. The live settings-file check now reports no issues for
+`display_name` or `llama_backend`. The real MiniCPM + DSpark pair loaded on GPU 1
+with 256K allocated, and a short provider request returned `OK` (17 prompt and
+2 completion tokens). This is a smoke test, not a speed benchmark. Real image
+and tool requests, long-context generation, and matched draft-on/off timing
+and acceptance measurements remain necessary before choosing a default.
 
 References: [MiniCPM DSpark model card](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-DSpark-gguf),
 [llama.cpp speculative decoding](https://github.com/ggml-org/llama.cpp/blob/master/docs/speculative.md).

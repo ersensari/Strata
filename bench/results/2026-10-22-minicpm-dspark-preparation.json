@@ -1,22 +1,29 @@
 {
-  "status": "prepared_not_gpu_validated",
+  "status": "gpu_loaded_short_smoke_passed",
   "date": "2026-10-22",
   "engine": "llama.cpp b11552",
   "engine_sha256": "850aca20e0308e0ca3cf7fd6b1653e4856433691147d181158a8d81c1116bc7c",
   "profile": "minicpm-dspark",
-  "context": 32768,
+  "context": 262144,
   "physical_gpu": 1,
   "speculative_type": "draft-dspark",
   "max_draft_tokens": 15,
-  "target_cpu_moe_layers": 20,
+  "target_cpu_moe_layers": 32,
   "vision": "cpu",
   "tests": {
-    "unit_tests_passed": 28,
+    "unit_tests_passed": 30,
     "real_server_entry_fake_child_smoke": "passed (ready file, health, telemetry, chat, shutdown)",
     "actual_llama_argument_parsing": "passed",
-    "actual_gpu_inference": "not run",
-    "performance": "not measured"
+    "actual_gpu_inference": "provider returned OK, 17 prompt tokens and 2 output tokens",
+    "performance": "not benchmarked; short smoke is not representative",
+    "settings_validation": "live settings-file API ok=true, issues=[]",
+    "host_restart": "required to reload settings validator; temporary startup override removed",
+    "full_context_generation": "not tested; 262144 allocated successfully",
+    "host_config_tests_passed": 11
   },
-  "host_restarted": false,
-  "preserved_active_model": "ornith-i1-iq3-m"
+  "host_restarted": true,
+  "require_cuda": true,
+  "initial_gpu_failure": "missing libnccl.so.2 prevented libggml-cuda loading; corrected with libraries from the pinned image",
+  "vram_used_mib_observed": 12789,
+  "active_model": "minicpm-dspark"
 }
