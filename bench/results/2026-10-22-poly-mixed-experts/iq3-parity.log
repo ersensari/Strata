@@ -1,0 +1,6 @@
+blk.48 expert   0  Q4_K/Q4_K/Q4_K  relative error: CPU 0.0402, GPU 0.016773, two in a launch: the same bits
+blk.48 expert 128  Q4_K/Q4_K/Q4_K  relative error: CPU 0.0419, GPU 0.017701, two in a launch: the same bits
+blk.48 expert 255  Q4_K/Q4_K/Q4_K  relative error: CPU 0.0428, GPU 0.019107, two in a launch: the same bits
+blk.47 expert   0  IQ3_XXS/IQ3_XXS/IQ3_S  relative error: CPU 0.0426, GPU 0.018792, two in a launch: the same bits
+blk.47 expert 128  IQ3_XXS/IQ3_XXS/IQ3_S  relative error: CPU 0.0466, GPU 0.018685, two in a launch: the same bits
+blk.47 expert 255  IQ3_XXS/IQ3_XXS/IQ3_S  relative error: CPU 0.0389, GPU 0.017702, two in a launch: the same bits

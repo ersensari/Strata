@@ -1,0 +1,8 @@
+types 14/8/8, geometry 3072/1024 checked
+types 12/12/12, geometry 3072/1024 checked
+types 12/12/14, geometry 3072/1024 checked
+types 12/14/14, geometry 3072/1024 checked
+types 12/14/13, geometry 3072/1024 checked
+types 2/2/2, geometry 3072/1024 checked
+types 12/14/12, geometry 3072/1024 checked
+CPU IQ: 224 cases passed, max relative L2 error 0
