@@ -65,9 +65,10 @@ bool cpu_expert_types_ok(int gu_type, int d_type, int n_embd, int n_ff, std::str
 /// or with `gelu` of weight * down(gelu(gate x) * up x), in the tanh form of GELU the GPU experts compute.
 /// The n experts come token after token, a token's together.  An expert that several of the tokens use is read
 /// once for all of them: reading it is most of the work.  A token's result is the one it has in a call of its own.
+/// `up_type` defaults to gu_type; mixed tensors use their own row size and activation quantizer.
 /// `meanwhile`, when given, is run once by one of the threads, beside the first products.  It must not throw.
 void cpu_experts(Workers& workers, const CpuExpert* experts, int n, int rows, int gu_type, int d_type, int n_embd,
                  int n_ff, const float* x, float limit, bool gelu, float* out,
-                 const std::function<void()>* meanwhile = nullptr);
+                 const std::function<void()>* meanwhile = nullptr, int up_type = -1);
 
 }  // namespace strata::poly

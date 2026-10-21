@@ -1,0 +1,12 @@
+{
+  "engine_sha256": "d3d58b09317920f1bf1c3a101516dcb379dca99de06df4b690f54c12d2fad049",
+  "app_version": "0.2.2+poly.mixed-gu",
+  "base_engine": "0.1.47",
+  "cuda_arch": "120",
+  "targets": [
+    "strata-poly",
+    "poly_expert_parity",
+    "poly_cpu_iq_test"
+  ],
+  "hip_tested": false
+}

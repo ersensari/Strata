@@ -156,17 +156,21 @@ bool cpu_expert_types_ok(int gu_type, int d_type, int n_embd, int n_ff, std::str
 
 void cpu_experts(Workers& workers, const CpuExpert* experts, int n, int rows, int gu_type, int d_type, int n_embd,
                  int n_ff, const float* x, float limit, bool gelu, float* out,
-                 const std::function<void()>* meanwhile) {
+                 const std::function<void()>* meanwhile, int up_type) {
     init_once();
+    if (up_type < 0) up_type = gu_type;
     const ggml_type_traits_cpu* tg = traits(gu_type);
+    const ggml_type_traits_cpu* tu = traits(up_type);
     const ggml_type_traits_cpu* td = traits(d_type);
     const size_t gu_row = ggml_row_size((ggml_type) gu_type, n_embd);
+    const size_t up_row = ggml_row_size((ggml_type) up_type, n_embd);
+    const size_t u_bytes = ggml_row_size(tu->vec_dot_type, n_embd);
     const size_t d_row = ggml_row_size((ggml_type) d_type, n_ff);
     const size_t a_bytes = ggml_row_size(tg->vec_dot_type, n_embd);
     const size_t h_bytes = ggml_row_size(td->vec_dot_type, n_ff);
 
     // The workers get these through the pointers below: a thread_local named in their code would be their own.
-    static thread_local std::vector<uint8_t> act, hq;
+    static thread_local std::vector<uint8_t> act, up_act, hq;
     static thread_local std::vector<float> h;
     static thread_local std::vector<int> by, run;
     act.resize((size_t) rows * a_bytes);
@@ -178,6 +182,17 @@ void cpu_experts(Workers& workers, const CpuExpert* experts, int n, int rows, in
     const auto act_from = traits(tg->vec_dot_type)->from_float;
     workers.run(rows, [&](int t) { act_from(x + (size_t) t * n_embd, actp + (size_t) t * a_bytes, n_embd); });
 
+    // Gate and up can require different activation quantizers (e.g. Q6_K / Q8_0).
+    // Reuse the gate input only when their dot-product activation formats agree.
+    const uint8_t* up_actp = actp;
+    if (tg->vec_dot_type != tu->vec_dot_type) {
+        up_act.resize((size_t) rows * u_bytes);
+        uint8_t* dst = up_act.data();
+        const auto from = traits(tu->vec_dot_type)->from_float;
+        workers.run(rows, [&](int t) { from(x + (size_t) t * n_embd, dst + (size_t) t * u_bytes, n_embd); });
+        up_actp = dst;
+    }
+
     // The uses of one expert next to each other (by), and where each expert's run of them starts (run).
     by.resize((size_t) n);
     std::iota(by.begin(), by.end(), 0);
@@ -188,7 +203,7 @@ void cpu_experts(Workers& workers, const CpuExpert* experts, int n, int rows, in
     const int n_run = (int) run.size();
     run.push_back(n);
 
-    const bool multi_gu = iq_multi(gu_type), multi_down = iq_multi(d_type);
+    const bool multi_gu = gu_type == up_type && iq_multi(gu_type), multi_down = iq_multi(d_type);
     float* hp = h.data();
     const int* byp = by.data();
     const int* runp = run.data();
@@ -232,13 +247,13 @@ void cpu_experts(Workers& workers, const CpuExpert* experts, int n, int rows, in
         }
         for (int r = r0; r < r1; ++r) {
             const uint8_t* gate = e.gate + (size_t) r * gu_row;
-            const uint8_t* up = e.up + (size_t) r * gu_row;
+            const uint8_t* up = e.up + (size_t) r * up_row;
             for (int i = i0; i < i1; ++i) {
                 const int j = byp[i];
                 const uint8_t* a = actp + (size_t) experts[j].row * a_bytes;
                 float g = 0.f, u = 0.f;
                 tg->vec_dot(n_embd, &g, 0, gate, 0, a, 0, 1);
-                tg->vec_dot(n_embd, &u, 0, up, 0, a, 0, 1);
+                tu->vec_dot(n_embd, &u, 0, up, 0, up_actp + (size_t) experts[j].row * u_bytes, 0, 1);
                 if (gelu) {
                     hp[(size_t) j * n_ff + r] =
                         0.5f * g * (1.f + std::tanh(0.7978845608f * g * (1.f + 0.044715f * g * g))) * u;

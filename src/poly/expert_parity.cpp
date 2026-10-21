@@ -8,7 +8,7 @@
 // every kind of matrix in the file (a type and a shape) takes a batch of tokens through the two GPU products,
 // native_mmvq and MMQ.  All of them quantize their input to 8 bits, so none is exact; the test fails when one is
 // far from the reference.  A model in several files: give the file that holds the tensors to check.
-#include "cpu_experts.hpp"
+#include "runtime.hpp"
 #include "mmq.hpp"
 
 #include "strata/artifact/gguf_reader.hpp"
@@ -67,28 +67,30 @@ double rel_error(const float* got, const std::vector<double>& want) {
 }  // namespace
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        std::fprintf(stderr, "usage: poly_expert_parity MODEL.gguf\n");
+    if (argc < 2 || argc > 3 || (argc == 3 && std::strcmp(argv[2], "--experts-only"))) {
+        std::fprintf(stderr, "usage: poly_expert_parity FIRST_SHARD.gguf [--experts-only]\n");
         return 2;
     }
     try {
-        GgufFile g(argv[1]);
+        poly::Shards g(argv[1]);
+        std::vector<TensorInfo> tensors;
+        g.each([&](const TensorInfo& t) { tensors.push_back(t); });
         const float limit = 10.f;
 
         // the first layer of every (gate/up type, down type) pair; the experts' shape says the rest
-        std::map<std::pair<uint32_t, uint32_t>, int> layers;
+        std::map<std::tuple<uint32_t, uint32_t, uint32_t>, int> layers;
         int n_embd = 0, n_ff = 0, n_expert = 0;
-        for (const TensorInfo& tg : g.tensors()) {
+        for (const TensorInfo& tg : tensors) {
             const size_t at = tg.name.find(".ffn_gate_exps.weight");
             if (at == std::string::npos || tg.shape.size() != 3) continue;
             const std::string b = tg.name.substr(0, at);
             const TensorInfo* tu = g.find(b + ".ffn_up_exps.weight");
             const TensorInfo* td = g.find(b + ".ffn_down_exps.weight");
-            if (!tu || !td || tu->type != tg.type) continue;
+            if (!tu || !td) continue;
             n_embd = (int) tg.shape[0];
             n_ff = (int) tg.shape[1];
             n_expert = (int) tg.shape[2];
-            layers.emplace(std::make_pair(tg.type, td->type), std::stoi(b.substr(4)));
+            layers.emplace(std::make_tuple(tg.type, tu->type, td->type), std::stoi(b.substr(4)));
         }
         if (layers.empty()) throw std::runtime_error("the GGUF has no routed experts");
 
@@ -123,17 +125,19 @@ int main(int argc, char** argv) {
             const TensorInfo& tu = *g.find(b + "ffn_up_exps.weight");
             const TensorInfo& td = *g.find(b + "ffn_down_exps.weight");
             const size_t gu_bytes = tensor_payload_bytes(tg) / (size_t) n_expert,
+                         up_bytes = tensor_payload_bytes(tu) / (size_t) n_expert,
                          d_bytes = tensor_payload_bytes(td) / (size_t) n_expert;
             std::string err;
-            if (!poly::cpu_expert_types_ok((int) tg.type, (int) td.type, n_embd, n_ff, err)) throw std::runtime_error(err);
-            const bool gpu = poly_kernels::native_mmvq_supported((int) tg.type) && poly_kernels::native_mmvq_supported((int) td.type);
+            if (!poly::cpu_expert_types_ok((int) tg.type, (int) td.type, n_embd, n_ff, err) ||
+                !poly::cpu_expert_types_ok((int) tu.type, (int) td.type, n_embd, n_ff, err)) throw std::runtime_error(err);
+            const bool gpu = poly_kernels::native_mmvq_supported((int) tg.type) && poly_kernels::native_mmvq_supported((int) tu.type) && poly_kernels::native_mmvq_supported((int) td.type);
             uint8_t* d_w = nullptr;
-            ck(cudaMalloc(&d_w, 2 * gu_bytes + d_bytes + 256));
+            ck(cudaMalloc(&d_w, (gu_bytes + up_bytes) + d_bytes + 256));
 
             for (int e : {0, n_expert / 2, n_expert - 1}) {
-                const uint8_t* gate = g.tensor_data(tg) + (size_t) e * gu_bytes;
-                const uint8_t* up = g.tensor_data(tu) + (size_t) e * gu_bytes;
-                const uint8_t* down = g.tensor_data(td) + (size_t) e * d_bytes;
+                const uint8_t* gate = g.data(tg) + (size_t) e * gu_bytes;
+                const uint8_t* up = g.data(tu) + (size_t) e * up_bytes;
+                const uint8_t* down = g.data(td) + (size_t) e * d_bytes;
 
                 const std::vector<double> gv = matvec(dequant(tg.type, gate, n_embd, n_ff), xd, n_embd, n_ff);
                 const std::vector<double> uv = matvec(dequant(tu.type, up, n_embd, n_ff), xd, n_embd, n_ff);
@@ -147,17 +151,22 @@ int main(int argc, char** argv) {
                 std::vector<float> cpu((size_t) n_embd), dev((size_t) n_embd);
                 const poly::CpuExpert ce{gate, up, down, 1.f};
                 poly::cpu_experts(workers, &ce, 1, 1, (int) tg.type, (int) td.type, n_embd, n_ff, x.data(), limit, false,
-                                 cpu.data());
+                                 cpu.data(), nullptr, (int) tu.type);
                 const double e_cpu = rel_error(cpu.data(), want);
                 double e_gpu = 0.0;
                 if (gpu) {
                     ck(cudaMemcpy(d_w, gate, gu_bytes, cudaMemcpyHostToDevice));
-                    ck(cudaMemcpy(d_w + gu_bytes, up, gu_bytes, cudaMemcpyHostToDevice));
-                    ck(cudaMemcpy(d_w + 2 * gu_bytes, down, d_bytes, cudaMemcpyHostToDevice));
-                    poly_kernels::native_mmvq((int) tg.type, d_w, d_xq, d_gu, n_embd, 2 * n_ff, 1, st);
+                    ck(cudaMemcpy(d_w + gu_bytes, up, up_bytes, cudaMemcpyHostToDevice));
+                    ck(cudaMemcpy(d_w + (gu_bytes + up_bytes), down, d_bytes, cudaMemcpyHostToDevice));
+                    if (tg.type == tu.type) {
+                        poly_kernels::native_mmvq((int) tg.type, d_w, d_xq, d_gu, n_embd, 2 * n_ff, 1, st);
+                    } else {
+                        poly_kernels::native_mmvq((int) tg.type, d_w, d_xq, d_gu, n_embd, n_ff, 1, st);
+                        poly_kernels::native_mmvq((int) tu.type, d_w + gu_bytes, d_xq, d_gu + n_ff, n_embd, n_ff, 1, st);
+                    }
                     poly::swiglu_clamp(d_gu, d_gu + n_ff, d_h, n_ff, limit, st);
                     poly_kernels::native_quantize_q8_1(d_h, d_hq, n_ff, 1, st);
-                    poly_kernels::native_mmvq((int) td.type, d_w + 2 * gu_bytes, d_hq, d_out, n_ff, n_embd, 1, st);
+                    poly_kernels::native_mmvq((int) td.type, d_w + (gu_bytes + up_bytes), d_hq, d_out, n_ff, n_embd, 1, st);
                     ck(cudaMemcpyAsync(dev.data(), d_out, (size_t) n_embd * 4, cudaMemcpyDeviceToHost, st));
                     ck(cudaStreamSynchronize(st));
                     e_gpu = rel_error(dev.data(), want);
@@ -167,17 +176,23 @@ int main(int argc, char** argv) {
                 const char* together = "";
                 bool same = true;
                 if (gpu) {
-                    poly_kernels::MmvqSlots gu{}, dn{};
+                    poly_kernels::MmvqSlots gu{}, up_slots{}, dn{};
                     for (int j = 0; j < 2; ++j) {
                         gu.w[j] = d_w;
                         gu.x[j] = d_xq;
                         gu.y[j] = d_gu + (size_t) j * 2 * n_ff;
-                        dn.w[j] = d_w + 2 * gu_bytes;
+                        up_slots.w[j] = d_w + gu_bytes;
+                        up_slots.x[j] = d_xq;
+                        up_slots.y[j] = gu.y[j] + n_ff;
+                        dn.w[j] = d_w + (gu_bytes + up_bytes);
                         dn.x[j] = (const uint8_t*) d_hq + (size_t) j * hq_bytes;
                         dn.y[j] = d_out + (size_t) j * n_embd;
                     }
                     together = ", two in a launch: no kernel";
-                    if (poly_kernels::native_mmvq_slots((int) tg.type, gu, 2, n_embd, 2 * n_ff, st)) {
+                    const bool mixed = tg.type != tu.type;
+                    const bool gates = poly_kernels::native_mmvq_slots((int) tg.type, gu, 2, n_embd, mixed ? n_ff : 2 * n_ff, st);
+                    const bool ups = !mixed || poly_kernels::native_mmvq_slots((int) tu.type, up_slots, 2, n_embd, n_ff, st);
+                    if (gates && ups) {
                         poly::swiglu_clamp_rows(d_gu, d_h, n_ff, 2, limit, st);
                         poly_kernels::native_quantize_q8_1(d_h, d_hq, n_ff, 2, st);
                         if (poly_kernels::native_mmvq_slots((int) td.type, dn, 2, n_ff, n_embd, st)) {
@@ -193,19 +208,21 @@ int main(int argc, char** argv) {
                 }
                 const bool pass = e_cpu < 0.05 && e_gpu < 0.05 && same;
                 ok = ok && pass;
-                std::printf("blk.%d expert %3d  %s/%s  relative error: CPU %.4f, GPU %s%s%s\n", il, e, tg.type_name(),
-                            td.type_name(), e_cpu, gpu ? std::to_string(e_gpu).c_str() : "(no kernel)", together,
+                std::printf("blk.%d expert %3d  %s/%s/%s  relative error: CPU %.4f, GPU %s%s%s\n", il, e, tg.type_name(),
+                            tu.type_name(), td.type_name(), e_cpu, gpu ? std::to_string(e_gpu).c_str() : "(no kernel)", together,
                             pass ? "" : "  FAIL");
             }
             ck(cudaFree(d_w));
         }
+
+        if (argc == 3) return ok ? 0 : 1;
 
         // Every kind of matrix: a type and a shape, a routed expert's being a matrix each.  The weights sit before
         // a megabyte of 0xFF bytes, which a product that reads past its matrix turns into NaN.
         constexpr int kBatch = 40;
         constexpr size_t kTail = size_t(1) << 20;
         std::map<std::tuple<uint32_t, uint64_t, uint64_t>, const TensorInfo*> kinds;
-        for (const TensorInfo& t : g.tensors())
+        for (const TensorInfo& t : tensors)
             if ((t.shape.size() == 2 || t.shape.size() == 3) && poly_kernels::native_mmvq_supported((int) t.type))
                 kinds.emplace(std::make_tuple(t.type, t.shape[0], t.shape[1]), &t);
         poly::Mmq mmq;
@@ -213,7 +230,7 @@ int main(int argc, char** argv) {
             const int n_in = (int) t->shape[0], n_out = (int) t->shape[1];
             const size_t bytes = tensor_payload_bytes(*t) / (t->shape.size() == 3 ? (size_t) t->shape[2] : 1);
             const size_t row_bytes = bytes / (size_t) n_out;
-            const uint8_t* w = g.tensor_data(*t);
+            const uint8_t* w = g.data(*t);
 
             std::vector<float> xb((size_t) kBatch * n_in);
             for (float& v : xb) v = small(rng);

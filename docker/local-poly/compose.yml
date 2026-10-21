@@ -16,7 +16,7 @@ services:
     ports:
       - "127.0.0.1:10110:8791"
     environment:
-      DEFAULT_MODEL: ornith-iq3
+      DEFAULT_MODEL: ornith-bartowski-q4_k_m
     volumes:
       - forgeloop-ai-strata-local-data:/data
       - forgeloop-ai-polystrata-legacy-data:/legacy-data:ro

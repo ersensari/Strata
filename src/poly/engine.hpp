@@ -117,12 +117,13 @@ struct Layer {
     const uint8_t* exp_gate = nullptr;  ///< n_expert experts back to back, in the mapped file
     const uint8_t* exp_up = nullptr;
     const uint8_t* exp_down = nullptr;
-    uint32_t gu_type = 0, d_type = 0;
-    size_t gu_bytes = 0, d_bytes = 0;  ///< one expert's gate (or up), and its down
+    uint32_t gu_type = 0, up_type = 0, d_type = 0;
+    size_t gu_bytes = 0, up_bytes = 0, d_bytes = 0;  ///< one expert's separate gate, up and down byte counts
+    size_t up_stride = 0;              ///< separate up tensor stride, or the fused gate/up stride
     size_t gu_stride = 0;              ///< from an expert's gate to the next one's: twice gu_bytes in a file that
                                        ///< keeps an expert's gate and up in one tensor
     std::vector<uint8_t*> slot;        ///< per expert: gate | up | down in VRAM, or null
-    size_t slot_bytes = 0;             ///< from a slot of the layer to the one behind it: whole blocks of both types
+    size_t slot_bytes = 0;             ///< from a slot of the layer to the one behind it: whole blocks of all three types
     std::vector<int32_t> ahead;        ///< experts a full prompt batch stages before it routes
     int trade = -1;                    ///< layers with the same number can take each other's slots: same size
     int8_t card = -1;                  ///< a few tokens' experts routed and found on the card (moe_card()): 1 yes,

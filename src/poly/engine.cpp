@@ -963,20 +963,22 @@ void Engine::load_moe(int il, bool shared) {
         L.gu_bytes = L.gu_stride / 2;
         L.exp_gate = home(gu).data(gu);
         L.exp_up = L.exp_gate + L.gu_bytes;
+        L.up_type = L.gu_type;
+        L.up_bytes = L.gu_bytes;
+        L.up_stride = L.gu_stride;
     } else {
         const TensorInfo& tg = exps("ffn_gate_exps.weight", n_embd_, n_ff_exp_);
         const TensorInfo& tu = exps("ffn_up_exps.weight", n_embd_, n_ff_exp_);
-        if (tg.type != tu.type)
-            throw std::runtime_error(tg.name + " and " + tu.name +
-                                     " have different types, which this engine does not run");
         L.gu_type = tg.type;
         L.gu_stride = L.gu_bytes = home(tg).payload(tg) / (size_t) n_expert_;
-        home(tu).payload(tu);
+        L.up_type = tu.type;
+        L.up_stride = L.up_bytes = home(tu).payload(tu) / (size_t) n_expert_;
         L.exp_gate = home(tg).data(tg);
         L.exp_up = home(tu).data(tu);
     }
     std::string err;
-    if (!cpu_expert_types_ok((int) L.gu_type, (int) L.d_type, n_embd_, n_ff_exp_, err))
+    if (!cpu_expert_types_ok((int) L.gu_type, (int) L.d_type, n_embd_, n_ff_exp_, err) ||
+        !cpu_expert_types_ok((int) L.up_type, (int) L.d_type, n_embd_, n_ff_exp_, err))
         throw std::runtime_error(blk(il, "ffn_*_exps.weight: ") + err);
     L.slot.assign((size_t) n_expert_, nullptr);
     ++n_moe_;
@@ -1170,15 +1172,15 @@ void Engine::fill_expert_cache() {
     for (int il = 0; il < (int) layers_.size(); ++il) {
         Layer& L = layers_[(size_t) il];
         if (!L.moe || !poly_kernels::native_mmvq_supported((int) L.gu_type) ||
+            !poly_kernels::native_mmvq_supported((int) L.up_type) ||
             !poly_kernels::native_mmvq_supported((int) L.d_type))
             continue;
         // A slot is a whole number of blocks of both of the experts' types, so the slots of a layer that lie one
         // behind the other are the matrices of one launch (moe_rows()), and of 8 bytes, which keeps every block
         // where its type may be read.
-        const size_t unit = std::lcm(std::lcm(ggml_type_size((ggml_type) L.gu_type),
-                                              ggml_type_size((ggml_type) L.d_type)),
-                                     size_t(8));
-        const size_t bytes = (2 * L.gu_bytes + L.d_bytes + kTail + unit - 1) / unit * unit;
+        const size_t gu_unit = std::lcm(ggml_type_size((ggml_type) L.gu_type), ggml_type_size((ggml_type) L.up_type));
+        const size_t unit = std::lcm(std::lcm(gu_unit, ggml_type_size((ggml_type) L.d_type)), size_t(8));
+        const size_t bytes = (L.gu_bytes + L.up_bytes + L.d_bytes + kTail + unit - 1) / unit * unit;
         L.slot_bytes = bytes;
         if (std::find(sizes.begin(), sizes.end(), bytes) == sizes.end()) sizes.push_back(bytes);
         L.trade = (int) (std::find(sizes.begin(), sizes.end(), bytes) - sizes.begin());
@@ -1229,8 +1231,8 @@ void Engine::fill_expert_cache() {
         exp_at_ += c.bytes;
         const size_t e = (size_t) c.e;
         h2d(s, L.exp_gate + e * L.gu_stride, L.gu_bytes);
-        h2d(s + L.gu_bytes, L.exp_up + e * L.gu_stride, L.gu_bytes);
-        h2d(s + 2 * L.gu_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
+        h2d(s + L.gu_bytes, L.exp_up + e * L.up_stride, L.up_bytes);
+        h2d(s + L.gu_bytes + L.up_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
         L.slot[e] = s;
         ++cached_;
     }
@@ -1460,8 +1462,8 @@ int Engine::grow_cache(size_t bytes) {
         exp_at_ += L.slot_bytes;
         const size_t e = (size_t) c.e;
         h2d(s, L.exp_gate + e * L.gu_stride, L.gu_bytes);
-        h2d(s + L.gu_bytes, L.exp_up + e * L.gu_stride, L.gu_bytes);
-        h2d(s + 2 * L.gu_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
+        h2d(s + L.gu_bytes, L.exp_up + e * L.up_stride, L.up_bytes);
+        h2d(s + L.gu_bytes + L.up_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
         L.slot[e] = s;
         ++cached_;
     }
@@ -1480,7 +1482,7 @@ void Engine::plan_ahead(Layer& L, int il) {
         const int64_t* used = prior_.data() + (size_t) il * n_expert_;
         std::stable_sort(L.ahead.begin(), L.ahead.end(), [used](int32_t a, int32_t b) { return used[a] > used[b]; });
     }
-    L.ahead.resize(std::min(L.ahead.size(), stage_bytes_ / (2 * L.gu_bytes + L.d_bytes)));
+    L.ahead.resize(std::min(L.ahead.size(), stage_bytes_ / (L.gu_bytes + L.up_bytes + L.d_bytes)));
 }
 
 // The follower: an asked-for expert goes from the mapped file to its pinned buffer, and from there to its slot.
@@ -1500,9 +1502,9 @@ void Engine::follow_loop() {
         const Layer& L = layers_[(size_t) s->il];
         const size_t e = (size_t) s->e, gu = L.gu_bytes;
         std::memcpy(s->pinned, L.exp_gate + e * L.gu_stride, gu);
-        std::memcpy(s->pinned + gu, L.exp_up + e * L.gu_stride, gu);
-        std::memcpy(s->pinned + 2 * gu, L.exp_down + e * L.d_bytes, L.d_bytes);
-        cudaError_t err = cudaMemcpyAsync(s->slot, s->pinned, 2 * gu + L.d_bytes, cudaMemcpyHostToDevice, cs(swap_st_));
+        std::memcpy(s->pinned + gu, L.exp_up + e * L.up_stride, L.up_bytes);
+        std::memcpy(s->pinned + gu + L.up_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
+        cudaError_t err = cudaMemcpyAsync(s->slot, s->pinned, gu + L.up_bytes + L.d_bytes, cudaMemcpyHostToDevice, cs(swap_st_));
         if (err == cudaSuccess) err = cudaEventRecord(s->done, cs(swap_st_));
         lk.lock();
         if (err != cudaSuccess) {
@@ -1779,7 +1781,7 @@ void Engine::load(const Options& o) {
     for (const Layer& L : layers_) {
         if (!L.moe) continue;
         spans.emplace_back(L.exp_gate, (size_t) n_expert_ * L.gu_stride);
-        if (L.gu_stride == L.gu_bytes) spans.emplace_back(L.exp_up, (size_t) n_expert_ * L.gu_bytes);
+        if (L.gu_stride == L.gu_bytes) spans.emplace_back(L.exp_up, (size_t) n_expert_ * L.up_stride);
         spans.emplace_back(L.exp_down, (size_t) n_expert_ * L.d_bytes);
     }
     if (!workers_) {   // a later card's engine has the first one's
@@ -1886,10 +1888,12 @@ void Engine::alloc() {
     for (int il = 0; il < n_layer_; ++il) {
         Layer& L = layers_[(size_t) il];
         if (!L.moe) continue;
-        L.mmq = opt_.gpu_experts && rows_ >= kStageRows && Mmq::fits((int) L.gu_type, 2 * n_ff_exp_, n_embd_) &&
+        // The tiled prompt path assumes a single gate/up quantizer. Mixed layers use
+        // moe()'s separate GPU products plus CPU experts, including during prefill.
+        L.mmq = L.gu_type == L.up_type && opt_.gpu_experts && rows_ >= kStageRows && Mmq::fits((int) L.gu_type, 2 * n_ff_exp_, n_embd_) &&
                 Mmq::fits((int) L.d_type, n_embd_, n_ff_exp_);
         tiles = tiles || L.mmq;
-        one_expert = std::max(one_expert, 2 * L.gu_bytes + L.d_bytes);
+        one_expert = std::max(one_expert, L.gu_bytes + L.up_bytes + L.d_bytes);
     }
     if (tiles) mmq_ = std::make_unique<Mmq>();
 
@@ -2214,7 +2218,7 @@ bool Engine::moe(Layer& L, int il, int n, const std::function<void()>* first) {
                 }
                 host_e[n_host] = (int32_t) e;
                 host_k[n_host] = k;
-                host[n_host++] = {L.exp_gate + e * L.gu_stride, L.exp_up + e * L.gu_stride,
+                host[n_host++] = {L.exp_gate + e * L.gu_stride, L.exp_up + e * L.up_stride,
                                   L.exp_down + e * L.d_bytes, w[k], t};
             }
         }
@@ -2264,15 +2268,28 @@ bool Engine::moe(Layer& L, int il, int n, const std::function<void()>* first) {
                     gate_up.w[j] = c.slot;
                     gate_up.x[j] = (const uint8_t*) xq_ + (size_t) c.row * xq_row;
                     gate_up.y[j] = g_ + (size_t) j * 2 * ff;
-                    down.w[j] = c.slot + 2 * L.gu_bytes;
+                    down.w[j] = c.slot + L.gu_bytes + L.up_bytes;
                     down.x[j] = (const uint8_t*) q8_ + (size_t) j * q8_row;
                     down.y[j] = d_ + (size_t) ((i0 + j) % kSumRows) * e_row;
                 }
+                const bool mixed = L.gu_type != L.up_type;
+                const int gu_rows = mixed ? n_ff_exp_ : 2 * n_ff_exp_;
                 const bool one = m > 1 && poly_kernels::native_mmvq_slots((int) L.gu_type, gate_up, m, n_embd_,
-                                                                      2 * n_ff_exp_, st_);
+                                                                      gu_rows, st_);
                 for (int j = 0; j < m && !one; ++j)
                     poly_kernels::native_mmvq((int) L.gu_type, gate_up.w[j], gate_up.x[j], gate_up.y[j], n_embd_,
-                                         2 * n_ff_exp_, 1, st_);
+                                         gu_rows, 1, st_);
+                if (mixed) {
+                    poly_kernels::MmvqSlots up = gate_up;
+                    for (int j = 0; j < m; ++j) {
+                        up.w[j] = cached[i0 + j].slot + L.gu_bytes;
+                        up.y[j] += ff;
+                    }
+                    const bool together = m > 1 && poly_kernels::native_mmvq_slots((int) L.up_type, up, m,
+                                                                                 n_embd_, n_ff_exp_, st_);
+                    for (int j = 0; j < m && !together; ++j)
+                        poly_kernels::native_mmvq((int) L.up_type, up.w[j], up.x[j], up.y[j], n_embd_, n_ff_exp_, 1, st_);
+                }
                 if (gelu_) geglu_rows(g_, h_, n_ff_exp_, m, st_);
                 else swiglu_clamp_rows(g_, h_, n_ff_exp_, m, limit, st_);
                 poly_kernels::native_quantize_q8_1(h_, q8_, n_ff_exp_, m, st_);
@@ -2302,7 +2319,7 @@ bool Engine::moe(Layer& L, int il, int n, const std::function<void()>* first) {
         t0 = Clock::now();
         cpu_experts(*workers_, host, n_host, m, (int) L.gu_type, (int) L.d_type, n_embd_, n_ff_exp_,
                     h_x_ + (size_t) at * e_row, limit, gelu_, cpu,
-                    n_cached > 0 || (first && at == 0) ? &launch : nullptr);
+                    n_cached > 0 || (first && at == 0) ? &launch : nullptr, (int) L.up_type);
         stats_.cpu_ms += ms_since(t0);
     }
     return any_host;
@@ -2337,7 +2354,7 @@ bool Engine::card_moe(int n) {
 // the card, an expert's slot read from d_slots_ by its pick.  False, with nothing launched: this layer is routed
 // on the host, or its formats have no kernel for picks on the card.
 bool Engine::moe_card(Layer& L, int il, int n) {
-    if (L.card == 0) return false;
+    if (L.card == 0 || L.gu_type != L.up_type) return false;
     if (!poly_kernels::native_mmvq_ids_supported((int) L.gu_type) || !poly_kernels::native_mmvq_ids_supported((int) L.d_type) ||
         !route_card(il, n, d_ids_, d_wts_)) {
         L.card = 0;
@@ -2352,7 +2369,7 @@ bool Engine::moe_card(Layer& L, int il, int n) {
     if (gelu_) geglu_rows(g_, h_, n_ff_exp_, rr, st_);
     else swiglu_clamp_rows(g_, h_, n_ff_exp_, rr, clamp_exp_[(size_t) il], st_);
     poly_kernels::native_quantize_q8_1(h_, q8_, n_ff_exp_ * rr, 1, st_);   // the rows back to back, as one vector
-    const poly_kernels::MmvqIds down{table, d_ids_, 2 * L.gu_bytes, q8_, poly_kernels::native_q8_1_bytes(n_ff_exp_), 1, d_,
+    const poly_kernels::MmvqIds down{table, d_ids_, (L.gu_bytes + L.up_bytes), q8_, poly_kernels::native_q8_1_bytes(n_ff_exp_), 1, d_,
                                 (size_t) n_embd_};
     poly_kernels::native_mmvq_ids((int) L.d_type, down, rr, n_ff_exp_, n_embd_, st_);
     moe_sum(d_, d_wts_, fo_, n_embd_, n_used_, n, st_);
@@ -2364,7 +2381,7 @@ bool Engine::moe_card(Layer& L, int il, int n) {
 // stagers_ fill them, while the workers compute experts.
 void Engine::stage(const Layer& L, const int32_t* experts, int m, void* stream, bool alone) {
     staged_il_ = -1;   // whatever the buffer held
-    const size_t gu2 = 2 * L.gu_bytes, down_at = pad((size_t) m * gu2);
+    const size_t gu2 = (L.gu_bytes + L.up_bytes), down_at = pad((size_t) m * gu2);
     const int per = (int) (chunk_bytes_ / (gu2 + L.d_bytes));
     for (int j0 = 0; j0 < m; j0 += per) {
         const size_t c = (size_t) std::min(per, m - j0);
@@ -2375,7 +2392,7 @@ void Engine::stage(const Layer& L, const int32_t* experts, int m, void* stream, 
         const auto copy = [&](int i) {
             const size_t j = (size_t) i / 3, e = (size_t) experts[(size_t) j0 + j];
             if (i % 3 == 0) std::memcpy(h + j * gu2, L.exp_gate + e * L.gu_stride, L.gu_bytes);
-            else if (i % 3 == 1) std::memcpy(h + j * gu2 + L.gu_bytes, L.exp_up + e * L.gu_stride, L.gu_bytes);
+            else if (i % 3 == 1) std::memcpy(h + j * gu2 + L.gu_bytes, L.exp_up + e * L.up_stride, L.up_bytes);
             else std::memcpy(h + c * gu2 + j * L.d_bytes, L.exp_down + e * L.d_bytes, L.d_bytes);
         };
         (alone ? *stagers_ : *workers_).run((int) (3 * c), copy);
@@ -2535,7 +2552,7 @@ void Engine::moe_rows(Layer& L, int il, int n) {
     for (int i = 0; i < rr; ++i) {
         const size_t e = (size_t) ids_[(size_t) i];
         if (on_cpu_[e]) {   // by token, as cpu_experts() takes them, and nothing of it in the card's sum
-            host_.push_back({L.exp_gate + e * L.gu_stride, L.exp_up + e * L.gu_stride, L.exp_down + e * L.d_bytes,
+            host_.push_back({L.exp_gate + e * L.gu_stride, L.exp_up + e * L.up_stride, L.exp_down + e * L.d_bytes,
                              w[i], i / n_used_});
             w[i] = 0.f;
             continue;
@@ -2544,7 +2561,7 @@ void Engine::moe_rows(Layer& L, int il, int n) {
         tok[row] = i / n_used_;
         place[row] = i;
     }
-    const size_t gu2 = 2 * L.gu_bytes;
+    const size_t gu2 = (L.gu_bytes + L.up_bytes);
     // a round is what the staging buffer holds at a time; round_ has the first group of each, and the end
     const int per_round = (int) (stage_bytes_ / (gu2 + L.d_bytes));
     round_.assign(1, n_cached);

@@ -49,3 +49,9 @@ would be incorrect. No engine change or re-quantization was attempted.
 There is **no Q4 TPS or generated response**, and no speed/quality verdict. The
 container default was restored to IQ3; downloaded files and the Q4 config were kept.
 256K is only the configured capacity, not a completed long-context test.
+
+## Follow-up, 2026-10-22
+
+The load limitation was fixed in the fork's Poly engine. Q4 now loads and generates through the
+original app; see [the mixed expert support record](../2026-10-22-poly-mixed-experts/README.md).
+The failure above describes the initial engine, not the current deployment.

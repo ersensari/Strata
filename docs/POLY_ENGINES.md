@@ -22,6 +22,9 @@ on the tested 16 GB host.
 - The Python server gains Poly-specific tokenizer metadata, prompt/tool formats and image markers. Original
   Qwen tool conversion and reasoning-effort precedence stay the default. Unknown Poly tool calls remain text
   when they do not name a declared tool.
+- Separate gate/up expert tensor types are supported, including Bartowski Ornith Q4_K_M.
+  Mixed layers use separate GPU products and CPU activation formats; prompt tiling and GPU-only routing
+  remain on the existing same-type path. See [the measured support record](../bench/results/2026-10-22-poly-mixed-experts/README.md).
 - `tools/poly_import.py` registers **existing local** GGUF files. It neither downloads models nor starts an engine.
   It refuses missing shards and existing config/pack paths. Generated API keys are not printed; configs are private files.
 

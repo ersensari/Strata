@@ -2,8 +2,8 @@
 
 `forgeloop-ai-strata` serves the original Strata 0.2.2 app host and this fork's Poly/native engines.
 UI: **http://127.0.0.1:10110**. Only host GPU 1 is exposed; it appears as GPU 0 to the engine.
-Startup loads **Ornith AD-IQ3_XXS**, 262144 context capacity, Q8 KV, 12 threads, one request at a time,
-1024 MiB reserve, CPU vision, fast attention and CPU IQ reuse enabled.
+Startup loads **Bartowski Ornith Q4_K_M**, 262144 context capacity, Q8 KV, 12 threads, one request at a time,
+1024 MiB reserve, CPU vision and fast attention enabled (CPU IQ reuse remains enabled for the Atomic IQ3/IQ4 configs).
 
 This is a standalone UI trial. No LiteLLM, Pi, router or other application was pointed at it. The
 inference worker listens only on the container's loopback; only the app host port is published to host
@@ -13,8 +13,8 @@ The separate named volume `forgeloop-ai-strata-local-data` stores configs, profi
 The existing `forgeloop-ai_forgeloop-ai-polystrata-data` volume is mounted **read-only** for prepared packs.
 All model directories are also read-only. Retain that legacy volume: this container depends on its packs.
 Six installed configs are registered in the native Models screen: Ornith IQ3, Ornith IQ4, MiniCPM,
-Gemma, Qwen and the downloaded Bartowski Ornith Q4_K_M. Only Ornith IQ3 loads at boot; model switching belongs to the UI.
-Bartowski Q4_K_M is currently blocked by mixed gate/up expert tensor types; see the record below.
+Gemma, Qwen and the downloaded Bartowski Ornith Q4_K_M. Only Bartowski Ornith Q4_K_M loads at boot; model switching belongs to the UI.
+Bartowski Q4_K_M now loads through the mixed gate/up expert path; see the records below.
 
 ## Prepare and run
 
@@ -73,3 +73,19 @@ a working model yet. This is an engine limitation, not a failed download or a CU
 
 The same-day IQ3 comparison through the new app, thinking off, returned 402 tokens at 36.5 tok/s.
 See [the trial record](../../bench/results/2026-10-21-bartowski-q4/README.md) for settings and limitations.
+
+## Mixed gate/up support (2026-10-22)
+
+The earlier Q4 rejection above is historical. The Poly engine now keeps separate gate/up types,
+strides and sizes, including GPU-cache allocation, refill and CPU activation quantization. Existing
+same-type models retain their combined gate/up products. No model weights were converted or re-quantized.
+
+Real Q4 CPU/GPU expert checks and IQ3 regression checks passed. In the original app with thinking
+off, the voice-assistant question produced 23.0 tok/s cold and 25.8 tok/s on a repeat; IQ3 on the
+updated engine produced 35.2 tok/s. These short runs do not establish quality or long-context performance.
+Q4 is the boot default and is left loaded for user testing, still standalone on host GPU 1.
+
+Mixed-type layers currently use the small-group path during prompt prefill as well as decoding;
+the single-quantizer tiled prompt and GPU-only-routing paths are bypassed for those layers.
+Long prompts can therefore be slower. CUDA was tested; HIP was not available for validation.
+See [the support record](../../bench/results/2026-10-22-poly-mixed-experts/README.md).
