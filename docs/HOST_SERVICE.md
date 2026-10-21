@@ -22,10 +22,17 @@ All dynamic CUDA libraries are in `.venv/lib/python*/site-packages/nvidia/cu13/l
 The six private `strata-*.json` configs live at the checkout root (git ignored).
 Their absolute Docker paths were translated to host paths, their GPU changed
 from container index 0 to physical index 1, and context, KV, MTP and sampling
-settings were preserved. Raw GGUF weights stay in `/mnt/llm-models`. Only required
-prepared packs, tokenizers and the active MTP subset were copied to
-`/mnt/llm-models/strata-runtime` (about 2.3 GB). `packs` and `mtp` in the checkout
-are symlinks to that runtime folder. Expert routing profiles were adopted with the model settings (an empty profile is invalid for the native engine). No chat history or request logs were imported.
+settings were preserved. Strata's data folder is now
+`/mnt/llm-models/Strata-data`, matching the installer's required folder name.
+Raw GGUF weights live in `Strata-data/models/<model-folder>`; prepared packs,
+tokenizers and the active MTP subset live in `Strata-data/packs` and
+`Strata-data/mtp`. `packs` and `mtp` in the checkout point there.
+The previous model-folder paths and `strata-runtime` remain relative symlinks
+so other services sharing these files keep working. The migration used
+same-filesystem renames, with no second copy of the weights. Host preferences,
+Control settings, saved model configs and the systemd unit use the new paths.
+Expert routing profiles were adopted with the model settings (an empty profile
+is invalid for the native engine). No chat history or request logs were imported.
 
 Host state is `/home/ersen/.local/share/strata-fork`: fresh `ui/`, `workspace/`,
 `profiles/`, `logs/`, and the source install's `settings.json`.

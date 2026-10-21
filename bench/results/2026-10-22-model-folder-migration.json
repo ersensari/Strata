@@ -1,0 +1,59 @@
+{
+  "data_dir": "/mnt/llm-models/Strata-data",
+  "installed": [
+    {
+      "model": "ornith-i1-iq3-m",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "qwen",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "gemma",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "minicpm-uncensored",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "minicpm",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "ornith-iq4",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    },
+    {
+      "model": "ornith-iq3",
+      "files_ready": true,
+      "data_dir": "/mnt/llm-models/Strata-data"
+    }
+  ],
+  "running": [
+    {
+      "model": "ornith-iq3",
+      "gpus": [
+        1
+      ]
+    }
+  ],
+  "router_health": {
+    "ok": true,
+    "current": "ornith-iq3"
+  },
+  "q4_download": {
+    "path": "/mnt/llm-models/Strata-data/models/ornith-1.5-122b-mradermacher-i1/Ornith-1.5-122B.i1-Q4_K_M.gguf",
+    "bytes": 75843912384,
+    "inference_test_run": false
+  },
+  "migration": "same-filesystem rename; old shared model paths retained as relative symlinks",
+  "validation": "data-directory name accepted; all saved model and vision paths exist; no inference requests sent"
+}

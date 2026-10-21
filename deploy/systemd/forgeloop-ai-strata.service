@@ -15,7 +15,7 @@ Environment=STRATA_WORKSPACE=%h/.local/share/strata-fork/workspace
 Environment=STRATA_NATIVE_REPO=%h/Source/Strata
 Environment=STRATA_PYTHON=%h/Source/Strata/.venv/bin/python
 Environment=STRATA_SETTINGS_FILE=%h/.local/share/strata-fork/settings.json
-Environment=STRATA_MODELS_DIR=/mnt/llm-models
+Environment=STRATA_MODELS_DIR=/mnt/llm-models/Strata-data
 Environment=STRATA_REAL_ENGINE=1
 Environment=STRATA_ENGINE_NICE=0
 Environment=STRATA_SOURCE_ENGINE_UPDATES=1
