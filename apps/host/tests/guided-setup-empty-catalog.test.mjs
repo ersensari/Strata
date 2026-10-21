@@ -116,3 +116,19 @@ test('model-family selector includes saved variants without mutating the downloa
  const known=m.availableModelFamilies(catalog,[{model:'iq3_xxs',ready:true}]);
  assert.equal(known.flatMap(g=>g.sizes).length,1);
 });
+
+test('imported Swift is downloaded in the original native catalog panel, with other recommendations retained',async()=>{
+ const m=await load();
+ const catalog={families:[{family:'swift',title:'Swift 1.5',images:true,sizes:[{id:'swift-iq3_xxs',model:'IQ3_XXS',download_gb:75.8,ram_needed_gb:60,experts_gb:42.9,on_this_pc:'fits'},{id:'swift-iq2_xs',model:'IQ2_XS'}]}],contexts:[32768],recommendation:{family:'swift',model:'IQ3_XXS'}};
+ const installed=[{model:'qwen',catalogId:'swift-iq3_xxs',model_name:'swift-1.5-iq3_xxs',ready:true,context:262144,kv:'int8',images:'yes'}];
+ const groups=m.availableModelFamilies(catalog.families,installed);
+ const swift=groups[0].sizes.find(v=>v.model==='IQ3_XXS');
+ assert.equal(swift.id,'qwen');assert.equal(swift.sourceFamily,'swift');assert.equal(swift.localConfig,undefined);
+ assert.equal(groups[0].sizes.length,2);assert.equal(catalog.families[0].sizes[0].id,'swift-iq3_xxs');
+ globalThis.__native={...base,catalog,installed:{...base.installed,models:installed}};globalThis.__store=store(true);
+ const html=m.renderToString(m.createElement(m.NativeModels));
+ assert.match(html,/Swift IQ3_XXS/);assert.match(html,/Downloaded<\/span>/);
+ assert.match(html,/Conversation context/);assert.match(html,/Computer use/i);
+ assert.doesNotMatch(html,/Installed model version/);assert.match(html,/>Load model<\/button>/);
+ assert.doesNotMatch(html,/>Download &amp; load<\/button>/);
+});

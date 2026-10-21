@@ -26,6 +26,9 @@ export function availableModelFamilies(families:NativeFamily[], installed:NonNul
  const groups=nativeCatalogModels(families);
  for(const model of installed){
   if(groups.some(f=>f.sizes.some(s=>s.id===model.model)))continue;
+  // Bind imported native configs to a real catalog version, retaining its native controls.
+  const catalogVersion=model.catalogId&&groups.flatMap(f=>f.sizes).find(v=>v.id===model.catalogId);
+  if(catalogVersion){catalogVersion.id=model.model;catalogVersion.installed=model.ready;continue;}
   const id=model.model;
   const [family,title]=/^ornith/.test(id)?['local-ornith','Ornith 1.5 122B']:
    /^minicpm/.test(id)?['local-minicpm','MiniCPM-V 4.7']:
