@@ -1,0 +1,8 @@
+{
+  "repo": "ornith-ai/Ornith-1.5-122B",
+  "revision": "7681ef608624e7532d8164128bcffdbdbaf1b1af",
+  "text_tensors": 735,
+  "vision_tensors": 333,
+  "total_bytes": 13197401568,
+  "cpu_gguf": "bartowski/Ornith-1.5-122B-GGUF Q4_K_M"
+}

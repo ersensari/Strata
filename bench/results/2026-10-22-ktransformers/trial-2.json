@@ -1,0 +1,38 @@
+{
+  "request": {
+    "model": "ornith-kt-test",
+    "messages": [
+      {
+        "role": "user",
+        "content": "bir sesli asistan yapsaydin mimariyi nasil kurardin"
+      }
+    ],
+    "max_tokens": 768,
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 1.5,
+    "repetition_penalty": 1.0,
+    "seed": 42,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "trial": 2,
+  "usage": {
+    "prompt_tokens": 28,
+    "total_tokens": 796,
+    "completion_tokens": 768,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 0
+  },
+  "ttft_s": 0.43942752602742985,
+  "total_s": 57.05206727399491,
+  "decode_tokens_per_s": 13.548233485393734,
+  "content": "# Sesli Asistan Mimarisi\n\nHarika bir konu! Bir sesli asistanı katmanlı bir mimariyle kurardım. İşte uçtan uca tasarım:\n\n## 🏗️ Genel Mimari Akışı\n\n```\n[Kullanıcı] → [Ses Girişi] → [STT] → [NLU] → [Diyalog Yönetimi] → [BAI] → [TTS] → [Ses Çıkışı]\n                     ↑                                                                              ↓\n                                     ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←\n```\n\n---\n\n## 1. Katman: Ses İşleme (Audio Front-End)\n\n**Görev:** Ham sesi temizlemek ve hazırlamak\n\n```python\nclass AudioFrontEnd:\n    def __init__(self):\n        self.noise_suppressor = NoiseSuppressor()\n        self vad = VoiceActivityDetector()  # Konuşma başlangıç/bitiş\n        \n    def preprocess(self, audio_stream):\n        # 1. Gürültü engelleme\n        cleaned = self.noise_suppressor(audio_stream)\n        # 2. VAD ile konuşma segmentlerini bul\n        segments = self.vad.detect(cleaned)\n        # 3. Endpoint detection (kullanıcı sustuğunda tetikle)\n        return segments\n```\n\n**Önemli:** Wake word (\"Hey Asistan\") tespiti için **yerel/edge** çalıştırılmalı (PowerDNS gibi). Sürekli internet bağlantısı gerektirmez.\n\n---\n\n## 2. Katman: Speech-to-Text (STT)\n\n**Seçenekler:**\n\n| Model | Avantaj | Kullanım |\n|-------|---------|----------|\n| **Whisper** (OpenAI) | Çok dilli, güçlü | Yerel/ sunucu |\n| **DeepSpeech** | Açık kaynak | Hafif sistemler |\n| **Google Speech API** | Yüksek doğruluk | Bulut |\n| **Vosk** | Offline, hızlı | Edge cihazlar |\n\n```python\nfrom whisper import load_model\n\nstt_model = load_model(\"turkish_model\")  # Türkçe için fine-tuned\n\ndef transcribe(audio_segment):\n    result = stt_model.transcribe(\n        audio_segment, \n        language=\"tr\",\n        beam_size=5\n    )\n    return result[\"text\"]\n```\n\n---\n\n## 3. Katman: Doğal Dil Anlama (NLU)\n\n**Görev:** Metni anlamlı yapıya dönüştürmek (Intent + Entities)\n\n```python\nfrom transformers import pipeline\n\nclass NLUEngine:\n    def __init__(self):\n        self.intent_classifier = pipeline(\"text-classification\")\n        self.ner = pipeline(\"token-classification\")  # Varlık tanıma\n        \n    def understand(self, text):\n        intent = self.intent_classifier(text)[0]\n        entities = self.ner(text)\n        \n        return {\n            \"intent\": intent[\"label\"],       #örn: \"hava_sorusu\"\n            \"entities\": entities,             #örn: [{\"city\": \"İstanbul\"}]\n            \"confidence\": intent[\"score\"]\n        }\n\n# Örnek çıkış:\n# \"İstanbul'da hava nasıl?\" \n# → {\"intent\": \"hava_sorusu\", \"entities\": [{\"city\": \"İstanbul"
+}

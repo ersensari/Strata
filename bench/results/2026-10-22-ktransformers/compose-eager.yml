@@ -1,0 +1,85 @@
+name: forgeloop-ai
+services:
+  forgeloop-ai-ktransformers-test:
+    image: forgeloop-ai-ktransformers:0.7.2-local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: forgeloop-ai-ktransformers-test
+    init: true
+    restart: "no"
+    entrypoint: /data/venv/bin/python
+    command:
+      - -m
+      - sglang.launch_server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "30000"
+      - --model-path
+      - /models-gpu
+      - --kt-weight-path
+      - /models-ornith/Ornith-1.5-122B-Q4_K_M
+      - --kt-method
+      - LLAMAFILE
+      - --kt-cpuinfer
+      - "12"
+      - --kt-threadpool-count
+      - "1"
+      - --kt-num-gpu-experts
+      - "0"
+      - --kt-max-deferred-experts-per-token
+      - "0"
+      - --dtype
+      - bfloat16
+      - --context-length
+      - "8192"
+      - --max-total-tokens
+      - "8192"
+      - --max-running-requests
+      - "1"
+      - --chunked-prefill-size
+      - "256"
+      - --mem-fraction-static
+      - "0.88"
+      - --disable-cuda-graph
+      - --disable-shared-experts-fusion
+      - --attention-backend
+      - triton
+      - --served-model-name
+      - ornith-kt-test
+    devices:
+      - nvidia.com/gpu=1
+    cap_add:
+      - SYS_NICE
+    shm_size: 8gb
+    ulimits:
+      memlock: -1
+    healthcheck:
+      disable: true
+    ports:
+      - "127.0.0.1:10112:30000"
+    environment:
+      HF_HOME: /data/hf-cache
+      TMPDIR: /data/tmp
+      OMP_NUM_THREADS: "12"
+      TOKENIZERS_PARALLELISM: "false"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - forgeloop-ai-ktransformers-data:/data
+      - /mnt/llm-models/ornith-1.5-122b-bartowski:/models-ornith:ro
+      - /mnt/llm-models/ornith-1.5-122b-kt-gpu:/models-gpu:ro
+    networks:
+      - forgeloop-ai-ktransformers-network
+    labels:
+      forgeloop.managed: "true"
+      forgeloop.project: forgeloop-ai
+      forgeloop.resource: experiment
+volumes:
+  forgeloop-ai-ktransformers-data:
+    external: true
+    name: forgeloop-ai-ktransformers-data
+networks:
+  forgeloop-ai-ktransformers-network:
+    external: true
+    name: forgeloop-ai-ktransformers-network

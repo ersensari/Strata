@@ -1,0 +1,100 @@
+# Sesli Asistan Mimarisi
+
+Harika bir soru! Bir sesli asistanı uçtan uca tasarlayacak olsaydım, mimariyi şu katmanlara ayırırdım:
+
+## 🏗️ Genel Mimari Akışı
+
+```
+Kullanıcı → [Ses Girişi] → [SPEECH-TO-TEXT] → [NLP/Anlama]
+→ [Diyalog Yönetimi] → [Backend/Tool Çağrısı] → [TEXT-TO-SPEECH] → [Ses Çıkışı]
+```
+
+---
+
+## 1. **Ses Yakalama Katmanı (Audio Capture)**
+
+- **WebRTC** veya **gRPC streaming** ile gerçek zamanlı ses akışı
+- 16kHz sample rate, mono, PCM/WAV format (STT modelleri için optimize)
+- **Endpoint detection**: Kullanıcının konuşmasının bittiğini anlama (VAD - Voice Activity Detection)
+- Gidon gürültü engelleme ve echo cancellation
+
+```python
+# Basit VAD mantığı
+def detect_speech_end(audio_stream):
+    # Enerji tabanlı + sessizlik eşiği
+    if silence_duration > 800ms:
+        return END_OF_UTTERANCE
+```
+
+---
+
+## 2. **Otomatik Konuşma Tanıma (ASR / STT)**
+
+Ses → Metin dönüşümü:
+
+| Seçenek | Kullanım Senaryosu |
+|---------|-------------------|
+| **Whisper (OpenAI)** | Kendi sunucumda, Türkçe performansı iyi |
+| **Deepgram / AssemblyAI** | Düşük latency, bulut |
+| **Google Speech-to-Text** | Çok dilli destek |
+
+**Karar:** Streaming ASR kullanırdım (tamamını beklemeden metne döker).
+
+---
+
+## 3. **Doğal Dil Anlama (NLU)**
+
+Metni anlamlı yapıya çevirme:
+
+```json
+{
+  "intent": "weather_query",
+  "entities": {
+    "location": "İstanbul",
+    "time": "bugün"
+  },
+  "confidence": 0.94
+}
+```
+
+- **Intent classification** + **NER** (Named Entity Recognition)
+- Modern yaklaşım: LLM ile few-shot intent extraction
+- Alternatif: RAG tabanlı semantic search
+
+---
+
+## 4. **Diyalog Yönetimi (Orkestratör)**
+
+Sistemin **beyni**. State'i takip eder:
+
+```python
+class DialogueManager:
+    def __init__(self):
+        self.state = {}
+        self.history = []  # Context için
+
+    def process(self, user_input, context):
+        # 1. Intent anla
+        # 2. Eksik bilgi var mı kontrol et (slot filling)
+        # 3. Tool çağır veya clarification sor
+        # 4. Response oluştur
+        pass
+```
+
+**Önemli:** Multi-turn diyalog için context yönetimi kritik.
+
+---
+
+## 5. **Araç/Görev Katmanı (Tool Use)**
+
+Anladığı eylemi gerçekleştir:
+
+```python
+tools = [
+    {"name": "get_weather", "api": "..."},
+    {"name": "set_reminder", "api": "..."},
+    {"name": "play_music", "api": "..."}
+]
+```
+
+- **Function

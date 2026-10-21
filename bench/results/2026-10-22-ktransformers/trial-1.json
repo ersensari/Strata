@@ -1,0 +1,38 @@
+{
+  "request": {
+    "model": "ornith-kt-test",
+    "messages": [
+      {
+        "role": "user",
+        "content": "bir sesli asistan yapsaydin mimariyi nasil kurardin"
+      }
+    ],
+    "max_tokens": 768,
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 1.5,
+    "repetition_penalty": 1.0,
+    "seed": 42,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "trial": 1,
+  "usage": {
+    "prompt_tokens": 28,
+    "total_tokens": 796,
+    "completion_tokens": 768,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 0
+  },
+  "ttft_s": 36.313379227009136,
+  "total_s": 100.736946051009,
+  "decode_tokens_per_s": 11.906181192963196,
+  "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistanı uçtan uca tasarlayacak olsaydım, mimariyi şu katmanlara ayırırdım:\n\n## 🏗️ Genel Mimari Akışı\n\n```\nKullanıcı → [Ses Girişi] → [SPEECH-TO-TEXT] → [NLP/Anlama] \n→ [Diyalog Yönetimi] → [Backend/Tool Çağrısı] → [TEXT-TO-SPEECH] → [Ses Çıkışı]\n```\n\n---\n\n## 1. **Ses Yakalama Katmanı (Audio Capture)**\n\n- **WebRTC** veya **gRPC streaming** ile gerçek zamanlı ses akışı\n- 16kHz sample rate, mono, PCM/WAV format (STT modelleri için optimize)\n- **Endpoint detection**: Kullanıcının konuşmasının bittiğini anlama (VAD - Voice Activity Detection)\n- Gidon gürültü engelleme ve echo cancellation\n\n```python\n# Basit VAD mantığı\ndef detect_speech_end(audio_stream):\n    # Enerji tabanlı + sessizlik eşiği\n    if silence_duration > 800ms:\n        return END_OF_UTTERANCE\n```\n\n---\n\n## 2. **Otomatik Konuşma Tanıma (ASR / STT)**\n\nSes → Metin dönüşümü:\n\n| Seçenek | Kullanım Senaryosu |\n|---------|-------------------|\n| **Whisper (OpenAI)** | Kendi sunucumda, Türkçe performansı iyi |\n| **Deepgram / AssemblyAI** | Düşük latency, bulut |\n| **Google Speech-to-Text** | Çok dilli destek |\n\n**Karar:** Streaming ASR kullanırdım (tamamını beklemeden metne döker).\n\n---\n\n## 3. **Doğal Dil Anlama (NLU)**\n\nMetni anlamlı yapıya çevirme:\n\n```json\n{\n  \"intent\": \"weather_query\",\n  \"entities\": {\n    \"location\": \"İstanbul\",\n    \"time\": \"bugün\"\n  },\n  \"confidence\": 0.94\n}\n```\n\n- **Intent classification** + **NER** (Named Entity Recognition)\n- Modern yaklaşım: LLM ile few-shot intent extraction\n- Alternatif: RAG tabanlı semantic search\n\n---\n\n## 4. **Diyalog Yönetimi (Orkestratör)**\n\nSistemin **beyni**. State'i takip eder:\n\n```python\nclass DialogueManager:\n    def __init__(self):\n        self.state = {}\n        self.history = []  # Context için\n        \n    def process(self, user_input, context):\n        # 1. Intent anla\n        # 2. Eksik bilgi var mı kontrol et (slot filling)\n        # 3. Tool çağır veya clarification sor\n        # 4. Response oluştur\n        pass\n```\n\n**Önemli:** Multi-turn diyalog için context yönetimi kritik.\n\n---\n\n## 5. **Araç/Görev Katmanı (Tool Use)**\n\nAnladığı eylemi gerçekleştir:\n\n```python\ntools = [\n    {\"name\": \"get_weather\", \"api\": \"...\"},\n    {\"name\": \"set_reminder\", \"api\": \"...\"},\n    {\"name\": \"play_music\", \"api\": \"...\"}\n]\n```\n\n- **Function"
+}

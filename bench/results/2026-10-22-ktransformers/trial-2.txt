@@ -1,0 +1,89 @@
+# Sesli Asistan Mimarisi
+
+Harika bir konu! Bir sesli asistanı katmanlı bir mimariyle kurardım. İşte uçtan uca tasarım:
+
+## 🏗️ Genel Mimari Akışı
+
+```
+[Kullanıcı] → [Ses Girişi] → [STT] → [NLU] → [Diyalog Yönetimi] → [BAI] → [TTS] → [Ses Çıkışı]
+                     ↑                                                                              ↓
+                                     ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+```
+
+---
+
+## 1. Katman: Ses İşleme (Audio Front-End)
+
+**Görev:** Ham sesi temizlemek ve hazırlamak
+
+```python
+class AudioFrontEnd:
+    def __init__(self):
+        self.noise_suppressor = NoiseSuppressor()
+        self vad = VoiceActivityDetector()  # Konuşma başlangıç/bitiş
+
+    def preprocess(self, audio_stream):
+        # 1. Gürültü engelleme
+        cleaned = self.noise_suppressor(audio_stream)
+        # 2. VAD ile konuşma segmentlerini bul
+        segments = self.vad.detect(cleaned)
+        # 3. Endpoint detection (kullanıcı sustuğunda tetikle)
+        return segments
+```
+
+**Önemli:** Wake word ("Hey Asistan") tespiti için **yerel/edge** çalıştırılmalı (PowerDNS gibi). Sürekli internet bağlantısı gerektirmez.
+
+---
+
+## 2. Katman: Speech-to-Text (STT)
+
+**Seçenekler:**
+
+| Model | Avantaj | Kullanım |
+|-------|---------|----------|
+| **Whisper** (OpenAI) | Çok dilli, güçlü | Yerel/ sunucu |
+| **DeepSpeech** | Açık kaynak | Hafif sistemler |
+| **Google Speech API** | Yüksek doğruluk | Bulut |
+| **Vosk** | Offline, hızlı | Edge cihazlar |
+
+```python
+from whisper import load_model
+
+stt_model = load_model("turkish_model")  # Türkçe için fine-tuned
+
+def transcribe(audio_segment):
+    result = stt_model.transcribe(
+        audio_segment,
+        language="tr",
+        beam_size=5
+    )
+    return result["text"]
+```
+
+---
+
+## 3. Katman: Doğal Dil Anlama (NLU)
+
+**Görev:** Metni anlamlı yapıya dönüştürmek (Intent + Entities)
+
+```python
+from transformers import pipeline
+
+class NLUEngine:
+    def __init__(self):
+        self.intent_classifier = pipeline("text-classification")
+        self.ner = pipeline("token-classification")  # Varlık tanıma
+
+    def understand(self, text):
+        intent = self.intent_classifier(text)[0]
+        entities = self.ner(text)
+
+        return {
+            "intent": intent["label"],       #örn: "hava_sorusu"
+            "entities": entities,             #örn: [{"city": "İstanbul"}]
+            "confidence": intent["score"]
+        }
+
+# Örnek çıkış:
+# "İstanbul'da hava nasıl?"
+# → {"intent": "hava_sorusu", "entities": [{"city": "İstanbul

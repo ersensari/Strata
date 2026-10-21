@@ -1,0 +1,4 @@
+services:
+  forgeloop-ai-ktransformers-test:
+    entrypoint: /bin/bash
+    command: ["-lc", "sleep infinity"]

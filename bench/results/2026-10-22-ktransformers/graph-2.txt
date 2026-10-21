@@ -1,0 +1,73 @@
+# Sesli Asistan Mimarisi
+
+Harika bir konu! Bir sesli asistanı katmanlı bir mimariyle düşünürüm. İşte temel bileşenler:
+
+## 1. Ses Girişi (Audio Input)
+- **Mikrofon yakalama**: WebRTC veya işletim sistemi ses API'leri
+- **Ön işleme**: Noise reduction, echo cancellation, voice activity detection (VAD)
+- **Buffer yönetimi**: Streaming için chunk bazlı işleme
+
+## 2. Otomatik Konuşma Tanima (ASR / Speech-to-Text)
+```
+Ses → Metin dönüşümü
+```
+- **Seçenekler**: Whisper, Google Speech-to-Text, Deepgram, AssemblyAI
+- **Streaming ASR**: Gerçek zamanlı sonuç için partial results
+- **Dil desteği**: Çok dilli gerekiyorsa model seçimi kritik
+
+## 3. Doğal Dil Anlama (NLU)
+- **Intent classification**: Kullanıcının amacı ne? ("hava durumu", "müzik çal")
+- **Entity extraction**: Parametreleri çıkar ("İstanbul", "bugün")
+- **Seçenekler**: Rasa, LangChain, LLM tabanlı yapılar
+
+## 4. Diyalog Yönetimi (Dialogue Manager)
+- **Context tracking**: Sohbet geçmişini tutma
+- **State management**: Multi-turn konuşmalarda durum
+- **LLM entegrasyonu**: GPT, Claude, Gemini gibi modellerle akıllı yanıt üretimi
+
+## 5. Beyin / Mantık Katmanı
+```python
+# Örnek basit akış
+def process_intent(intent, entities, context):
+    if intent == "weather":
+        return fetch_weather(entities["location"])
+    elif intent == "play_music":
+        return play_song(entities["song"])
+```
+
+## 6. Metin-Cevap Üretimi (NLG)
+- LLM'den doğal dil yanıtı alma
+- Token kısıtlamaları ve latency optimizasyonu
+
+## 7. Metin-Konuşma (TTS / Text-to-Speech)
+- **Seçenekler**: ElevenLabs, OpenAI TTS, Coqui, Google TTS
+- **Streaming TTS**: İlk kelimeyi hızlı döndürmek için
+- **Doğallık**: Empati, tonlama, pause yönetimi
+
+## 8. Ses Çıkışı (Audio Output)
+- DAC'a gönderim
+- Playback yönetimi
+
+---
+
+## Teknik Dikkat Noktaları
+
+| Konu | Öneri |
+|------|-------|
+| **Latency** | Uçtan uca <2s hedefle. Streaming her katmanda |
+| **Concurrency** | WebSocket + mesaj kuyruğu (Redis/RabbitMQ) |
+| **Durum** | Session state için Redis |
+| **Ölçekleme** | Microservices + container (K8s) |
+| **Güvenlik** | Ses verisini şifrele, retention politikası |
+| **Fallback** | TTS/ASR servisleri çökerse alternatif |
+
+## Akış Diyagramı
+```
+[Mikrofon] → [VAD/Önişleme] → [ASR] → [NLU]
+                                          ↓
+[Hoparlör] ← [TTS] ← [NLG/LLM] ← [Diyalog Yönetimi]
+```
+
+---
+
+İstersen şu konulardan birinde **detaya

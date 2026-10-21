@@ -1,0 +1,89 @@
+# Sesli Asistan Mimarisi
+
+Harika bir konu! Bir sesli asistanı katmanlı bir mimariyle kurardım. İşte tüm pipeline:
+
+## 🏗️ Genel Mimari Akışı
+
+```
+Ses Girişi → İşleme → Anlama → Karar → Üretim → Ses Çıkışı
+```
+
+---
+
+## 1. **Ses Yakalama ve Ön İşleme (Frontend)**
+
+**Görev:** Ham sesi dijital veriye çevirmek
+
+- **Mic capture:** WebRTC veya `audioio` kütüphanesi
+- **VAD (Voice Activity Detection):** Sadece konuşma kısmını yakala, sessizliği kes
+  - Öneri: `WebRTC VAD` veya `Silero VAD`
+- **Sampling:** 16kHz, mono, PCM format (STT modelleri için ideal)
+- **Noise suppression:** Arka plan gürültüsünü azalt (`noisereduce`, RNNoise)
+
+```python
+# VAD örneği mantığı
+import silero_vad
+# Ses geldiğinde tetiklenir, sessizlikte durur
+```
+
+---
+
+## 2. **Otomatik Konuşma Tanıma (ASR / STT)**
+
+**Görev:** Sesi metne çevirme
+
+| Model | Özellik | Kullanım |
+|-------|---------|----------|
+| **Whisper** (OpenAI) | Çok dilli, sağlam | Yerel veya API |
+| **Deepgram** | Düşük latency, API | Gerçek zamanlı |
+| **Faster-Whisper** | Optimize edilmiş | Yerel deployment |
+| **Coqui STT** | Açık kaynak | Kendi modelini eğit |
+
+**Tercihim:**
+- Hız için → **Deepgram** (streaming)
+- Gizlilik/yerel için → **Faster-Whisper**
+
+```python
+# Faster-whisper kullanımı
+from faster_whisper import WhisperModel
+model = WhisperModel("small", device="cuda")
+segments, info = model.transcribe(audio, language="tr")
+```
+
+---
+
+## 3. **Doğal Dil Anlama (NLU)**
+
+**Görev:** Metinden niyet ve varlık çıkarma
+
+- **Niyet sınıflandırması (Intent Classification):** Kullanıcı ne istiyor?
+- **Varlık çıkarımı (Entity Extraction):** Tarih, isim, konum vb.
+
+**Seçenekler:**
+```
+a) LLM tabanlı (modern yaklaşım):
+   GPT-4o, Claude, Llama → yapılandırılmış JSON çıktısı
+
+b) Geleneksel:
+   Rasa NLU, spaCy, transformers pipeline
+```
+
+```python
+# LLM ile niyet anlama örneği
+prompt = """
+Kullanıcı: 'Yarınki toplantımı iptal et'
+Niyeti ve varlıkları JSON olarak bul.
+"""
+# Çıktı: {"intent": "delete_event", "entities": {"date": "yarın", "type": "meeting"}}
+```
+
+---
+
+## 4. **Sohbet Motoru & Bağlam Yönetimi (Orkestratör)**
+
+**Görev:** Diyalog akışını yönetmek, context tutmak
+
+Bu **beyin** kısmıdır:
+
+- **State management:** Kullanıcının nerede olduğunu takip et
+- **Context window:** Geçmişi sakla (Redis veya bellekte)

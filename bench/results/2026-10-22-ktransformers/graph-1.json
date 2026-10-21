@@ -1,0 +1,38 @@
+{
+  "request": {
+    "model": "ornith-kt-test",
+    "messages": [
+      {
+        "role": "user",
+        "content": "bir sesli asistan yapsaydin mimariyi nasil kurardin"
+      }
+    ],
+    "max_tokens": 768,
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 1.5,
+    "repetition_penalty": 1.0,
+    "seed": 42,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "trial": 1,
+  "usage": {
+    "prompt_tokens": 28,
+    "total_tokens": 796,
+    "completion_tokens": 768,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 0
+  },
+  "ttft_s": 43.58122490695678,
+  "total_s": 110.2789470689604,
+  "decode_tokens_per_s": 11.502166300371366,
+  "content": "# Sesli Asistan Mimarisi\n\nHarika bir konu! Bir sesli asistanı katmanlı bir mimariyle kurardım. İşte tüm pipeline:\n\n## 🏗️ Genel Mimari Akışı\n\n```\nSes Girişi → İşleme → Anlama → Karar → Üretim → Ses Çıkışı\n```\n\n---\n\n## 1. **Ses Yakalama ve Ön İşleme (Frontend)**\n\n**Görev:** Ham sesi dijital veriye çevirmek\n\n- **Mic capture:** WebRTC veya `audioio` kütüphanesi\n- **VAD (Voice Activity Detection):** Sadece konuşma kısmını yakala, sessizliği kes\n  - Öneri: `WebRTC VAD` veya `Silero VAD`\n- **Sampling:** 16kHz, mono, PCM format (STT modelleri için ideal)\n- **Noise suppression:** Arka plan gürültüsünü azalt (`noisereduce`, RNNoise)\n\n```python\n# VAD örneği mantığı\nimport silero_vad\n# Ses geldiğinde tetiklenir, sessizlikte durur\n```\n\n---\n\n## 2. **Otomatik Konuşma Tanıma (ASR / STT)**\n\n**Görev:** Sesi metne çevirme\n\n| Model | Özellik | Kullanım |\n|-------|---------|----------|\n| **Whisper** (OpenAI) | Çok dilli, sağlam | Yerel veya API |\n| **Deepgram** | Düşük latency, API | Gerçek zamanlı |\n| **Faster-Whisper** | Optimize edilmiş | Yerel deployment |\n| **Coqui STT** | Açık kaynak | Kendi modelini eğit |\n\n**Tercihim:** \n- Hız için → **Deepgram** (streaming)\n- Gizlilik/yerel için → **Faster-Whisper**\n\n```python\n# Faster-whisper kullanımı\nfrom faster_whisper import WhisperModel\nmodel = WhisperModel(\"small\", device=\"cuda\")\nsegments, info = model.transcribe(audio, language=\"tr\")\n```\n\n---\n\n## 3. **Doğal Dil Anlama (NLU)**\n\n**Görev:** Metinden niyet ve varlık çıkarma\n\n- **Niyet sınıflandırması (Intent Classification):** Kullanıcı ne istiyor?\n- **Varlık çıkarımı (Entity Extraction):** Tarih, isim, konum vb.\n\n**Seçenekler:**\n```\na) LLM tabanlı (modern yaklaşım):\n   GPT-4o, Claude, Llama → yapılandırılmış JSON çıktısı\n\nb) Geleneksel:\n   Rasa NLU, spaCy, transformers pipeline\n```\n\n```python\n# LLM ile niyet anlama örneği\nprompt = \"\"\"\nKullanıcı: 'Yarınki toplantımı iptal et'\nNiyeti ve varlıkları JSON olarak bul.\n\"\"\"\n# Çıktı: {\"intent\": \"delete_event\", \"entities\": {\"date\": \"yarın\", \"type\": \"meeting\"}}\n```\n\n---\n\n## 4. **Sohbet Motoru & Bağlam Yönetimi (Orkestratör)**\n\n**Görev:** Diyalog akışını yönetmek, context tutmak\n\nBu **beyin** kısmıdır:\n\n- **State management:** Kullanıcının nerede olduğunu takip et\n- **Context window:** Geçmişi sakla (Redis veya bellekte)"
+}

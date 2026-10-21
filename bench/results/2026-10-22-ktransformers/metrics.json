@@ -1,0 +1,30 @@
+[
+  {
+    "run": "trial-1",
+    "completion_tokens": 768,
+    "ttft_s": 36.313379227009136,
+    "total_s": 100.736946051009,
+    "decode_tokens_per_s": 11.906181192963196
+  },
+  {
+    "run": "trial-2",
+    "completion_tokens": 768,
+    "ttft_s": 0.43942752602742985,
+    "total_s": 57.05206727399491,
+    "decode_tokens_per_s": 13.548233485393734
+  },
+  {
+    "run": "graph-1",
+    "completion_tokens": 768,
+    "ttft_s": 43.58122490695678,
+    "total_s": 110.2789470689604,
+    "decode_tokens_per_s": 11.502166300371366
+  },
+  {
+    "run": "graph-2",
+    "completion_tokens": 768,
+    "ttft_s": 0.8500645610038191,
+    "total_s": 55.52403917099582,
+    "decode_tokens_per_s": 14.028670705550796
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "request": {
+    "model": "ornith-kt-test",
+    "messages": [
+      {
+        "role": "user",
+        "content": "bir sesli asistan yapsaydin mimariyi nasil kurardin"
+      }
+    ],
+    "max_tokens": 768,
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 1.5,
+    "repetition_penalty": 1.0,
+    "seed": 42,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "trial": 2,
+  "usage": {
+    "prompt_tokens": 28,
+    "total_tokens": 796,
+    "completion_tokens": 768,
+    "prompt_tokens_details": null,
+    "reasoning_tokens": 0
+  },
+  "ttft_s": 0.8500645610038191,
+  "total_s": 55.52403917099582,
+  "decode_tokens_per_s": 14.028670705550796,
+  "content": "# Sesli Asistan Mimarisi\n\nHarika bir konu! Bir sesli asistanı katmanlı bir mimariyle düşünürüm. İşte temel bileşenler:\n\n## 1. Ses Girişi (Audio Input)\n- **Mikrofon yakalama**: WebRTC veya işletim sistemi ses API'leri\n- **Ön işleme**: Noise reduction, echo cancellation, voice activity detection (VAD)\n- **Buffer yönetimi**: Streaming için chunk bazlı işleme\n\n## 2. Otomatik Konuşma Tanima (ASR / Speech-to-Text)\n```\nSes → Metin dönüşümü\n```\n- **Seçenekler**: Whisper, Google Speech-to-Text, Deepgram, AssemblyAI\n- **Streaming ASR**: Gerçek zamanlı sonuç için partial results\n- **Dil desteği**: Çok dilli gerekiyorsa model seçimi kritik\n\n## 3. Doğal Dil Anlama (NLU)\n- **Intent classification**: Kullanıcının amacı ne? (\"hava durumu\", \"müzik çal\")\n- **Entity extraction**: Parametreleri çıkar (\"İstanbul\", \"bugün\")\n- **Seçenekler**: Rasa, LangChain, LLM tabanlı yapılar\n\n## 4. Diyalog Yönetimi (Dialogue Manager)\n- **Context tracking**: Sohbet geçmişini tutma\n- **State management**: Multi-turn konuşmalarda durum\n- **LLM entegrasyonu**: GPT, Claude, Gemini gibi modellerle akıllı yanıt üretimi\n\n## 5. Beyin / Mantık Katmanı\n```python\n# Örnek basit akış\ndef process_intent(intent, entities, context):\n    if intent == \"weather\":\n        return fetch_weather(entities[\"location\"])\n    elif intent == \"play_music\":\n        return play_song(entities[\"song\"])\n```\n\n## 6. Metin-Cevap Üretimi (NLG)\n- LLM'den doğal dil yanıtı alma\n- Token kısıtlamaları ve latency optimizasyonu\n\n## 7. Metin-Konuşma (TTS / Text-to-Speech)\n- **Seçenekler**: ElevenLabs, OpenAI TTS, Coqui, Google TTS\n- **Streaming TTS**: İlk kelimeyi hızlı döndürmek için\n- **Doğallık**: Empati, tonlama, pause yönetimi\n\n## 8. Ses Çıkışı (Audio Output)\n- DAC'a gönderim\n- Playback yönetimi\n\n---\n\n## Teknik Dikkat Noktaları\n\n| Konu | Öneri |\n|------|-------|\n| **Latency** | Uçtan uca <2s hedefle. Streaming her katmanda |\n| **Concurrency** | WebSocket + mesaj kuyruğu (Redis/RabbitMQ) |\n| **Durum** | Session state için Redis |\n| **Ölçekleme** | Microservices + container (K8s) |\n| **Güvenlik** | Ses verisini şifrele, retention politikası |\n| **Fallback** | TTS/ASR servisleri çökerse alternatif |\n\n## Akış Diyagramı\n```\n[Mikrofon] → [VAD/Önişleme] → [ASR] → [NLU] \n                                          ↓\n[Hoparlör] ← [TTS] ← [NLG/LLM] ← [Diyalog Yönetimi]\n```\n\n---\n\nİstersen şu konulardan birinde **detaya"
+}
