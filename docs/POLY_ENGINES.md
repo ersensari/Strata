@@ -6,7 +6,8 @@ the GQA16 attention kernels and opt-in CPU IQ multi-token reuse from `f5cfcd4a`.
 applies; the imported sources retain their upstream comments and third-party attributions.
 
 No upstream pull request is planned. This is a source integration branch, not a published desktop installer
-or a replacement for the running homelab deployment.
+or a migration of existing application routing. A separate [local container trial](../docker/local-poly/README.md)
+now runs the original web app host with the imported engines.
 
 ## Scope
 

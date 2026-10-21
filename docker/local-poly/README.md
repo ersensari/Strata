@@ -1,0 +1,58 @@
+# Local homelab container
+
+`forgeloop-ai-strata` serves the original Strata 0.2.2 app host and this fork's Poly/native engines.
+UI: **http://127.0.0.1:10110**. Only host GPU 1 is exposed; it appears as GPU 0 to the engine.
+Startup loads **Ornith AD-IQ3_XXS**, 262144 context capacity, Q8 KV, 12 threads, one request at a time,
+1024 MiB reserve, CPU vision, fast attention and CPU IQ reuse enabled.
+
+This is a standalone UI trial. No LiteLLM, Pi, router or other application was pointed at it. The
+inference worker listens only on the container's loopback; only the app host port is published to host
+loopback. Existing PolyStrata stays stopped. Never run the two services concurrently on this GPU.
+
+The separate named volume `forgeloop-ai-strata-local-data` stores configs, profiles, chats and workspace.
+The existing `forgeloop-ai_forgeloop-ai-polystrata-data` volume is mounted **read-only** for prepared packs.
+All model directories are also read-only. Retain that legacy volume: this container depends on its packs.
+Five installed configs are registered in the native Models screen: Ornith IQ3, Ornith IQ4, MiniCPM,
+Gemma and Qwen. Only Ornith IQ3 loads at boot; model switching belongs to the UI.
+
+## Prepare and run
+
+This local image reuses the existing `forgeloop-ai-polystrata:0.1.45-poly.2` CUDA/Python runtime. It is not
+a self-contained public build. Build the engines and CPU encoder as described in
+[POLY_ENGINES.md](../../docs/POLY_ENGINES.md), then copy `strata-poly`, `strata` and `strata-vision` into
+`docker/local-poly/artifacts/` (ignored by Git). Build the host with `npm ci && npm run build` in
+`apps/host/`. The image adds pinned Node 24.14.0 and copies the app and local binaries.
+
+From the repository root:
+
+```sh
+docker stop forgeloop-ai-polystrata
+COMPOSE_IGNORE_ORPHANS=true docker compose -p forgeloop-ai \
+  -f docker/local-poly/compose.yml up -d --build
+docker logs --tail 30 forgeloop-ai-strata
+```
+
+`COMPOSE_IGNORE_ORPHANS` only suppresses warnings about this homelab's other services. Do **not** use
+`--remove-orphans` or `down -v`; those services/data belong to the same wider Compose project.
+The entrypoint refreshes its source copy, preserves saved configs, starts the original Node host, and
+asks its native controller to load exactly the configured default model. No setup downloader runs.
+The original app then owns the inference process, including unload and model switching.
+
+Stopping this trial:
+
+```sh
+docker stop forgeloop-ai-strata
+```
+
+Leave it stopped before restoring old PolyStrata. The old service's own startup default remains MiniCPM;
+starting it again will load that model unless its separate default is deliberately changed.
+
+## Verification (2026-10-21)
+
+- Container running/healthy; native controller reports Ornith IQ3 ready at internal port 8080.
+- Browser displays the new app with the loaded Ornith model. A real UI request, `Yalnızca Hazırım yaz.`,
+  returned `Hazırım`. This was a functionality check, not a speed benchmark.
+- Old production and development containers are stopped. Other applications' routing is unchanged.
+- Fixed a source-app startup incompatibility: the native controller used to pass `STRATA_API_KEY=''`,
+  which the current server explicitly rejects. It now removes that environment override, so each private
+  run config supplies its own key. The helper's regression test and native control/chat tests pass.

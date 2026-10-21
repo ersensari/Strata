@@ -67,6 +67,7 @@ build-vision-cuda12.bat
 dist-hip/
 
 # Terminal / Desktop split: local venvs, build output and archives never enter git
+/docker/local-poly/artifacts/
 .terminal-venv/
 .terminal-test-venv/
 node_modules/
