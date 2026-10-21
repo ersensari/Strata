@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-21T18:30:04.065Z",
+  "strata": {
+    "installedVersion": "0.2.2+poly.host",
+    "status": "current",
+    "latestVersion": "v0.2.2",
+    "releaseUrl": "https://github.com/Niko1221/Strata/releases/tag/v0.2.2",
+    "message": "Strata is up to date.",
+    "canInstall": false
+  },
+  "engine": {
+    "installedVersion": "0.1.47",
+    "latestVersion": "0.1.47",
+    "status": "current",
+    "canInstall": false,
+    "message": "The native engine is current for this source checkout.",
+    "details": "Source mode: setup.py --update follows the checked-out source. Upstream merges and the custom Poly engine are managed separately."
+  }
+}

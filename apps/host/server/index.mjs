@@ -1318,7 +1318,7 @@ async function api(req, res, path, method, url) {
 
   if (path === '/api/setup' && method === 'GET') return json(res, 200, setupState());
   if (path === '/api/updates/check' && method === 'GET' && control?.updateCheck) return json(res, 200, await checkComponentUpdates({ control, appUpdater, appVersion: process.env.STRATA_APP_VERSION || null }));
-  if (path === '/api/updates/check' && method === 'GET') return json(res, 200, await checkUpdates({ appVersion:appVersionToShow(setupState().app.version,native.state().version), engineVersion:native.state().available?(native.state().installed?.engine?.version??null):(await engine.config()).engine.version }));
+  if (path === '/api/updates/check' && method === 'GET') return json(res, 200, await checkUpdates({ appVersion:appVersionToShow(setupState().app.version,native.state().version), engineVersion:native.state().available?(native.state().installed?.engine?.version??null):(await engine.config()).engine.version, sourceEngine:process.env.STRATA_SOURCE_ENGINE_UPDATES==='1'?native.state().installed?.engine:null }));
 
   if (path === '/api/setup/step' && method === 'POST') {
     const body = await readBody(req);

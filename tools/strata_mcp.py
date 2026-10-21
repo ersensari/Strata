@@ -817,8 +817,21 @@ class Strata:
         for d in ("engine",):
             try:
                 meta = json.loads((self.root / d / "BUILD.json").read_text())
-                return {"folder": d, "version": meta.get("version"), "source": meta.get("source"),
-                        "backend": meta.get("backend")}
+                result = {"folder": d, "version": meta.get("version"), "source": meta.get("source"),
+                          "backend": meta.get("backend")}
+                # Opt-in source service: update_install follows this checkout, not the app's component feed.
+                if os.environ.get("STRATA_SOURCE_ENGINE_UPDATES") == "1":
+                    setup = self.setup_module()
+                    if setup:
+                        local = meta.get("source") == "local"
+                        result.update(update_mode="source", target_version=setup.source_version() if local else
+                                      ".".join(map(str, setup.MIN_ENGINE)))
+                        result["source_changed"] = bool(local and (
+                            meta.get("src") != setup.source_hash(setup.ENGINE_SOURCES) or
+                            setup.stale_binary(self.root / d / setup.EXE) or
+                            (meta.get("vision") not in (None, "none") and
+                             meta.get("vision_src") != setup.source_hash(setup.VISION_SOURCES))))
+                return result
             except (OSError, ValueError):
                 continue
         return {"folder": None, "version": None}

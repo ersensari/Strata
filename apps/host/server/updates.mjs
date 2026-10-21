@@ -1,3 +1,4 @@
+import {engineTooOld, parseEngineVersion} from './engine-version.mjs';
 import { OFFLINE_MESSAGE, looksOffline, plainUpdateError } from './update-messages.mjs';
 
 /** Read-only release checks. Installing/rolling back needs a managed installer. */
@@ -13,7 +14,7 @@ function compare(a, b) {
   return 0;
 }
 
-export async function checkUpdates({ appVersion, engineVersion }, fetcher = fetch) {
+export async function checkUpdates({ appVersion, engineVersion, sourceEngine = null }, fetcher = fetch) {
   let strata;
   try {
     const response = await fetcher(RELEASES, { headers: { accept: 'application/vnd.github+json' }, signal: AbortSignal.timeout(10000) });
@@ -40,7 +41,7 @@ export async function checkUpdates({ appVersion, engineVersion }, fetcher = fetc
     strata: { installedVersion: appVersion, ...strata, canInstall: false },
     // The existing binary downloader has no tested-release compatibility feed
     // or trustworthy installed build ID. Upstream's latest is not an update verdict.
-    engine: { installedVersion: engineVersion, status: 'unavailable', canInstall: false, message: 'Engine update checks are not available in this build.' },
+    engine: sourceEngine?.update_mode === 'source' ? sourceEngineUpdate(engineVersion, sourceEngine) : { installedVersion: engineVersion, status: 'unavailable', canInstall: false, message: 'Engine update checks are not available in this build.' },
   };
 }
 
@@ -88,4 +89,14 @@ export async function checkComponentUpdates({ control, appUpdater = null, appVer
   if (appNew || controlNew) Object.assign(strata, { status: 'available', latestVersion: appNew ?? controlNew, message: `A new version of Strata is available.${appNotes ? ` ${appNotes}` : ''}${appNew && appCannot ? ` ${appCannot}` : ''}` });
   else Object.assign(strata, { status: 'current', message: 'Strata is up to date.' });
   return { checkedAt, feed: report.feed, strata, engine: engineView, serving: report.serving ?? [] };
+}
+
+/** A local source install can promise only the update that setup.py in that checkout performs. */
+export function sourceEngineUpdate(installedVersion, source) {
+ const target=source.target_version;
+ if(!parseEngineVersion(installedVersion)||!parseEngineVersion(target))return {installedVersion,status:'unavailable',canInstall:false,message:'The source engine version could not be compared.'};
+ const available=source.source_changed===true||engineTooOld(installedVersion,target);
+ return {installedVersion,latestVersion:target,status:available?'available':'current',canInstall:available,
+  message:available?'The native engine needs an update for this source checkout.':'The native engine is current for this source checkout.',
+  details:'Source mode: setup.py --update follows the checked-out source. Upstream merges and the custom Poly engine are managed separately.'};
 }

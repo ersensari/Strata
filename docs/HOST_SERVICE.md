@@ -111,3 +111,10 @@ An explicit `update-engine` job also completed after unloading the model. SHA-25
 checks confirmed both the current native binary and the separate Poly binary
 were unchanged; this verified the source-mode update path at the currently
 required version, not acquisition of a newer release.
+
+The opt-in `STRATA_SOURCE_ENGINE_UPDATES=1` in this service also enables an honest
+source-mode check in Settings → About: the target is the version this checkout's
+installer can supply, and a changed native source hash offers a rebuild through
+the original update action. "Current" means current for this checkout, not that
+all upstream commits have been merged. Other deployments keep the upstream
+update-check behavior unless this option is explicitly enabled.
