@@ -3788,6 +3788,9 @@ class Service:
                 else PromptEncoder(tokenizer)
         poly_backend.configure(self, tokenizer)
 
+    def supports_images(self) -> bool:
+        return self.vision is not None or bool(getattr(self.engine, "supports_images", False))
+
     def loaded(self) -> bool:
         return not hasattr(self.engine, "alive") or self.engine.alive()
 
@@ -4469,7 +4472,7 @@ class Service:
                 live["state"] = "generating"
         if hasattr(self.engine, "replica_view"):        # opt-in replicas: each one's state and requests routed to it
             live["replicas"] = self.engine.replica_view()
-        engine = {"model": self.model, "max_context": self.reported_ctx(), "images": self.vision is not None,
+        engine = {"model": self.model, "max_context": self.reported_ctx(), "images": self.supports_images(),
                   **dict(getattr(self.engine, "info", {}) or {})}
         tel = self.telemetry.snapshot() if getattr(self, "telemetry", None) else {"now": {}, "history": {}, "static": {}}
         parked = self.conv_log.poll(getattr(self.engine, "log_path", None), getattr(self.engine, "log_start", None))
@@ -4530,7 +4533,7 @@ class Service:
             return round(v / unit, digits) if isinstance(v, (int, float)) else None
 
         busy, ctx = bool(s.get("busy")), self.reported_ctx()
-        images = self.vision is not None
+        images = self.supports_images()
         return {
             "service": "strata", "model": self.model,
             "loaded": self.loaded(), "auto_load": hasattr(self.engine, "restart"),
@@ -6173,6 +6176,12 @@ def make_handler(svc: Service):
 
         def do_GET(self):
             path = self.path.split("?")[0].rstrip("/")
+            if getattr(svc, "llama_backend", False):
+                from serve.llama_backend import GET_PATHS, proxy
+                if path in GET_PATHS:
+                    if self._authorized():
+                        proxy(self, svc, path, "GET")
+                    return
             if path.startswith("/fonts/"):
                 # the web app's font (Outfit, OFL: serve/web/fonts); the page falls back to the system font
                 name = path[len("/fonts/"):]
@@ -6436,7 +6445,7 @@ def make_handler(svc: Service):
                 self.wfile.write(body)
             elif path in ("/health", "/api/health"):
                 self._json(200, {"status": "ok", "max_context": svc.reported_ctx(), "model": svc.model,
-                                 "images": svc.vision is not None, "api_key": bool(svc.api_key),
+                                 "images": svc.supports_images(), "api_key": bool(svc.api_key),
                                  "image_generation": svc.images is not None,
                                  "loaded": svc.loaded(), "service": "strata"})
             elif path.startswith("/v1/images/files/"):
@@ -6471,7 +6480,7 @@ def make_handler(svc: Service):
                     loaded = svc.loaded()
                     model = {"id": svc.model, "object": "model", "status": {"value": "loaded"},
                              "meta": {"n_ctx": svc.reported_ctx()},
-                             "architecture": {"input_modalities": ["text", "image"] if svc.vision is not None else ["text"],
+                             "architecture": {"input_modalities": ["text", "image"] if svc.supports_images() else ["text"],
                                               "output_modalities": ["text"]}}
                     if not loaded and (svc.idle_unload_s or getattr(svc.engine, "unloaded", False)):
                         model["status"] = {"value": "unloaded"}   # like llama-server's router: listed, loads on use
@@ -6525,6 +6534,10 @@ def make_handler(svc: Service):
             path = V1_V1_ALIASES.get(path, path)         # an Anthropic client given ".../v1" as its base posts /v1/v1/messages
             if path.startswith("/v1/") and self._foreign_page():
                 return
+            if getattr(svc, "llama_backend", False):
+                from serve.llama_backend import proxy
+                if proxy(self, svc, path, "POST"):
+                    return
             if path == "/settings":
                 self._settings()
                 return
@@ -6751,7 +6764,7 @@ def make_handler(svc: Service):
                      "total_slots": max(1, int(getattr(svc.engine, "batch", 0) or 0)),   # #1004: the batch slots
                      "model_alias": svc.model, "chat_template": svc.template.source,
                      "chat_template_caps": svc.template.caps,
-                     "modalities": {"vision": svc.vision is not None}, "models_autoload": hasattr(svc.engine, "restart"),
+                     "modalities": {"vision": svc.supports_images()}, "models_autoload": hasattr(svc.engine, "restart"),
                      "is_sleeping": not svc.loaded()}
             if getattr(svc.engine, "model_path", None):
                 props["model_path"] = svc.engine.model_path
@@ -8136,7 +8149,17 @@ def main(argv=None, *, lifecycle_event=None, interrupt_exit_code: int = 0) -> in
         if blocked:
             ap.error("--offline cannot be strict for this profile: " + "; ".join(blocked))
     lazy = False
-    if a.engine == "strata":
+    if a.engine == "strata" and cfg.get("llama_backend"):
+        from serve.llama_backend import LlamaEngine
+        if a.lazy or cfg.get("lazy_load"):
+            ap.error("llama_backend currently requires eager load")
+        if hub is not None:
+            ap.error("llama_backend does not execute Strata-managed MCP tools")
+        env = child_env(cfg, offline=a.offline)
+        groups, effort_end, vision = [], None, None
+        sampling_defaults = sampling_defaults_from_config(cfg)
+        engine = LlamaEngine(cfg, env)
+    elif a.engine == "strata":
         if not cfg:
             ap.error("--engine strata needs --config")
         cfg = with_component_engine(cfg)
@@ -8229,6 +8252,7 @@ def main(argv=None, *, lifecycle_event=None, interrupt_exit_code: int = 0) -> in
                   model_name=default_model_name(cfg), vision=vision,
                   sampling_defaults=sampling_defaults,
                   fit_max_tokens=a.fit_max_tokens or (not a.no_fit_max_tokens and cfg.get("fit_max_tokens") is not False))
+    svc.llama_backend = bool(cfg.get("llama_backend"))
     svc.launch_attestation = launch_attestation
     svc.offline = a.offline
     svc.max_queue = max_queue

@@ -1,0 +1,22 @@
+{
+  "status": "prepared_not_gpu_validated",
+  "date": "2026-10-22",
+  "engine": "llama.cpp b11552",
+  "engine_sha256": "850aca20e0308e0ca3cf7fd6b1653e4856433691147d181158a8d81c1116bc7c",
+  "profile": "minicpm-dspark",
+  "context": 32768,
+  "physical_gpu": 1,
+  "speculative_type": "draft-dspark",
+  "max_draft_tokens": 15,
+  "target_cpu_moe_layers": 20,
+  "vision": "cpu",
+  "tests": {
+    "unit_tests_passed": 28,
+    "real_server_entry_fake_child_smoke": "passed (ready file, health, telemetry, chat, shutdown)",
+    "actual_llama_argument_parsing": "passed",
+    "actual_gpu_inference": "not run",
+    "performance": "not measured"
+  },
+  "host_restarted": false,
+  "preserved_active_model": "ornith-i1-iq3-m"
+}
