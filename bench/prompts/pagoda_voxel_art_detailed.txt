@@ -1,0 +1,56 @@
+Create an elaborate voxel-art Japanese pagoda garden as a complete, working scene in one HTML file named pagoda_voxel_art.html. It must open directly in Chrome through file://.
+
+DELIVERY
+- Return the complete HTML, with all CSS and application JavaScript inside it.
+- Three.js and OrbitControls may load from a public CDN, using compatible versions and a correct import map. Use no local assets, build tools, npm installation, external images, or downloaded 3D models.
+- If you have file-writing tools, save a working first version early, then improve that same file in small steps. Do not prepare the entire implementation only in reasoning.
+- Deliver functioning code, not a plan, pseudocode, or a description of the intended scene.
+
+ART DIRECTION
+Create a miniature world that rewards close inspection. The dominant landmark is a five-tier Japanese pagoda in a lush, terraced garden during cherry-blossom season. Use a rich but coherent palette: vermilion wood, dark teal roof tiles, warm stone, golden ornaments, several greens, pink and white blossoms, and turquoise water.
+
+Use visible cubic or stepped geometry throughout. Avoid a scene made from a few oversized cubes, flat platforms, and identical trees. Small features should remain readable at the initial camera distance.
+
+PAGODA
+- Five clearly separated, progressively smaller floors.
+- Broad stepped roofs with visibly upturned corners, layered eaves, ridge ornaments, and a golden finial.
+- Red columns, cream wall panels, dark wooden beams, window lattices, balconies, and railings.
+- A raised stone foundation, an entrance staircase, and warm lanterns at the doorway.
+- Give the viewer useful details on the sides and back as well as the front.
+
+GARDEN COMPOSITION
+Build an asymmetric composition with distinct foreground, middle ground, and background. Include:
+1. An irregular koi pond with stepped banks, visible shallow edges, clusters of stones, lily pads, and several recognizable koi.
+2. A curved red wooden bridge spanning a narrow part of the pond, with planks, supports, and railings.
+3. A small waterfall descending from an elevated rocky stream into the pond.
+4. A winding stepping-stone path connecting the entrance gate, bridge, pagoda, and a quiet seating area.
+5. A red torii gate near the garden entrance.
+6. At least seven cherry-blossom trees of varied sizes and silhouettes. Give them branching trunks, layered irregular blossom clusters, pink-to-white variation, and fallen petals beneath them.
+7. Contrasting vegetation: sculptural pine trees, a bamboo grove, low shrubs, moss, reeds, and several flower beds.
+8. Stone lanterns, a small wooden bench, a washing basin, and a compact zen garden with raked gravel and carefully placed rocks.
+9. Several terrain elevations, retaining walls, and steps. Integrate objects into the terrain rather than placing everything on one flat slab.
+10. A deliberately detailed foreground: individual flower clusters, scattered petals, mossy stones, and path edging.
+
+Make a garden that feels designed and inhabited. Leave breathing room around the pagoda and preserve clear views of the bridge and pond. Avoid evenly spacing every object or hiding the central architecture behind trees.
+
+LIGHTING AND ANIMATION
+- Warm late-afternoon sunlight, soft shadows, restrained atmospheric depth, and a pleasant background.
+- A small amount of slow drifting blossom petals.
+- Gentle koi movement and a readable waterfall animation.
+- Keep animation subtle; it should support the scene rather than distract from it.
+
+CAMERA AND INTERACTION
+- Begin with an attractive elevated three-quarter view showing the complete garden.
+- Provide orbit, zoom, and pan controls, with sensible distance limits and a ground-aware camera target.
+- Add a small unobtrusive panel with a title, interaction instructions, Reset View, and Pause Animation.
+- Resize correctly with the browser window.
+
+PERFORMANCE AND CORRECTNESS
+- Use InstancedMesh or merged geometry for repeated voxels; do not create thousands of independent draw calls.
+- Use seeded procedural variation so the composition remains stable on reload.
+- Reuse geometry and materials, cap device pixel ratio sensibly, and keep shadow cost reasonable.
+- Every visible control must work. Do not include placeholders, TODO sections, or omitted code.
+- If CDN loading or WebGL initialization fails, show an understandable message.
+- Before finishing, check imports, initialization order, object references, animation updates, resize handling, and button wiring. If a browser tool is available, open the actual HTML and check for console errors.
+
+The final result should look like a carefully crafted voxel diorama, with architectural detail and a garden worth exploring—not merely a recognizable pagoda surrounded by generic trees.
