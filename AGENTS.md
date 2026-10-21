@@ -4,6 +4,12 @@ This is Ersen’s local fork of Niko1221/Strata. Keep the original UI, Control a
 PolyStrata backends live under src/poly and cmake/poly_engines.cmake. The owner explicitly requested no pull
 requests for this work. Do not open an upstream PR unless the owner later asks for one.
 
+Maintenance policy: merge updates from Niko1221/Strata's upstream main into this fork so the original native
+Qwen engine, Control and app UI follow upstream development. Preserve the optional Poly engines, local
+container setup and owner-specific fixes when resolving conflicts. Validate native Qwen and Poly compatibility
+after each integration, rebuild the local image, and keep deployment changes separate from the source merge.
+Updates are performed when requested; this policy does not authorize a scheduled monitor or automatic restarts.
+
 Strata runs the Qwen3.8-Flash-Next mixture-of-experts model (and its Coder, Swift 1.5, Unsloth, Gyro and NVFP4
 variants, and Qwen3.6-35B-A3B) on a normal PC: one NVIDIA or AMD graphics card plus system RAM on Windows or Linux,
 or an Apple Silicon Mac. Version 0.2.2, engine 0.1.47. It has three parts:
