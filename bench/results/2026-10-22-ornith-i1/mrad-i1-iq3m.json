@@ -1,0 +1,1114 @@
+{
+  "model": "ornith-i1-iq3-m",
+  "context": 262144,
+  "kv": "q8_0",
+  "gpu": 1,
+  "temperature": 0,
+  "reasoning_effort": "none",
+  "engine_nice": 0,
+  "records": [
+    {
+      "case": "warmup",
+      "prompt": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz.",
+      "limit": 64,
+      "seconds": 3.462,
+      "response": {
+        "id": "chatcmpl-bd769405939140019fb44438",
+        "object": "chat.completion",
+        "created": 1792608227,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 64,
+          "total_tokens": 93,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 831.3,
+          "prompt_per_token_ms": 28.666,
+          "prompt_per_second": 34.9,
+          "predicted_n": 64,
+          "predicted_ms": 2535.6,
+          "predicted_per_token_ms": 39.619,
+          "predicted_per_second": 25.2,
+          "draft_n": 9,
+          "draft_n_accepted": 5
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 1348825088
+      }
+    },
+    {
+      "case": "merge",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 5.008,
+      "response": {
+        "id": "chatcmpl-64e1cac991a1480cb7300bc0",
+        "object": "chat.completion",
+        "created": 1792608230,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    ordered = sorted(intervals, key=lambda x: x[0])\n    merged = [list(ordered[0])]\n    for start, end in ordered[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 99,
+          "completion_tokens": 108,
+          "total_tokens": 207,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 99,
+          "prompt_ms": 1448.4,
+          "prompt_per_token_ms": 14.63,
+          "prompt_per_second": 68.4,
+          "predicted_n": 108,
+          "predicted_ms": 3478.4,
+          "predicted_per_token_ms": 32.207,
+          "predicted_per_second": 31.0,
+          "draft_n": 49,
+          "draft_n_accepted": 41
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 2769899520
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "lru",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 5.568,
+      "response": {
+        "id": "chatcmpl-52a47a5db7344881b06387b0",
+        "object": "chat.completion",
+        "created": 1792608235,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity <= 0:\n            raise ValueError(\"Kapasite sıfır veya negatif olamaz.\")\n        self.capacity = capacity\n        self.cache = {}\n        self.order = []\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.order.remove(key)\n        self.order.append(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache[key] = value\n            self.order.remove(key)\n            self.order.append(key)\n        else:\n            if len(self.cache) >= self.capacity:\n                oldest = self.order.pop(0)\n                del self.cache[oldest]\n            self.cache[key] = value\n            self.order.append(key)\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 111,
+          "completion_tokens": 194,
+          "total_tokens": 305,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 111,
+          "prompt_ms": 834.5,
+          "prompt_per_token_ms": 7.518,
+          "prompt_per_second": 133.0,
+          "predicted_n": 194,
+          "predicted_ms": 4677.7,
+          "predicted_per_token_ms": 24.112,
+          "predicted_per_second": 41.5,
+          "draft_n": 110,
+          "draft_n_accepted": 84
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 482070528
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 6.621,
+      "response": {
+        "id": "chatcmpl-e41ffae09dc141ab8f7c49f6",
+        "object": "chat.completion",
+        "created": 1792608241,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef topo_sort(graph):\n    from collections import defaultdict\n\n    graph = dict(graph)\n    nodes = set()\n    adj = defaultdict(list)\n\n    for src, dests in graph.items():\n        nodes.add(src)\n        for dst in dests:\n            nodes.add(dst)\n            adj[src].append(dst)\n\n    for src in nodes:\n        adj[src] = sorted(set(adj[src]))\n\n    WHITE, GRAY, BLACK = 0, 1, 2\n    color = {n: WHITE for n in nodes}\n    result = []\n\n    def dfs(node):\n        color[node] = GRAY\n        for neighbor in adj[node]:\n            if color[neighbor] == GRAY:\n                raise ValueError(\"Döngü tespit edildi\")\n            if color[neighbor] == WHITE:\n                dfs(neighbor)\n        color[node] = BLACK\n        result.append(node)\n\n    for node in sorted(nodes):\n        if color[node] == WHITE:\n            dfs(node)\n\n    result.reverse()\n    return result\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 117,
+          "completion_tokens": 234,
+          "total_tokens": 351,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 117,
+          "prompt_ms": 821.1,
+          "prompt_per_token_ms": 7.018,
+          "prompt_per_second": 142.5,
+          "predicted_n": 234,
+          "predicted_ms": 5742.1,
+          "predicted_per_token_ms": 24.539,
+          "predicted_per_second": 40.8,
+          "draft_n": 146,
+          "draft_n_accepted": 106
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 251912192
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/case/run.py\", line 41, in <module>\n    before=copy.deepcopy(graph);assert topo_sort(graph)==want;assert graph==before\n                                       ^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      }
+    },
+    {
+      "case": "json",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 2.365,
+      "response": {
+        "id": "chatcmpl-7ece633d7de74368b721f5e8",
+        "object": "chat.completion",
+        "created": 1792608248,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"items\":[{\"name\":\"Defter\",\"qty\":2,\"unit_try\":125.50},{\"name\":\"Kalem\",\"qty\":3,\"unit_try\":19.90}],\"total_try\":316.70"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 112,
+          "completion_tokens": 51,
+          "total_tokens": 163,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 112,
+          "prompt_ms": 894.3,
+          "prompt_per_token_ms": 7.985,
+          "prompt_per_second": 125.2,
+          "predicted_n": 51,
+          "predicted_ms": 1430.0,
+          "predicted_per_token_ms": 28.039,
+          "predicted_per_second": 35.7,
+          "draft_n": 27,
+          "draft_n_accepted": 21
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 39665664
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": false,
+        "error": "not valid plain JSON/schema"
+      }
+    },
+    {
+      "case": "tool",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 2.785,
+      "response": {
+        "id": "chatcmpl-2ba7d9ba25644f64b3546e6a",
+        "object": "chat.completion",
+        "created": 1792608250,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_a7e46c687f1140cf8a42a9a6",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\":\"Melbourne\",\"unit\":\"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 320,
+          "completion_tokens": 40,
+          "total_tokens": 360,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 320,
+          "prompt_ms": 1693.1,
+          "prompt_per_token_ms": 5.291,
+          "prompt_per_second": 189.0,
+          "predicted_n": 40,
+          "predicted_ms": 1027.2,
+          "predicted_per_token_ms": 25.68,
+          "predicted_per_second": 38.9,
+          "draft_n": 21,
+          "draft_n_accepted": 18
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 94162944
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "architecture",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 1536,
+      "seconds": 25.343,
+      "response": {
+        "id": "chatcmpl-a95b29b3942a47989fa09240",
+        "object": "chat.completion",
+        "created": 1792608253,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Sesli Asistan Mimarisi Tasarımı\n\nHarika bir soru! Katmanlı, modüler ve ölçeklenebilir bir mimari kurardım. İşte detaylı tasarımım:\n\n## 🏗️ Genel Mimari Katmanları\n\n```\n[Kullanıcı Etkileşimi] → [Ses İşleme] → [Anlama] → [Mantık] → [Yanıt] → [Sentez]\n```\n\n## 1. **Ses Giriş Katmanı (Frontend)**\n- **Uzaklık-kaçınma (far-field) mikrofon dizisi** ile gürültü engelleme\n- **Wake word engine** (yerel çalışabilen \"Hey asistan\" algılama)\n- **Endpointing** – konuşmanın bittiğini anlama (sessizlik algılama + niyet analizi)\n\n## 2. **Konuşma Tanıma (ASR - Automatic Speech Recognition)**\n- **Yerel/hızlı model** (örn. Whisper, DeepSpeech tabanlı) düşük gecikme için\n- **Cloud ASR** – karmaşık sorgular için (daha yüksek doğruluk)\n- **Hybrid yaklaşım**: Basit komutlar yerelde, karmaşık cümleler bulutta\n\n## 3. **Doğal Dil Anlama (NLU)**\n```\nKonuşma → Metin → Niyet (Intent) + Varlıklar (Entities)\n```\n- **Intent classification**: \"Hava durumu soruyor\", \"müzik çalmak istiyor\"\n- **NER (Named Entity Recognition)**: Tarih, yer, kişi isimleri\n- **Context manager**: Diyalog geçmişini takip etme\n\n## 4. **Sohbet Yöneticisi (Dialog Manager)**\n- **State tracking**: Konuşma bağlamını koruma\n- **Task orchestration**: Çok adımlı işlemleri yönetme\n- **Clarification logic**: Belirsizlikte soru sorma\n\n## 5. **Bilgi & Servis Katmanı**\n- **Knowledge base** sorgulama\n- **Tool calling / Function calling**: API'ler, smart home, takvim vb.\n- **LLM entegrasyonu**: Doğal dil üretimi ve akıl yürütme\n\n## 6. **Konuşma Sentezi (TTS)**\n- **Neural TTS** (örn. ElevenLabs, Azure Neural, veya açık kaynak)\n- **Duygu tonu tespiti**: Metne göre ses tonu ayarlama\n- **Streaming**: Hızlı başlangıç için token-level sentez\n\n## 🔄 Veri Akışı ve İletişim\n- **Message bus** (Kafka/RabbitMQ) – katmanlar arası asenkron iletişim\n- **Event-driven architecture** – ölçeklenebilirlik için\n- **gRPC** – düşük gecikmeli iç servis iletişimi\n\n## 🔧 Yatay Kaygılar (Cross-Cutting Concerns)\n\n| Konu | Yaklaşım |\n|------|----------|\n| **Gizlilik** | Ses verileri işlendikten sonra silinir, yerel işleme öncelik |\n| **Gecikme** | Streaming her katmanda, paralel işleme |\n| **Ölçeklenebilirlik** | Microservices + container (K8s) |\n| **İzleme** | Her katmanda metrics (gecikme, doğruluk, hata oranı) |\n| **Hata yönetimi** | Graceful degradation (bulut yoksa yerel mod) |\n\n## 🎯 Önemli Tasarım Prensiplerim\n\n1. **Low-latency first**: Kullanıcı deneyimi için <500ms hedeflerim\n2. **Graceful degradation**: İnternet yoksa temel fonksiyonlar çalışmalı\n3. **Privacy by design**: Gerektiği kadar veri topla, gereksiz yere saklama\n4. **Modülerlik**: ASR veya NLU modelini değiştirmek diğer katmanları etkilememeli\n5. **A/B test altyapısı**: Model ve UX iyileştirmeleri için\n\n## 📊 Örnek Teknoloji Stack\n```\nASR:      Whisper (yerel) + Cloud API (hybrid)\nNLU:      Fine-tuned BERT/Electra veya LLM-based\nDialog:   Rasa veya özel state machine\nLLM:      Llama/Mistral (self-hosted) veya GPT tabanlı\nTTS:      ElevenLabs / Piper (yerel)\nInfra:    Kubernetes, gRPC, Redis (context cache)\n```\n\n---\n\n**Soru soracak olursan**: Bu mimaride en çok dikkat edilecek nokta **gecikme vs. doğruluk** arasındaki denge. \n\nHangi kullanım senaryosu için merak ettin? (Örn: ev asistanı, müşteri hizmetleri, gömülü sistem) Buna göre mimariyi özelleştirebiliriz! 🚀"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 1111,
+          "total_tokens": 1142,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 31,
+          "prompt_ms": 597.6,
+          "prompt_per_token_ms": 19.277,
+          "prompt_per_second": 51.9,
+          "predicted_n": 1111,
+          "predicted_ms": 24720.0,
+          "predicted_per_token_ms": 22.25,
+          "predicted_per_second": 44.9,
+          "draft_n": 493,
+          "draft_n_accepted": 357
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 197300224
+      },
+      "quality_trial": 1
+    },
+    {
+      "case": "merge-repeat-2",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 4.237,
+      "response": {
+        "id": "chatcmpl-55647235d78a4059948fc763",
+        "object": "chat.completion",
+        "created": 1792608279,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = [list(sorted_intervals[0])]\n    for start, end in sorted_intervals[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 99,
+          "completion_tokens": 110,
+          "total_tokens": 209,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 99,
+          "prompt_ms": 711.6,
+          "prompt_per_token_ms": 7.188,
+          "prompt_per_second": 139.1,
+          "predicted_n": 110,
+          "predicted_ms": 3502.4,
+          "predicted_per_token_ms": 31.84,
+          "predicted_per_second": 31.4,
+          "draft_n": 59,
+          "draft_n_accepted": 45
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 21168128
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "lru-repeat-2",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 4.588,
+      "response": {
+        "id": "chatcmpl-3f68205a25bb4bb2b7820f92",
+        "object": "chat.completion",
+        "created": 1792608283,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\nfrom collections import OrderedDict\n\n\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity <= 0:\n            raise ValueError(\"Kapasite sıfır veya negatif olamaz.\")\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.capacity:\n            self.cache.popitem(last=False)\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 111,
+          "completion_tokens": 155,
+          "total_tokens": 266,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 111,
+          "prompt_ms": 750.6,
+          "prompt_per_token_ms": 6.762,
+          "prompt_per_second": 147.9,
+          "predicted_n": 155,
+          "predicted_ms": 3813.7,
+          "predicted_per_token_ms": 24.605,
+          "predicted_per_second": 40.6,
+          "draft_n": 78,
+          "draft_n_accepted": 64
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 245760
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo-repeat-2",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 7.311,
+      "response": {
+        "id": "chatcmpl-27ebb0ea7d0844aa88b8b868",
+        "object": "chat.completion",
+        "created": 1792608288,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef topo_sort(graph):\n    from collections import defaultdict\n\n    # Tüm düğümleri topla (kaynaklar + hedefler)\n    nodes = set(graph.keys())\n    for targets in graph.values():\n        nodes.update(targets)\n\n    indegree = {node: 0 for node in nodes}\n    adjacency = defaultdict(list)\n\n    for src, targets in graph.items():\n        seen = set()\n        for dst in targets:\n            if dst in seen:\n                continue  # aynı kenarın tekrarını yoksay\n            seen.add(dst)\n            adjacency[src].append(dst)\n            indegree[dst] += 1\n\n    # Leksikografik en küçük sıralama için min-heap\n    import heapq\n    heap = [node for node in nodes if indegree[node] == 0]\n    heapq.heapify(heap)\n\n    result = []\n    while heap:\n        node = heapq.heappop(heap)\n        result.append(node)\n        for neighbor in adjacency[node]:\n            indegree[neighbor] -= 1\n            if indegree[neighbor] == 0:\n                heapq.heappush(heap, neighbor)\n\n    if len(result) != len(nodes):\n        raise ValueError(\"Döngü tespit edildi: topolojik sıralama mümkün değil.\")\n\n    return result\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 117,
+          "completion_tokens": 296,
+          "total_tokens": 413,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 117,
+          "prompt_ms": 735.6,
+          "prompt_per_token_ms": 6.287,
+          "prompt_per_second": 159.1,
+          "predicted_n": 296,
+          "predicted_ms": 6553.0,
+          "predicted_per_token_ms": 22.139,
+          "predicted_per_second": 45.2,
+          "draft_n": 138,
+          "draft_n_accepted": 113
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 4784128
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "json-repeat-2",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 2.23,
+      "response": {
+        "id": "chatcmpl-651a2ad06291478fb24932db",
+        "object": "chat.completion",
+        "created": 1792608295,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"items\":[{\"name\":\"Defter\",\"qty\":2,\"unit_try\":125.50},{\"name\":\"Kalem\",\"qty\":3,\"unit_try\":19.90}],\"total_try\":310.80"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 112,
+          "completion_tokens": 51,
+          "total_tokens": 163,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 112,
+          "prompt_ms": 823.8,
+          "prompt_per_token_ms": 7.355,
+          "prompt_per_second": 136.0,
+          "predicted_n": 51,
+          "predicted_ms": 1383.8,
+          "predicted_per_token_ms": 27.133,
+          "predicted_per_second": 36.9,
+          "draft_n": 24,
+          "draft_n_accepted": 21
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 3280896
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": false,
+        "error": "not valid plain JSON/schema"
+      }
+    },
+    {
+      "case": "tool-repeat-2",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 2.725,
+      "response": {
+        "id": "chatcmpl-e6f1a00a965043ba8d18ce2d",
+        "object": "chat.completion",
+        "created": 1792608297,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_815577dd395d4fe4adfa2d48",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\":\"Melbourne\",\"unit\":\"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 320,
+          "completion_tokens": 40,
+          "total_tokens": 360,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 320,
+          "prompt_ms": 1598.9,
+          "prompt_per_token_ms": 4.997,
+          "prompt_per_second": 200.1,
+          "predicted_n": 40,
+          "predicted_ms": 1103.0,
+          "predicted_per_token_ms": 27.575,
+          "predicted_per_second": 36.3,
+          "draft_n": 19,
+          "draft_n_accepted": 15
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 57344
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "merge-repeat-3",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 3.369,
+      "response": {
+        "id": "chatcmpl-f6049b02187c41989b8b4420",
+        "object": "chat.completion",
+        "created": 1792608300,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    ordered = sorted(intervals, key=lambda x: (x[0], x[1]))\n    merged = [list(ordered[0])]\n    for start, end in ordered[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 99,
+          "completion_tokens": 113,
+          "total_tokens": 212,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 99,
+          "prompt_ms": 698.8,
+          "prompt_per_token_ms": 7.059,
+          "prompt_per_second": 141.7,
+          "predicted_n": 113,
+          "predicted_ms": 2646.4,
+          "predicted_per_token_ms": 23.419,
+          "predicted_per_second": 42.7,
+          "draft_n": 55,
+          "draft_n_accepted": 43
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "lru-repeat-3",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 5.572,
+      "response": {
+        "id": "chatcmpl-802853c2e46b48f995146c38",
+        "object": "chat.completion",
+        "created": 1792608304,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\nclass LRUCache:\n    def __init__(self, capacity):\n        if capacity <= 0:\n            raise ValueError(\"Kapasite sıfır veya negatif olamaz!\")\n        self.capacity = capacity\n        self.cache = {}  # key -> value\n        self.order = []  # [en yeni, ..., en eski]\n\n    def get(self, key):\n        if key not in self.cache:\n            return None\n        self.order.remove(key)\n        self.order.insert(0, key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache[key] = value\n            self.order.remove(key)\n            self.order.insert(0, key)\n        else:\n            if len(self.cache) >= self.capacity:\n                oldest = self.order.pop()\n                del self.cache[oldest]\n            self.cache[key] = value\n            self.order.insert(0, key)\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 111,
+          "completion_tokens": 216,
+          "total_tokens": 327,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 111,
+          "prompt_ms": 748.2,
+          "prompt_per_token_ms": 6.741,
+          "prompt_per_second": 148.4,
+          "predicted_n": 216,
+          "predicted_ms": 4800.4,
+          "predicted_per_token_ms": 22.224,
+          "predicted_per_second": 45.0,
+          "draft_n": 110,
+          "draft_n_accepted": 81
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 3706880
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo-repeat-3",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 6.479,
+      "response": {
+        "id": "chatcmpl-01c22ffb3d8c48e1860d3e8a",
+        "object": "chat.completion",
+        "created": 1792608310,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef topo_sort(graph):\n    from collections import defaultdict\n\n    graph = graph or {}\n    graph = {k: list(v) for k, v in graph.items()}\n\n    indegree = defaultdict(int)\n    nodes = set(graph.keys())\n\n    for src in list(graph.keys()):\n        for dst in graph[src]:\n            nodes.add(dst)\n            indegree[dst] += 1\n\n    for node in nodes:\n        if node not in indegree:\n            indegree[node] = 0\n\n    import heapq\n\n    queue = [node for node in nodes if indegree[node] == 0]\n    heapq.heapify(queue)\n\n    result = []\n\n    while queue:\n        node = heapq.heappop(queue)\n        result.append(node)\n\n        if node in graph:\n            seen = set()\n            for neighbor in graph[node]:\n                if neighbor in seen:\n                    continue\n                seen.add(neighbor)\n                indegree[neighbor] -= 1\n                if indegree[neighbor] == 0:\n                    heapq.heappush(queue, neighbor)\n\n    if len(result) != len(nodes):\n        raise ValueError(\"Döngü tespit edildi.\")\n\n    return result\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 117,
+          "completion_tokens": 268,
+          "total_tokens": 385,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 117,
+          "prompt_ms": 755.9,
+          "prompt_per_token_ms": 6.461,
+          "prompt_per_second": 154.8,
+          "predicted_n": 268,
+          "predicted_ms": 5700.8,
+          "predicted_per_token_ms": 21.272,
+          "predicted_per_second": 47.0,
+          "draft_n": 118,
+          "draft_n_accepted": 100
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 19251200
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/case/run.py\", line 48, in <module>\n    before=copy.deepcopy(graph);assert topo_sort(graph)==want;assert graph==before\n                                       ^^^^^^^^^^^^^^^^\n  File \"/case/run.py\", line 41, in topo_sort\n    raise ValueError(\"Döngü tespit edildi.\")\nValueError: Döngü tespit edildi.\n"
+      }
+    },
+    {
+      "case": "json-repeat-3",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 2.247,
+      "response": {
+        "id": "chatcmpl-6ca94880b9d0419ab34d32bd",
+        "object": "chat.completion",
+        "created": 1792608316,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\"items\":[{\"name\":\"Defter\",\"qty\":2,\"unit_try\":125.50},{\"name\":\"Kalem\",\"qty\":3,\"unit_try\":19.90}],\"total_try\":306.80"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 112,
+          "completion_tokens": 51,
+          "total_tokens": 163,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 112,
+          "prompt_ms": 838.6,
+          "prompt_per_token_ms": 7.487,
+          "prompt_per_second": 133.6,
+          "predicted_n": 51,
+          "predicted_ms": 1387.1,
+          "predicted_per_token_ms": 27.198,
+          "predicted_per_second": 36.8,
+          "draft_n": 19,
+          "draft_n_accepted": 17
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": false,
+        "error": "not valid plain JSON/schema"
+      }
+    },
+    {
+      "case": "tool-repeat-3",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 2.592,
+      "response": {
+        "id": "chatcmpl-c84e306b8fc74e0dbc88267f",
+        "object": "chat.completion",
+        "created": 1792608319,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_b61df555f5a74c9284e0f4e8",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\":\"Melbourne\",\"unit\":\"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 320,
+          "completion_tokens": 40,
+          "total_tokens": 360,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 320,
+          "prompt_ms": 1582.4,
+          "prompt_per_token_ms": 4.945,
+          "prompt_per_second": 202.2,
+          "predicted_n": 40,
+          "predicted_ms": 987.4,
+          "predicted_per_token_ms": 24.685,
+          "predicted_per_second": 40.5,
+          "draft_n": 18,
+          "draft_n_accepted": 17
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "speed-warmup",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 12.297,
+      "response": {
+        "id": "chatcmpl-acf3c74c20e244e9839ec8a0",
+        "object": "chat.completion",
+        "created": 1792608321,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Sesli Asistan Mimarisi Taslağı\n\nHarika bir soru! Kendi tasarımımdan bir örnek paylaşayım.\n\n## Katmanlı Mimari\n\n```\n[Kullanıcı] → [Mikrofon] → [Uyanma Kelimesi] → [İşleme] → [Aksiyon] → [Ses Çıktısı]\n```\n\n### 1. **Ses Tanıma (ASR - Automatic Speech Recognition)**\n- **Yaklaşım:** Yerel model (Whisper, DeepSpeech) + bulut hibrit\n- **Neden:** Gecikmeyi azaltmak için yerel ön işleme, hassaslık için bulut\n- **İpucu:** Uyanma kelimesi (wake word) için düşük güçlü yerel işlem\n\n### 2. **Doğal Dil Anlama (NLU)**\n- **Amaç:** Niyeti (intent) ve varlıkları (entities) çıkarma\n- **Örnek:** \"Hava durumu\" → Intent: `weather_query`, Entity: `location`\n- **Model:** Fine-tuned transformer veya LLM tabanlı\n\n### 3. **Sohbet Yöneticisi (Dialogue Manager)**\n- **Sorumluluk:** Bağlamı (context) takip etme, çok-sıra diyaloglar\n- **Örnek:** \"Peki İstanbul'da?\" → Önceki bağlama referans\n\n### 4. **Aksiyon/Yanıt Modülü**\n- API entegrasyonları (hava durumu, takvim, müzik)\n- **Tasarım:** Plugin tabanlı, genişletilebilir\n\n### 5. **Konuşma Sentezi (TTS)**\n- Doğal ses sentezi (neural TTS)\n- **Dikkat:** Tonlama, vurgu, doğal duraklamalar\n\n---\n\n## Kendi Tasarımda Dikkat Ederdim\n\n| Öncelik | Neden |\n|---------|-------|\n| **Gecikme** | 500ms altı doğal sohbet için kritik |\n| **Gizlilik** | Ses verisi hassas; yerel işlem mümkün olduğunca |\n| **Hata toleransı** | Yanlış anlama durumunda doğal onay mekanizması |\n| **Çok"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 31,
+          "prompt_ms": 564.5,
+          "prompt_per_token_ms": 18.21,
+          "prompt_per_second": 54.9,
+          "predicted_n": 512,
+          "predicted_ms": 11710.0,
+          "predicted_per_token_ms": 22.871,
+          "predicted_per_second": 43.7,
+          "draft_n": 211,
+          "draft_n_accepted": 167
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 12509184
+      }
+    },
+    {
+      "case": "speed-1",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 10.619,
+      "response": {
+        "id": "chatcmpl-44d1918ffe49433eaeafec50",
+        "object": "chat.completion",
+        "created": 1792608333,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Sesli Asistan Mimarisi Taslağı\n\nHarika bir soru! Kendi tasarımıyla katmanlı bir mimari kurmayı severim. İşte düşüncelerim:\n\n## Genel Mimari Katmanları\n\n### 1. **Girdi Katmanı (Input Layer)**\n- **Ses yakalama**: Mikrofon dizisi + noise reduction\n- **Wake word detection**: \"Hey assistant\" gibi tetikleyici kelime (yerel işlem, düşük güç tüketimi)\n- **VAD (Voice Activity Detection)**: Konuşma başlangıç/bitiş tespiti\n\n### 2. **Konuşma Tanıma (ASR - Automatic Speech Recognition)**\n```\nSes Sinyali → Feature Extraction → ASR Model → Metin\n```\n- **Seçenekler**: Whisper, DeepSpeech, veya cloud tabanlı çözümler\n- **İpucu**: Gecikme için streaming ASR kullanırım\n- Dil desteği ve aksan tanıma esnekliği önemli\n\n### 3. **Doğal Dil Anlama (NLU)**\n- **Intent Classification**: Kullanıcı ne istiyor?\n- **Entity Extraction**: Tarih, konum, isim gibi detaylar\n- **Context Management**: Sohbet bağlamını takip etme\n\n### 4. **Diyalog Yönetimi (Orkestrasyon Katmanı)**\nEn kritik katman bence:\n- **State Management**: Konuşma durumunu tutma\n- **Task Orchestration**: Birden fazla servis arasında geçiş\n- **Fallback Stratejisi**: Ne zaman yardıma ihtiyaç var?\n\n### 5. **Bilgi/Eylem Katmanı**\n```\nTools/APIs:\n├── Knowledge Base (sorgular)\n├── Action Executors (işlemler)\n└── LLM Backend (karmaşık muhakeme)\n```\n\n### 6. **Çıktı Katmanı (TTS)**\n- Metin → Doğal ses sentezi\n- **Emotion/Prosody**: Ses tonlaması doğal olsun\n\n---\n\n## Teknik Kararlar\n\n### 🏗️ **Mimari Desen**\n```\nMicroservices + Event-Driven\n```\n- Her katman bağımsız ölçeklenebilir\n- Message queue (Kafka/Rabbit"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 31.3,
+          "prompt_per_token_ms": 31.3,
+          "prompt_per_second": 31.9,
+          "predicted_n": 512,
+          "predicted_ms": 10565.5,
+          "predicted_per_token_ms": 20.636,
+          "predicted_per_second": 48.5,
+          "draft_n": 211,
+          "draft_n_accepted": 157
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 9109504
+      }
+    },
+    {
+      "case": "speed-2",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 10.545,
+      "response": {
+        "id": "chatcmpl-448b48260e0b45168d98f4fa",
+        "object": "chat.completion",
+        "created": 1792608344,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Sesli Asistan Mimarisi Taslağı\n\nHarika bir soru! Kendi sesli asistanımı tasarlasaydım, kurduğum mimariyi şöyle anlatırım.\n\n## Genel Yaklaşum: Modüler ve Boru Hattı (Pipeline) Tabanlı\n\nSistemi birbirine bağlanan bağımsız bileşenlere bölerdim. Bu, her parçayı ayrı ayrı test etmeyi, geliştirmeyi ve hata ayıklamayı kolaylaştırır.\n\n```\nSes Girdisi → İşitsel İşleme → Konuşma Tanıma → Dil Anlama → Diyalog Yönetimi → Yanıt Üretimi → Konuşma Sentezi → Ses Çıktısı\n```\n\n## Katman Katman Mimarî\n\n### 1. **Ses Ön İşleme (Audio Front-End)**\n- **VAD (Voice Activity Detection):** Konuşma başlangıç/bitiş tespiti\n- **Büyüme/İşaretleme:** \"Wake word\" (örn. \"Hey Asistan\") algılama\n- **Gürültü Azaltma & Yankı Engelleme:** Gerçek dünya koşullarına hazırlık\n\n### 2. **Konuşma Tanıma (ASR - Automatic Speech Recognition)**\n- **Model:** Whisper, wav2vec 2.0 veya WavLM gibi self-supervised modeller\n- **Özellik:** Deneşik (streaming) işlem için dilimli işlem desteği\n- **Amaç:** Ses dalgalarını metne çevirme\n\n### 3. **Doğal Dil Anlama (NLU)**\n- **Intent (Niyet) Sınıflandırma:** Kullanıcı ne istiyor?\n- **Entity Çıkarma:** Tarih, konum, isim gibi detaylar\n- **Diyalog Durum Takibi:** Bağlamı (context) unutma\n\n### 4. **Diyalog Yönetimi**\n- **Durum Makinesi / Politikalar:** Ne zaman soru soralım, ne zaman eylem yapalım?\n- **Bağlam Belleği:** Söylediğin şeyi birkaç tur önce hatırlama\n\n### 5. **Eylem / Bilgi Erişimi**\n- **Tool Use (A"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 33.9,
+          "prompt_per_token_ms": 33.9,
+          "prompt_per_second": 29.5,
+          "predicted_n": 512,
+          "predicted_ms": 10489.9,
+          "predicted_per_token_ms": 20.488,
+          "predicted_per_second": 48.8,
+          "draft_n": 201,
+          "draft_n_accepted": 149
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 15605760
+      }
+    },
+    {
+      "case": "speed-3",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 10.733,
+      "response": {
+        "id": "chatcmpl-b9b803412e724baebb69c94d",
+        "object": "chat.completion",
+        "created": 1792608355,
+        "model": "ornith-i1-iq3-m",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Sesli Asistan Mimarisi Taslağı\n\nHarika bir soru! Kendi tasarımıyla katmanlı (layered) bir mimari kurardım. İşte temel bileşenler:\n\n## 🎙️ 1. Input Katmanı (Giriş)\n\n- **Uzak Uç (Edge) İşleme**: Komutun hızlı algılanması için \"uyku modu\" (wake word detection) cihaz üzerinde çalışır\n- **Wake Word Engine**: \"Hey asistan\" gibi tetikleyici kelimeler için lokal işlem (örn. Porcupine, Snowboy alternatifi)\n- **Audio Preprocessing**: Noise cancellation, echo cancellation, beamforming (mikrofon dizisi ile)\n\n## 🧠 2. İşleme Katmanı\n\n```\nSes → Metin (STT) → Anlama (NLU) → Mantık → Metin (TTS) → Ses\n```\n\n**Merkezî Bileşenler:**\n\n| Bileşen | Görev | Örnek Teknoloji |\n|---------|-------|-----------------|\n| **STT** (Speech-to-Text) | Sesi metne çevirir | Whisper, Google Speech |\n| **NLU** (Natural Language Understanding) | Niyeti anlar | Fine-tuned LLM, intent classification |\n| **Dialog Yöneticisi** | Sohbet akışını kontrol eder | State machine, context manager |\n| **TTS** (Text-to-Speech) | Metni sese çevirir | ElevenLabs, Coqui |\n\n## 🔌 3. Entegrasyon Katmanı\n\n- **Araç Çağrıları (Tool Calling)**: API'lerle iletişim (hava durumu, takvim, ev otomasyonu)\n- **Mikroservis Mimarisi**: Her servis tek bir işe odaklanır\n\n## 🔒 Dikkat Edilecek Kritik Noktalar\n\n1. **Gizlilik**: Ses verileri hassas → uçtan uca şifreleme, işleme sonrası silme\n2. **Gecikme (Latency)**: Gerçek zamanlı etkileşim için <500ms hedef\n3. **Ölçeklenebilirlik**: Microservices + container orchestration (Kubernetes)\n4. **Çoklu Dil Desteği**: Türkçe'nin ek"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 35.5,
+          "prompt_per_token_ms": 35.5,
+          "prompt_per_second": 28.2,
+          "predicted_n": 512,
+          "predicted_ms": 10673.2,
+          "predicted_per_token_ms": 20.846,
+          "predicted_per_second": 48.0,
+          "draft_n": 185,
+          "draft_n_accepted": 143
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 4493312
+      }
+    }
+  ],
+  "file_cache_warmup": {
+    "bytes_read": 54879675072,
+    "seconds": 13.779
+  }
+}

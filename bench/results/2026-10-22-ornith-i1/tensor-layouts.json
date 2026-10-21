@@ -1,0 +1,72 @@
+{
+  "mradermacher-i1-IQ3_M": {
+    "expert_elements": {
+      "Q4_K": 4831838208,
+      "IQ3_S": 113548197888
+    },
+    "tensor_counts": {
+      "Q6_K": 1,
+      "F32": 370,
+      "IQ3_S": 454,
+      "Q4_K": 74
+    },
+    "mtp_names": [
+      "blk.48.attn_k.weight",
+      "blk.48.attn_k_norm.weight",
+      "blk.48.attn_norm.weight",
+      "blk.48.attn_output.weight",
+      "blk.48.attn_q.weight",
+      "blk.48.attn_q_norm.weight",
+      "blk.48.attn_v.weight",
+      "blk.48.ffn_down_exps.weight",
+      "blk.48.ffn_down_shexp.weight",
+      "blk.48.ffn_gate_exps.weight",
+      "blk.48.ffn_gate_inp.weight",
+      "blk.48.ffn_gate_inp_shexp.weight",
+      "blk.48.ffn_gate_shexp.weight",
+      "blk.48.ffn_up_exps.weight",
+      "blk.48.ffn_up_shexp.weight",
+      "blk.48.nextn.eh_proj.weight",
+      "blk.48.nextn.enorm.weight",
+      "blk.48.nextn.hnorm.weight",
+      "blk.48.nextn.shared_head_norm.weight",
+      "blk.48.post_attention_norm.weight"
+    ]
+  },
+  "atomic-AD-IQ3_XXS": {
+    "expert_elements": {
+      "IQ3_S": 38654705664,
+      "IQ3_XXS": 77309411328,
+      "Q4_K": 2415919104
+    },
+    "tensor_counts": {
+      "Q8_0": 374,
+      "F32": 370,
+      "IQ3_S": 48,
+      "IQ3_XXS": 96,
+      "Q4_K": 11
+    },
+    "mtp_names": [
+      "blk.48.ffn_gate_exps.weight",
+      "blk.48.ffn_gate_inp.weight",
+      "blk.48.ffn_gate_inp_shexp.weight",
+      "blk.48.ffn_gate_shexp.weight",
+      "blk.48.ffn_up_exps.weight",
+      "blk.48.ffn_up_shexp.weight",
+      "blk.48.nextn.eh_proj.weight",
+      "blk.48.nextn.enorm.weight",
+      "blk.48.nextn.hnorm.weight",
+      "blk.48.nextn.shared_head_norm.weight",
+      "blk.48.post_attention_norm.weight",
+      "blk.48.attn_k.weight",
+      "blk.48.attn_k_norm.weight",
+      "blk.48.attn_norm.weight",
+      "blk.48.attn_output.weight",
+      "blk.48.attn_q.weight",
+      "blk.48.attn_q_norm.weight",
+      "blk.48.attn_v.weight",
+      "blk.48.ffn_down_exps.weight",
+      "blk.48.ffn_down_shexp.weight"
+    ]
+  }
+}

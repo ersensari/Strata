@@ -1,0 +1,250 @@
+{
+  "model": "ornith-iq3",
+  "context": 262144,
+  "kv": "q8_0",
+  "gpu": 1,
+  "temperature": 0,
+  "reasoning_effort": "none",
+  "engine_nice": 0,
+  "records": [
+    {
+      "case": "warmup",
+      "prompt": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz.",
+      "limit": 64,
+      "seconds": 2.389,
+      "response": {
+        "id": "chatcmpl-63568e3afc184d56b1797434",
+        "object": "chat.completion",
+        "created": 1792608138,
+        "model": "ornith-iq3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 64,
+          "total_tokens": 93,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 29,
+          "prompt_ms": 572.1,
+          "prompt_per_token_ms": 19.728,
+          "prompt_per_second": 50.7,
+          "predicted_n": 64,
+          "predicted_ms": 1793.3,
+          "predicted_per_token_ms": 28.02,
+          "predicted_per_second": 35.7,
+          "draft_n": 34,
+          "draft_n_accepted": 27
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-warmup",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 14.253,
+      "response": {
+        "id": "chatcmpl-1a2773900bc647f9afbdfc02",
+        "object": "chat.completion",
+        "created": 1792608140,
+        "model": "ornith-iq3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Bir Sesli Asistan Mimarisi\n\nHarika bir soru! Modern bir sesli asistan için kurduğum mimariyi katmanlı olarak anlatayım:\n\n## 1. Ses Girişi Katmanı (Frontend)\n\n**VAD (Voice Activity Detection)** ile başlardım - sessizliği filtreleyip sadece konuşma kısmını keser. Böylece gereksiz işlem tasarrufu sağlanır.\n\n```\nMikrofon → VAD → Ses Segmenti → Buffer\n```\n\n## 2. Konuşma Tanıma (ASR - Automatic Speech Recognition)\n\nBurada kritik bir karar var: **Edge vs Cloud**\n\n- **Sınır cihazda (on-device):** Hızlı, gizlilik odaklı, offline çalışır. Basit komutlar için ideal.\n- **Cloud:** Daha yüksek doğruluk, karmaşık cümleler, çok dilli destek.\n\n**Hybrid yaklaşım** en mantıklısı: Hızlı komutlar lokal, karmaşık istekler cloud'a gider.\n\n## 3. Dil Anlama (NLU)\n\n```\nMetin → NER (Varlık Tanıma) → Intent Sınıflandırma → Slot Doldurma\n```\n\nKullanıcının *ne istediğini* ve *hangi detayları* içerdiğini çıkarır.\n\n## 4. Diyalog Yönetimi\n\n**Durum makinesi (state machine)** veya modern yaklaşım olarak **LLM tabanlı** bir yönetici. Bağlamı (context) takip eder:\n\n> \"Yarınki toplantım ne saat?\" → \"Onu iptal et\" *(hangi toplantı olduğunu bağlamdan anlar)*\n\n## 5. Girişim Yürütme (Action Execution)\n\nAPI çağrıları, cihaz kontrolleri, veri sorguları için güvenli bir **tool calling** katmanı.\n\n## 6. Yanıt Üretimi & Konuşma Sentezi (TTS)\n\nDoğal, duygulu TTS ile sesli yanıt. **Streaming** destekli olmalı - tamamını beklemeden konuşmaya başlamalı.\n\n---\n\n## Mimari Prensiplerim\n\n| İlke | Neden |\n|------|-------|\n| **Düşük gecikme** | 300ms'den az tepki süresi hissi"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 31,
+          "prompt_ms": 563.1,
+          "prompt_per_token_ms": 18.165,
+          "prompt_per_second": 55.1,
+          "predicted_n": 512,
+          "predicted_ms": 13667.9,
+          "predicted_per_token_ms": 26.695,
+          "predicted_per_second": 37.5,
+          "draft_n": 286,
+          "draft_n_accepted": 198
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-1",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 13.394,
+      "response": {
+        "id": "chatcmpl-8dcd89f65e4541359a03d36d",
+        "object": "chat.completion",
+        "created": 1792608155,
+        "model": "ornith-iq3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Bir Sesli Asistan Mimarisi\n\nHarika bir soru! Modern bir sesli asistan için kurduğum mimariyi katmanlar halinde anlatayım:\n\n## 1. Ses Girişi ve Ön İşleme\n\n**Ses Yakalama**\n- Mikrofon dizisinden ham ses akışı (genelde 16kHz, 16-bit mono)\n- **Buzloop/echo cancellation** ve **noise suppression** ile temizleme\n- VAD (Voice Activity Detection) ile konuşma başlangıç/bitiş noktalarının tespiti\n\n## 2. Otomatik Konuşma Tanıma (ASR)\n\n- **End-to-end modeller** (Whisper, DeepSpeech benzeri) veya hybrid approach\n- Streaming için **chunk-based processing** (kullanıcı konuşurken anlık sonuç)\n- Dil modelinden sonra **context-aware correction** (özel isimler, domain terimleri)\n\n## 3. Ses Sendirleme (VAD + Endpointing)\n\nKullanıcının ne zaman sustuğunu anlamak kritik:\n- Kısa sessizliklerde bekleme (doğal konuşma ritmi)\n- \"Hmm\", \"şey\" gibi dolgu seslerini görmezden gelme\n\n## 4. Doğal Dil Anlama (NLU)\n\n```\nIntent Classification → Entity Extraction → Context Management\n```\n\n- **Intent**: Kullanıcının amacı (\"hava durumu\", \"müzik çal\", \"hatırlatıcı ekle\")\n- **Entities**: Zaman, konum, kişi gibi parametreler\n- **Slot filling**: Eksik bilgi varsa kullanıcıdan tamamlama\n\n## 5. Diyalog Yönetimi\n\n- **State tracking**: Sohbet bağlamını tutma\n- **Multi-turn dialog**: \"Peki yarini?\" gibi referansları çözme\n- **Policy**: Sonraki aksiyonu belirleme (sorgu, onay, netleştirme)\n\n## 6. Beyin Katmanı (LLM)\n\nModern asistanlarda merkezi yapı:\n- **RAG** ile kişiselleştirilmiş bilgi erişimi\n- **Tool calling / Function calling** ile dış servisler (API, veritabanı)\n- **Reasoning** için düşünsel zincirler, ancak **low latency** için optimize\n\n## 7. Aks"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 41.0,
+          "prompt_per_token_ms": 41.0,
+          "prompt_per_second": 24.4,
+          "predicted_n": 512,
+          "predicted_ms": 13330.7,
+          "predicted_per_token_ms": 26.037,
+          "predicted_per_second": 38.4,
+          "draft_n": 283,
+          "draft_n_accepted": 186
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-2",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 13.349,
+      "response": {
+        "id": "chatcmpl-c2ae38e8d30842bfa06b6864",
+        "object": "chat.completion",
+        "created": 1792608168,
+        "model": "ornith-iq3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Bir Sesli Asistan Mimarisi\n\nHarika bir soru! Modern bir sesli asistan için kurduğum mimariyi katmanlar halinde anlatayım:\n\n## 1. Ses Girişi ve Ön İşleme\n\n**Akustik Katman**\n- WebRTC ile gürültü engelleme ve ses kalitesi iyileştirme\n- VAD (Voice Activity Detection) ile konuşma başlangıç/bitiş tespiti\n- 16kHz, mono, PCM formatında standartlaştırma\n\n## 2. Konuşma Tanıma (ASR)\n\n```\nSes → Metin Dönüşümü\n```\n- **Seçenekler:** Whisper, Google Speech-to-Text, Deepgram\n- Streaming destekli olmalı (kullanıcı konuşurken sonuç gelmeli)\n- Yerel dil ve lehçe desteği\n- Endpointing (cümle sonu tespiti)\n\n## 3. Dil Anlama (NLU)\n\n- **Intent sınıflandırma:** Kullanıcı niyetini anlama\n- **NER (Named Entity Recognition):** Varlıkları tanıma (tarih, yer, isim)\n- **Slot filling:** Gerekli bilgileri tamamlama\n- Context yönetimi: Sohbet bağlamını tutma\n\n## 4. Diyalog Yönetimi\n\n```\n[Bağlam] → [Niye] → [Eylem] → [Yanıt]\n```\n- State machine veya LLM tabanlı diyalog yöneticisi\n- Multi-turn sohbet takibi\n- Belirsizlik durumunda geri sorma\n\n## 5. Beyin Katmanı (LLM)\n\n- **Retrieval-Augmented Generation (RAG):** Bilgi tabanı entegrasyonu\n- Tool/function calling: Dış servislerle etkileşim\n- Prompt yönetimi ve zehirlenme koruması\n\n## 6. Cevap Üretimi ve Sentezleme (TTS)\n\n- **TTS motorları:** ElevenLabs, Azure TTS, Piper (yerel)\n- Doğal, duygulu ve düşük gecikmeli sentez\n- SSML desteği (duraklama, vurgu kontrolü)\n\n## 7. Tool Entegrasyonu\n\n```python\n# Örnek fonksiyon çağrıları\n- API çağrıları\n- Ver"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 41.1,
+          "prompt_per_token_ms": 41.1,
+          "prompt_per_second": 24.3,
+          "predicted_n": 512,
+          "predicted_ms": 13286.3,
+          "predicted_per_token_ms": 25.95,
+          "predicted_per_second": 38.5,
+          "draft_n": 307,
+          "draft_n_accepted": 198
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-3",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 13.198,
+      "response": {
+        "id": "chatcmpl-d33f304f6a824edeb9f20639",
+        "object": "chat.completion",
+        "created": 1792608181,
+        "model": "ornith-iq3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# Bir Sesli Asistan Mimarisi\n\nHarika bir soru! Modern bir sesli asistan için kurduğum mimariyi katmanlar halinde anlatayım:\n\n## 1. Ses Girişi ve Ön İşleme\n\n**Akustik Özellik Çıkarımı**\n- Mel-spektrogram veya log-Mel gibi insan işitme sistemine uygun gösterimler\n- Örneklem oranı genellikle 16kHz civarında\n\n**Ses Aktivitesi Algılama (VAD)**\n- Sadece insan konuşması olan kısımları tespit et\n- Arka plan gürültüsünü ve sessizliği filtrele\n- Bu, hem performans hem de maliyet açısından kritik\n\n## 2. Konuşma Tanıma (ASR)\n\n**Encoder-Decoder Yaklaşımı**\n- **Encoder**: Ses dalgalarını karakterize eden vektörlere dönüştürür\n- **Decoder**: Bu vektörlerden metin üretir\n\n**End-to-End Modeller**\n- Geleneksel pipeline (GMM-HMM → DNN → LM) yerine modern yaklaşımlar\n- Whisper, wav2vec 2.0 gibi modeller bağlamı daha iyi anlar\n\n**Dikkat Edilecekler**\n- Gürültü altında dayanıklılık\n- Aksan ve lehçe çeşitliliği\n- Kelime hata oranı (WER) optimizasyonu\n\n## 3. Dil Anlama (NLU)\n\n**Niyet Sınıflandırma**\n- Kullanıcının ne istediğini belirle (örn. \"hava durumu\", \"müzik çal\")\n\n**Varlık Çıkarma (NER)**\n- Zaman, konum, isim gibi kritik bilgileri tespit et\n- Örn: \"yarın için hatırlat\" → tarih = yarın\n\n**Bağlam Yönetimi**\n- Diyalog geçmişini sakla\n- Belirsiz referansları çöz (örn. \"o nerede?\" → önceki konuşmadaki nesne)\n\n## 4. Görev Planlayıcısı ve Mantık Katmanı\n\n**Durum Makinesi**\n- Asistanın mevcut durumunu ve olası geçişleri takip et\n\n**Çok Adımlı Akışlar**\n- Bazı görevler birden fazla işlem gerektirir\n"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 31,
+          "completion_tokens": 512,
+          "total_tokens": 543,
+          "prompt_tokens_details": {
+            "cached_tokens": 30
+          }
+        },
+        "timings": {
+          "cache_n": 30,
+          "prompt_n": 1,
+          "prompt_ms": 39.7,
+          "prompt_per_token_ms": 39.7,
+          "prompt_per_second": 25.2,
+          "predicted_n": 512,
+          "predicted_ms": 13137.8,
+          "predicted_per_token_ms": 25.66,
+          "predicted_per_second": 39.0,
+          "draft_n": 287,
+          "draft_n_accepted": 199
+        }
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    }
+  ],
+  "file_cache_warmup": {
+    "bytes_read": 54286856288,
+    "seconds": 3.004
+  }
+}
