@@ -1,0 +1,170 @@
+[
+  {
+    "engine": "native",
+    "run": 1,
+    "seconds": 36.177,
+    "response": {
+      "id": "chatcmpl-f7fbaecb68f443c4be68964b",
+      "object": "chat.completion",
+      "created": 1792585395,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "Sesli asistan mimarisini kurarken şu katmanları düşünürdüm:\n\n## 1. Ses Girişi Katmanı (Frontend)\n- **Mikrofon yakalama**: Tarayıcıda `Web Audio API` veya native kütüphanelerle (iOS/Android SDK) ses akışını yakalamak\n- **Ön işlem (preprocessing)**: Gürültü temizleme, normalizasyon, VAD (Voice Activity Detection) ile konuşma başlangıç/bitiş tespiti\n\n## 2. Ses Tanıma (Speech Recognition)\nİki ana yaklaşım:\n- **On-device**: Whisper-tiny, Android Speech API, Windows SAPI gibi hafif modeller (hızlı, gizlilik odaklı)\n- **Cloud tabanlı**: Google Speech-to-Text, Speechal, AWS Transcribe (yüksek doğruluk)\n\n## 3. Doğal Dil İşleme (NLU)\n- **NLU motoru**: Kullanıcının ne istediğini anlamak için (ör. \"yarınki toplantıları getir\" → `list_events(date=yesterday)`)\n- **Intent tespiti + entity extraction**: Webhook veya kural tabanlı motor\n- **Context yönetimi**: Çok adımlı diyaloglar için hafıza katmanı\n\n## 4. İş Mantığı / Aksiyon Katmanı\n- **Tool calling**: API çağrıları, cihaz komutları (ışığı aç, müzik çal)\n- **Aksiyon yürütücü**: Fonksiyonları tetikleyen ve sonucu toplayan katman\n\n## 5. Yanıt Üretimi (TTS)\n- **Metinden sese**: ElevenLabs, Google TTS, veya yerel modeller\n- **Doğal ses tonu**: Duygu/tonlama için prompt mühendisliği\n\n## 6. Kontrol ve Hata Yönetimi\n- **Aspiratif doğrulama**: \"Yarınki toplantı 3 saat sürmüş\" gibi onay mekanizması\n- **Kesme (barge-in)**: Kullanıcı konuşmaya devam ederken asistanı susturma\n- **Timeout ve fallback**: Anlayamadığında \"Ne demek istedin?\" sorusu\n\n## Mimari Prensiplerim\n- **Modülerlik**: Her katman bağımsız çalışabilmeli (ör. TTS'yi değiştirmek sadece 5. katmanı etkilemeli)\n- **Gecikme yönetimi**: STT → NLU → TTS arasındaki pipeline'da toplam ~500ms hedeflerim\n- **Gizlilik**: Hassas veriler için on-device işlem önceliği\n- **Ölçeklenebilirlik**: Cloud/edge hibrit yapı\n\nBu katmanları nasıl detaylandırmamı istersin? Örneğin tek bir teknoloji stack'i mi (ör. tarayıcı tabanlı) yoksa mobil uygulama için mi düşünüyorsun? 🎙️"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 642,
+        "total_tokens": 670,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 779.7,
+        "prompt_per_token_ms": 27.846,
+        "prompt_per_second": 35.9,
+        "predicted_n": 642,
+        "predicted_ms": 35370.0,
+        "predicted_per_token_ms": 55.093,
+        "predicted_per_second": 18.2,
+        "draft_n": 1023,
+        "draft_n_accepted": 302
+      }
+    }
+  },
+  {
+    "engine": "native",
+    "run": 2,
+    "seconds": 24.755,
+    "response": {
+      "id": "chatcmpl-7dad66f93a3b4996b4936cb6",
+      "object": "chat.completion",
+      "created": 1792585432,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nSesli asistan için kapalı bir mimari öneririm. İşte katmanlı yapım:\n\n## 1. Katmanlar\n\n```\nKullanıcı → [STT] → [Anlama] → [Mantık] → [Sentez] → Kullanıcı\n```\n\n**STT (Ses Tanıma)** — Konuşmayı metne çevirir\n- Yerel: Whisper (yerel model)\n- Bulut: Google, Azure, Deepgram\n\n**Doğal Dil Anlama (NLU)**\n- Niyet tespiti + varlık çıkarma\n- Örnek: \"Yarın hava nasıl?\" → niyet: hava_sor, varlık: yarın\n\n**Sohbet Yöneticisi (Dialog Manager)**\n- Oturum durumunu tutar\n- Bir sonraki adımı belirler\n\n**TTS (Metin Okuma)**\n- Seslendirme: Piper (yerel), ElevenLabs (bulut)\n\n## 2. Bileşenler\n\n```\n┌─────────────────────────────────┐\n│         Ses Girişi/Çıkışı        │\n├─────────────────────────────────┤\n│  STT  →  NLU  →  Manager  →  TTS  │\n├─────────────────────────────────┤\n│        İş Mantığı / Araçlar       │\n│  (API çağrıları, veritabanı)      │\n└─────────────────────────────────┘\n```\n\n## 3. Dikkat Edilecekler\n\n**Gecikme** — Kullanıcı hissediyor. STT ve TTS'i hızlı tut.\n**Ayrık yapı** — Her katman bağımsız çalışsın, değiştirmek kolay olsun.\n**Durum yönetimi** — Sohbet bağlamı kaybolmasın.\n**Hata yönetimi** — Anlayamadığında sorsun, tekrar etsin.\n\n## 4. Yerel vs Bulut\n\n| Konu | Yerel | Bulut |\n|------|-------|-------|\n| Gizlilik | Daha iyi | Sunucuya bağlı |\n| Gecikme | Düşük donanıma bağlı | Ağ gecikmesi |\n| Maliyet | Ücretsiz | Abonelik |\n\nHangi dili ve platformu düşünüyorsun? Ona göre somut kütüphaneler önerebilirim."
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 536,
+        "total_tokens": 564,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 463.9,
+        "prompt_per_token_ms": 16.568,
+        "prompt_per_second": 60.4,
+        "predicted_n": 536,
+        "predicted_ms": 24288.2,
+        "predicted_per_token_ms": 45.314,
+        "predicted_per_second": 22.1,
+        "draft_n": 792,
+        "draft_n_accepted": 271
+      }
+    }
+  },
+  {
+    "engine": "poly",
+    "run": 1,
+    "seconds": 32.1,
+    "response": {
+      "id": "chatcmpl-25a2556aa18f47e18bdaa77e",
+      "object": "chat.completion",
+      "created": 1792585468,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistan için uçtan uca bir mimari kuralım.\n\n## 1. Genel Akış (Pipeline)\n\n```\nKullanıcı Konuşması\n   ↓\n[Mikrofon] → Ses Yakalama\n   ↓\n[ASR] → Ses → Metin Dönüşümü\n   ↓\n[NLU] → Anlam Çıkarma\n   ↓\n[Dialog Yönetimi] → Karar\n   ↓\n[LLM / İş Mantığı] → Yanıt Üretimi\n   ↓\n[TTS] → Metin → Ses Dönüşümü\n   ↓\n[Ses Çıkışı]\n```\n\n## 2. Katman Katman Detay\n\n### 🔹 1. Ses Yakalama (Audio Capture)\n- **Buffer streaming** ile çalış (tamamını bekleme)\n- VAD (Voice Activity Detection) ile konuşma başlangıç/bitişini tespit et\n- Örnek: `webrtcvad` veya `Silero VAD`\n\n```python\n# VAD mantığı (kavram olarak)\nif audio_frame.energy > threshold and vad.is_speech(frame):\n    start_recording()\n```\n\n### 🔹 2. ASR (Automatic Speech Recognition)\n**Seçenekler:**\n| Model | Artı | Eksi |\n|-------|------|------|\n| **Whisper** | Çok dilli, kaliteli | Biraz ağır |\n| **DeepSpeech** | Hafif | Daha az doğru |\n| **Google/AssemblyAI API** | Kolay | API bağımlılığı |\n\nTürkçe için **Whisper** veya cloud API'ler daha güvenli.\n\n### 🔹 3. NLU + Dialog Yönetimi\nKullanıcının **niyetini** (intent) ve **varlıklarını** (entities) çıkar:\n\n```\n\"Yarın saat 3'te toplantı hatırlat\"\n  → intent: create_reminder\n  → entity: time=15:00, date=tomorrow\n```\n\n### 🔹 4. Yanıt Üretimi (LLM)\nModern bir asistanda burası genelde **LLM** ile yapılır:\n\n```python\nresponse = llm.generate(\n    system=\"Sen yardımcı bir asistansın.\",\n    user_input=transcribed_text,\n    context=conversation_history\n)\n```\n\n**Önemli:** Latency için streaming response kullan (token token döndür).\n\n### 🔹 5. TTS (Text-to-Speech)\n**Seçenekler:**\n- **ElevenLabs** – çok doğal\n- **Piper** – yerel, hızlı, ücretsiz\n- **Coqui TTS** – açık kaynak\n\n### 🔹 6. Ses Çıkışı\n- Streaming ile oynat (ilk token gelir gelmez ses çıksın)\n\n## 3. Teknik Mimari (System Design)\n\n```\n┌─────────────┐\n│  Client     │  (Web/Mobile/Desktop)\n│  - Mic I/O  │\n│  - WebRTC   │\n└──────┬──────┘\n       │ WebSocket / gRPC (düşük latency)\n┌──────▼──────────────────────────┐\n│  Backend Orchestrator           │\n│  - Pipeline yönetimi            │\n│  - State/Context tutma          │\n└──────┬─────────────┬────────────┘\n       │             │\n┌──────▼─────┐ ┌─────▼──────┐ ┌──────────┐\n│ ASR Servisi│ │ LLM Servisi│ │ TTS Serv.│\n└────────────┘ └────────────┘ └──────────┘\n```\n\n## 4. Kritik Tasarım Kararları\n\n**Latency yönetimi:**\n- Pipeline'ı **streaming** yap (her aşamada bekleme)\n- **Barge-in** destekle (kullanıcı asistan konuşurken sözünü kesebilsin)\n- TTS'yi LLM ile **paralel** çalıştır\n\n**State yönetimi:**\n```python\nclass ConversationState:\n    history: list[Message]\n    current_task: dict\n    user_profile: dict\n```\n\n**Hata yönetimi:**\n- ASR belirsizse \"Tam dedin mi?\" diye onay al\n- Network kesintisinde retry + fallback\n\n---\n\nİstersen belirli bir katmanı (örneğin **streaming ASR** veya **barge-in mantığı**) detaylı"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 1024,
+        "total_tokens": 1052,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 2671.1,
+        "prompt_per_token_ms": 95.396,
+        "prompt_per_second": 10.5,
+        "predicted_n": 1024,
+        "predicted_ms": 29426.7,
+        "predicted_per_token_ms": 28.737,
+        "predicted_per_second": 34.8,
+        "draft_n": 642,
+        "draft_n_accepted": 414
+      }
+    }
+  },
+  {
+    "engine": "poly",
+    "run": 2,
+    "seconds": 21.411,
+    "response": {
+      "id": "chatcmpl-7bee5fd383374a7a8e549abe",
+      "object": "chat.completion",
+      "created": 1792585500,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistanı uçtan uca nasıl kurdüğumuğu paylaşayım.\n\n## 🏗️ Genel Mimari Akışı\n\n```\nSes Girdisi → İşleme → Anlama → Karar → Yanıt → Ses Çıktısı\n```\n\n## 1. **Ses Tanıma (ASR - Automatic Speech Recognition)**\n\nÖncelikle sesi metne çevirmen lazım.\n\n```python\n# Seçenekler\n- Yerel: Whisper (OpenAI), Vosk, Speech-to-Text (Google)\n- Bulut: Google Speech, AWS Transcribe, Azure Speech\n```\n\n**Karar noktası:** Gecikme kritikse **yerel Whisper** tercih ederim. Gizlilik için de yerel iyi.\n\n## 2. **Doğal Dil Anlama (NLU)**\n\nMetni anlamlandırmak için:\n\n```python\n# Klasik yaklaşım\nintent_classification → entity_extraction\n\n# Örnek\n\"Sabah 8'de toplantı hatırlat\" \n→ intent: create_reminder\n→ entities: {time: \"08:00\", task: \"toplantı\"}\n```\n\n## 3. **Sohbet Motoru & Bağlam Yönetimi**\n\nBurada **state management** çok önemli:\n\n```python\nclass ConversationManager:\n    def __init__(self):\n        self.context = {}\n        self.history = []\n    \n    def process(self, user_input):\n        # Bağlamı güncelle\n        # Multi-turn diyalog takibi\n        # Referans çözümleme (\"o ne?\" → önceki entity)\n```\n\n## 4. **Görev Yürütme (Task Execution)**\n\n```python\n# Tool calling / Function calling patterni\ntools = [\n    {\"name\": \"create_reminder\", \"params\": {...}},\n    {\"name\": \"search_web\", \"params\": {...}},\n    {\"name\": \"control_device\", \"params\": {...}},\n]\n```\n\n## 5. **Yanıt Üretimi**\n\n```python\n# LLM tabanlı (esnek, doğal)\n# veya\n# Şablon tabanlı (hızlı, deterministik)\n```\n\n## 6. **Metin-Konuşma (TTS)**\n\n```python\n# Seçenekler\n- Yerel: Piper (hızlı), Coqui TTS\n- Bulut: ElevenLabs, Azure TTS, Google TTS\n```\n\n## ⚡ Kritik Mimarî Kararlar\n\n| Konu | Öneri |\n|------|-------|\n| **Gecikme** | Streaming ASR + TTS (parçalı işleme) |\n| **Offline** | Whisper + Piper (tam yerel stack) |\n| **Ölçeklenebilirlik** | Microservice + message queue |\n| **Hata yönetimi** | Her katmanda fallback |\n\n## 🔧 Teknoloji Stack Örneği\n\n```\nKullanıcı → FastAPI → Whisper → LLM → Tool Executor → TTS → Hoparlör\n                    ↓\n              Redis (context)\n```\n\n---\n\n**Sana özel sorayım mı?** Bu mimariyi hangi kullanım senaryosu için istiyorsun?\n\n- 🏠 Yerel/kişisel bir asistan mı?\n- ☁️ Bulut tabanlı, çok kullanıcılı bir servis mi?\n- 📱 Mobil uygulama içi mi?\n\nBu üçü mimariyi ciddi şekilde değiştirir. Senaryoyu söylersen, o alana odaklı daha detaylı tasarım yapabilirim! 🎯"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 810,
+        "total_tokens": 838,
+        "prompt_tokens_details": {
+          "cached_tokens": 27
+        }
+      },
+      "timings": {
+        "cache_n": 27,
+        "prompt_n": 1,
+        "prompt_ms": 41.3,
+        "prompt_per_token_ms": 41.3,
+        "prompt_per_second": 24.2,
+        "predicted_n": 810,
+        "predicted_ms": 21368.1,
+        "predicted_per_token_ms": 26.38,
+        "predicted_per_second": 37.9,
+        "draft_n": 483,
+        "draft_n_accepted": 336
+      }
+    }
+  }
+]

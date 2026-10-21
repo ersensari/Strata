@@ -126,6 +126,7 @@ option(STRATA_WERROR "Treat compiler warnings as errors" OFF)
 # #2027: defined here, before the GPU section reads it to register the native-expert tests (it was defined at the
 # native-experts section far below, so a first configure registered four tests fewer than the second)
 option(STRATA_NATIVE_EXPERTS "Native (IQ) expert support through ggml-cpu" ON)
+option(STRATA_ORNITH_NATIVE "Experimental Ornith 1.5 IQ3 support in the native qwen35moe path" OFF)
 
 if(STRATA_BUILD_CONVERSATION_TESTS)
   enable_testing()
@@ -2201,6 +2202,9 @@ endif()
 option(STRATA_POLY_ENGINES "Build the optional PolyStrata GGUF engine" OFF)
 if(STRATA_POLY_ENGINES)
   include(cmake/poly_engines.cmake)
+endif()
+if(STRATA_ORNITH_NATIVE)
+  include(cmake/ornith_native.cmake)
 endif()
 
 if(STRATA_BUILD_TESTS)

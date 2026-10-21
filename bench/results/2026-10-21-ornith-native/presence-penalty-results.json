@@ -1,0 +1,170 @@
+[
+  {
+    "engine": "native",
+    "run": 1,
+    "seconds": 33.409,
+    "response": {
+      "id": "chatcmpl-c8d67eacffe148489e39be63",
+      "object": "chat.completion",
+      "created": 1792585189,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Bir Sesli Asistan Mimarisi Nasıl Kurulur?\n\nHarika bir soru! Bir sesli asistan (voice assistant) sisteminin mimarisini adım adım anlatayım:\n\n## 🎙️ Ana Bileşenler\n\n### 1. **Ses Girişi (Audio Input)**\n- Mikrofondan ses verisinin alınması\n- Sesin dijital sinyale dönüştürülmesi\n- Ön işlemleme (noise reduction, normalization)\n\n### 2. **Uyandırma (Wake Word Detection)**\n- \"Hey Siri\", \"Ok Google\" gibi tetikleyici kelimeler\n- Genelde cihaz üzerinde (on-device) çalışır\n- Örnek: Keyword spotting modelleri\n\n### 3. **Konuşma Tanıma (ASR - Automatic Speech Recognition)**\n- Sesi metne dönüştürme\n- Kullanılan teknolojiler:\n  - Whisper (OpenAI)\n  - Google Speech-to-Text\n  - DeepSpeech\n  - Vosk\n\n### 4. **Doğal Dil Anlama (NLU)**\n- Metni anlamlandırma\n- Niyet tespiti (intent detection)\n- Varlık tanıma (entity recognition)\n- Örnek: \"yarın için hava durumu\" → intent: `get_weather`, entity: `date: tomorrow`\n\n### 5. **Görev Yöneticisi (Task Manager/Dialogue Manager)**\n- Niyete göre aksiyon planlama\n- Durum takibi (context tracking)\n- API çağrıları veya yerel komutlar\n\n### 6. **Doğal Dil Üretimi (NLG)**\n- Cevabın metin formatına getirilmesi\n\n### 7. **Sentezleme (TTS - Text-to-Speech)**\n- Metni sese dönüştürme\n- Örnek: ElevenLabs, Google TTS, Coqui\n\n---\n\n## 🏗️ Basit Bir Mimari Akışı\n\n```\n[Mikrofon] → [Wake Word] → [ASR] → [NLU] → [Task Handler] → [NLG] → [TTS] → [Hoparlör]\n```\n\n---\n\n## 💡 Pratikte Nasıl Kurulur?\n\n**Hızlı başlangıç için:**\n```python\n# Örnek bir akış (psödokod)\nses = dinle()                    # Audio capture\nif wake_word_al(ses):            # Wake word detection\n    metin = asr_donusum(ses)      # Speech to text\n    niyet = nlu_analyze(metin)    # Understand intent\n    sonuc = task_cal(niyet)       # Execute task\n    cevap_metin = nlG_uret(sonuc) # Generate response\n    ses_cevap = tts_sozles(cevap_metin)  # Text to speech\n    play(ses_cevap)               # Play audio\n```\n\n---\n\n## 🤔 Hangi Detayları İstersin?\n\nSana daha faydalı olabilmek için şunlardan birini seçebilirsin:\n\n- 🔹 **Belirli bir bileşeni** derinlemesine mi anlatayım? (örn. ASR veya NLU)\n- 🔹 **Kendi kendine çalışan** basit bir örnek mi istersin?\n- 🔹 **Üretim ortamı (production)** mimarisi mi? (ölçeklenebilir, cloud-based)\n- 🔹 **Yerel (on-device)** mı yoksa **bulut tabanlı** mı olsun?\n\nHangi kısmı merak ediyorsun? 😊"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 794,
+        "total_tokens": 822,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 719.9,
+        "prompt_per_token_ms": 25.711,
+        "prompt_per_second": 38.9,
+        "predicted_n": 794,
+        "predicted_ms": 32658.6,
+        "predicted_per_token_ms": 41.132,
+        "predicted_per_second": 24.3,
+        "draft_n": 0,
+        "draft_n_accepted": 0
+      }
+    }
+  },
+  {
+    "engine": "native",
+    "run": 2,
+    "seconds": 25.605,
+    "response": {
+      "id": "chatcmpl-76b675988da44675bcd72741",
+      "object": "chat.completion",
+      "created": 1792585223,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistanı uçtan uca nasıl kurdüğumu anlatayım:\n\n## 🎙️ 1. Ses Girişi (Frontend)\n\n**WebRTC** ile tarayıcıdan gerçek zamanlı ses yakalama. Kesme algılama (endpointing) için **VAD (Voice Activity Detection)** kullanırım - çünkü her zaman tam cümle beklemek doğalcılığı öldürür.\n\n```\nMikrofon → WebRTC Stream → VAD → Segmentlere Ayırma\n```\n\n## 🧠 2. İşitsel İşleme Pipeline'ı\n\n**ASR (Speech-to-Text):**\n- Yerinde/low-latency için **Whisper.cpp** veya **Deepgram**\n- Türkçe için özel fine-tuning kritik — Türkçe'deki ünlü uyumları ve ekleri ASR bazen kaçırıyor\n\n**LLM (Beyin):**\n- Kullanıcı niyetini anlama + bağlam yönetimi\n- **ReAct pattern** ile araç çağrılarına geçiş\n\n```python\n# Örnek akış\nuser_text → LLM → [Düşünce] → Tool Call → Sonuç → LLM → Yanıt\n```\n\n## 🔊 3. Ses Çıkışı (TTS)\n\n**ElevenLabs** veya **XT-TTS** (açık kaynak, çok dilli). \n- **Streaming TTS**: İlk kelimeyi beklememek için segment bazlı sentezleme\n- Latency kritik: **TTFT < 500ms** hedeflerim\n\n## 🛠️ 4. Araçlar & Entegrasyonlar\n\n```python\ntools = [\n    {\"name\": \"get_weather\", \"params\": [\"city\"]},\n    {\"name\": \"set_reminder\", \"params\": [\"time\", \"text\"]},\n    {\"name\": \"search_web\", \"params\": [\"query\"]},\n]\n```\n\n## 📐 5. Altyapı Kararları\n\n| Katman | Seçenek | Neden |\n|--------|---------|-------|\n| Orchestration | **LangGraph** / kendi state machine | Bağlam yönetimi |\n| Queue | **Redis/RabbitMQ** | Asenkron streaming |\n| Cache | Semantic cache | Tekrar soruları için hız |\n| Monitoring | Latency tracing | Her adım izlenebilir |\n\n## ⚡ Kritik Zorluklar\n\n1. **Latency bütünlüğü**: Kullanıcı \"tamam\" dediğinde hemen kesmeli (barge-in)\n2. **Bağlam hafızası**: Kısa vadeli (oturum) + uzun vadeli (kullanıcı profili)\n3. **Hata toparlanması**: ASR hatası → \"Şunu mu dedin?\" onayı\n\n---\n\nİstersen belirli bir katmanı (örneğin streaming pipeline'ı veya tool calling mantığı) detaylı kodla gösterebilirim. Hangi kısım ilgini çekti? 🚀"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 668,
+        "total_tokens": 696,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 425.8,
+        "prompt_per_token_ms": 15.207,
+        "prompt_per_second": 65.8,
+        "predicted_n": 668,
+        "predicted_ms": 25171.1,
+        "predicted_per_token_ms": 37.681,
+        "predicted_per_second": 26.5,
+        "draft_n": 0,
+        "draft_n_accepted": 0
+      }
+    }
+  },
+  {
+    "engine": "poly",
+    "run": 1,
+    "seconds": 23.996,
+    "response": {
+      "id": "chatcmpl-6ae5cb8b05434983b8eb804f",
+      "object": "chat.completion",
+      "created": 1792585260,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistan için uçtan uca bir mimari kuralım.\n\n## 1. Genel Mimari Akışı\n\n```\n[Mikrofon] → [STT] → [NLU] → [Diyalog Yönetimi] → [İş Mantığı] → [TTS] → [Hoparlör]\n```\n\n## 2. Katman Katman Detay\n\n### 🎙️ Ses Girişi (Audio Capture)\n- **Önerim:** Wake word (uyandırma kelimesi) ile başlayan yerel işleme\n- Örnek: \"Hey Asistan\" gibi bir tetikleyici\n- Buffer yönetimi ve gürültü engelleme (noise suppression)\n\n### 🔤 Konuşma Tanıma (STT - Speech-to-Text)\n```python\n# Önerilen yaklaşımlar:\n# - Yerel/Hızlı: Whisper (local), Vosk (offline)\n# - Bulut: Google Speech, Azure Speech, Deepgram\n```\n- **Önemli:** Düşük latency için streaming STT tercih ederim\n\n### 🧠 Dil Anlama (NLU)\n```\nMetin → Intent (niyet) + Entity (varlıklar)\n```\nÖrnek:  \n*\"Yarın saat 3'te toplantı hatırlat\"*  \n- **Intent:** `create_reminder`  \n- **Entity:** `time=15:00`, `date=tomorrow`, `task=toplantı`\n\n### 💬 Diyalog Yönetimi\n- **Durum makinesi (state machine)** veya **LLM tabanlı** yaklaşım\n- Bağlam (context) hafızası kritik!\n\n```python\nclass DialogManager:\n    def __init__(self):\n        self.context = {}\n    \n    def update_context(self, intent, entities):\n        self.context.update(entities)\n        return self.context\n```\n\n### ⚙️ İş Mantığı (Action/Tool Layer)\n- API çağrıları, veritabanı işlemleri, cihaz kontrolleri\n- **Tool calling** ile LLM'i fonksiyon çağırmaya yönlendirme\n\n### 🔊 Ses Üretimi (TTS - Text-to-Speech)\n- **Önerim:** ElevenLabs, Azure TTS veya yerel Piper (hızlı/ücretsiz)\n- Doğal tonlama ve duygu için modern modeller\n\n## 3. Teknik Kararlar\n\n| Bileşen | Yerel (Local) | Bulut (Cloud) |\n|---------|---------------|---------------|\n| STT | Vosk, Whisper | Deepgram, Azure |\n| NLU | spaCy, Rasa | LLM API'leri |\n| TTS | Piper | ElevenLabs |\n\n## 4. Kaynak Kodu İstersen\n\nHangi katmanda başlamak istersin? Örneğin:\n- **Basit bir CLI prototip** mi?\n- **Streaming mimari** mi?\n- Belirli bir teknoloji stack'i (Python + Whisper + LLM) mi?\n\nNasıl bir derinlik istediğini söylersen, kodla birlikte gösterebilirim. 🚀"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 722,
+        "total_tokens": 750,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 28,
+        "prompt_ms": 3051.3,
+        "prompt_per_token_ms": 108.975,
+        "prompt_per_second": 9.2,
+        "predicted_n": 722,
+        "predicted_ms": 20943.3,
+        "predicted_per_token_ms": 29.007,
+        "predicted_per_second": 34.5,
+        "draft_n": 429,
+        "draft_n_accepted": 304
+      }
+    }
+  },
+  {
+    "engine": "poly",
+    "run": 2,
+    "seconds": 21.751,
+    "response": {
+      "id": "chatcmpl-4476b984f399452a8682ca97",
+      "object": "chat.completion",
+      "created": 1792585284,
+      "model": "ornith-1.5-122b-uncensored-ad-iq3_xxs",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# Sesli Asistan Mimarisi\n\nHarika bir soru! Bir sesli asistanı uçtan uca nasıl kurdüğumuyu anlatayım:\n\n## 1. Ses Girişi (Asenkron Yaklaşım)\n\n```\n[Mikrofon] → [Ses Akışı] → [VAD - Voice Activity Detection]\n```\n\n**Kritik karar:** Kesintisiz dinleme yerine **VAD** kullanırım. Sürekli STT çağırmak hem maliyetli hem de doğal değil. Kullanıcı konuşmaya başladığında ve bittiğinde bunu tespit ederim.\n\n```python\n# Önerim: WebRTC VAD veya PyAudioWeb\nvad = webrtcvad.Vad(2)  # 0-3 arası agresiflik seviyesi\n```\n\n## 2. Konuşma Tanıma (STT)\n\n| Seçenek | Kullanım |\n|---------|----------|\n| **Whisper** (yerel) | Gecikme kabul edilebilir, gizlilik önemli |\n| **Deepgram / Google STT** | Düşük gecikme, gerçek zamanlı |\n| **Streaming STT** | Kelime kelime sonuç için |\n\n## 3. Anlama ve LLM Katmanı\n\n```python\n# En kritik kısım: Fonksiyon çağrıları\ntools = [\n    {\"type\": \"function\", ...},  # takvim, hava durumu vb.\n]\nresponse = llm.chat.completions.create(\n    messages=history,\n    tools=tools\n)\n```\n\n**Tasarım kararı:** LLM'i her şeyi yapmaya zorlamamak için **işlev çağrısı (function calling)** pattern'ini kullanırım. LLM metni anlar, araçları o seçer.\n\n## 4. Sentezleme (TTS)\n\n- **Gerçek zamanlı streaming** TTS kullanırım — ilk kelime gelene kadar bekleme olmasın\n- **Elektromanyetik dalga**: LLM çıktısı ile TTS'i paralel çalıştır\n\n## 5. En Büyük Zorluklar\n\n### Gecikme Yönetimi ⏱️\nToplam hedef: **< 500ms** hissedilen yanıt\n\n```\nSTT (300ms) + LLM (başlangıç 200ms) + TTS ilk kelime (100ms)\n```\n\n### Tam Ekran vs. Parçalı İşleme\nLLM tam metni beklemek yerine, VAD \"konuşma bitti\" dediğinde işlemeye başlarım. Yarım cümleler için **partial results** desteklerim.\n\n### Duraklama Algılama\n```python\n# Kullanıcı nefes alıyor mu yoksa bitirdi mi?\nSILENCE_TIMEOUT = 0.8  # saniye\n```\n\n## Önerilen Teknoloji Yığını\n\n```\nFrontend: WebRTC + Web Audio API\nSTT: Deepgram (streaming) veya Whisper.local\nLLM: Function calling destekli model\nTTS: ElevenLabs / Azure / Piper (yerel)\nOrkestrasyon: State machine\n```\n\n## State Machine (Kalp)\n\n```\nDINLE → TANIMA → ANLA → [ARAÇ ÇAĞRI?] → ÜRET → KONUŞ → DINLE\n                                    ↑                    |\n                                    └────────────────────┘\n```\n\n---\n\n**En önemli tasarım felsefem:** Doğal konuşma = kesintisiz akış. Kullanıcı \"tamam\" deme hissi yaşamamalı. Parçalı işleme + streaming her yerde.\n\nHangi kısmı üzerine derinleşmek istersin? (Örn: gerçek zamanlı STT, low-latency TTS pipeline'ı ya da function calling tasarımı)"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 28,
+        "completion_tokens": 840,
+        "total_tokens": 868,
+        "prompt_tokens_details": {
+          "cached_tokens": 27
+        }
+      },
+      "timings": {
+        "cache_n": 27,
+        "prompt_n": 1,
+        "prompt_ms": 38.0,
+        "prompt_per_token_ms": 38.0,
+        "prompt_per_second": 26.3,
+        "predicted_n": 840,
+        "predicted_ms": 21711.8,
+        "predicted_per_token_ms": 25.847,
+        "predicted_per_second": 38.7,
+        "draft_n": 478,
+        "draft_n_accepted": 325
+      }
+    }
+  }
+]

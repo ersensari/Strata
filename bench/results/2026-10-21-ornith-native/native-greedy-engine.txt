@@ -1,0 +1,10 @@
+[strata] 2026-10-21 12:22:13 engine started: /data/build/strata --serve --model /models-ornith/Ornith-1.5-122B-Uncensored-AD-IQ3_XXS/Ornith-1.5-122B-Uncensored-AD-IQ3_XXS-00001-of-00031.gguf --ctx 32768 --chunk 512 --cpu-threads 11 --mtp 3 --expert-vram 6.4
+strata-q36: /models-ornith/Ornith-1.5-122B-Uncensored-AD-IQ3_XXS/Ornith-1.5-122B-Uncensored-AD-IQ3_XXS-00001-of-00031.gguf: 899 tensors (layout checked), 6.43 GiB on the GPU in 1.0 s (the routed experts are placed after the engine's buffers)
+strata: K-quant prompt kernels from /data/build/libstrata_kq.so (STRATA_MMQ_KQ=1)
+strata-q36: prompt experts on MMQ (int8)
+strata-q36: context 32768 cells, prompt chunk 512, MTP block loaded, 5.24 GiB of VRAM free
+strata-q36: hybrid experts: 12 of 256 per layer in VRAM (2.09 GiB), all 44.69 GiB in pinned host memory, the rest of a batch of <= 128 rows on 12 CPU threads, bigger prompt chunks streamed (2.53 GiB staging); 58.5 s
+strata-q36: warmed up in 2.2 s (one prompt chunk, a decode step, a speculative step)
+strata serve: session 0: prompt 28 tokens = 0 reused + 28 read in 780 ms (35.9 tok/s), 642 generated in 35370 ms (18.2 tok/s), drafts accepted 302 of 1023 (stop)
+strata serve: session 0: prompt 28 tokens = 0 reused + 28 read in 464 ms (60.4 tok/s), 536 generated in 24288 ms (22.1 tok/s), drafts accepted 271 of 792 (stop)
+strata-q36: hybrid experts: 272598 of 932800 batch entries on the GPU (29.2%), 660202 on the CPU pool in 44476 ms, 1172 slot replacements

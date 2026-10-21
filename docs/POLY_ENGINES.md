@@ -9,6 +9,10 @@ No upstream pull request is planned. This is a source integration branch, not a 
 or a migration of existing application routing. A separate [local container trial](../docker/local-poly/README.md)
 now runs the original web app host with the imported engines.
 
+An opt-in [Ornith native-engine experiment](ORNITH_NATIVE.md) also runs the existing IQ3 GGUF through
+the original `strata` executable. It is separate from the default Poly deployment and currently slower
+on the tested 16 GB host.
+
 ## Scope
 
 - `src/poly/` and `include/strata/poly/`: Qwen35 MoE (Ornith/MiniCPM), Gemma4, GLM5-next, DeepSeek4 and LFM2 MoE.
