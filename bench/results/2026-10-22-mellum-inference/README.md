@@ -73,7 +73,7 @@ the original 9/15 result into a 15/15 score.
 ## Evidence
 
 `quality-speed.json`, `thinking-check.json`, `lookup-speed.json`,
-`reference-cases.json`, `parity-summary.json`, `batch-parity.log`,
+`reference-cases.json`, `parity-summary.json`, `batch-parity.txt`,
 `cache-restore.json` and `summary.json` retain the measured prompts, responses,
 settings and timings. `first-load.json` and the Poly logs include raw token IDs
 and the first generated probabilities. The runner is `bench/ornith_compare.py`
