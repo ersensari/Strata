@@ -1,0 +1,108 @@
+forgeloop-ai-polystrata
+Production stopped; now testing on GPU 1 only
+ok   n   512 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n   512 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n  1024 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n  2816 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n  4096 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    1 norm spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    1 add  spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    3 norm spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    3 add  spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    8 norm spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows    8 add  spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows   64 norm spread 1: residual same, normed same, q8_1 same
+ok   n  5120 rows   64 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows 1024 add  spread 1: residual same, normed same, q8_1 same
+ok   n  2048 rows    8 add  spread 300: residual same, normed same, q8_1 same
+all passed
+gate 0, 256 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 3.7e-07 relative: ok
+gate 0, 128 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 4.1e-07 relative: ok
+gate 1, 256 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 2.9e-07 relative: ok
+gate 2, 256 experts, 6 used: 0 picks differ, 0 rounding ties, weights within 2.7e-07 relative: ok
+gate 1, 64 experts, 4 used: 0 picks differ, 0 rounding ties, weights within 2.3e-07 relative: ok
+query heads 32, KV heads 2, group 16
+ok   q8  pos      0 rows   16 scratch  64.0 MiB: 2.44e-03 from attend_batch (mean 1.3e-04, results up to 4.61); against doubles: fattn 2.44e-03, attend_batch 2.28e-03; 0.05 ms against 43.33
+ok   q8  pos      0 rows   64 scratch  64.0 MiB: 3.41e-03 from attend_batch (mean 1.2e-04, results up to 4.61); against doubles: fattn 3.39e-03, attend_batch 2.61e-03; 0.02 ms against 0.95
+ok   q8  pos      0 rows 1024 scratch  64.0 MiB: 9.62e-03 from attend_batch (mean 1.4e-04, results up to 4.61); against doubles: fattn 3.92e-03, attend_batch 1.59e-03; 0.40 ms against 1.37
+ok   q8  pos      5 rows   37 scratch  64.0 MiB: 3.93e-03 from attend_batch (mean 1.2e-04, results up to 4.69); against doubles: fattn 2.70e-03, attend_batch 2.59e-03; 0.03 ms against 0.29
+ok   q8  pos   1000 rows  517 scratch  64.0 MiB: 1.09e-02 from attend_batch (mean 1.6e-04, results up to 4.20); against doubles: fattn 4.40e-03, attend_batch 1.37e-03; 0.50 ms against 1.28
+ok   q8  pos   4095 rows 1024 scratch  64.0 MiB: 1.63e-02 from attend_batch (mean 2.0e-04, results up to 3.54); against doubles: fattn 4.38e-03, attend_batch 1.11e-03; 2.70 ms against 7.98
+ok   q8  pos  30000 rows 1024 scratch  64.0 MiB: 1.18e-02 from attend_batch (mean 1.9e-04, results up to 3.58); against doubles: fattn 3.97e-03, attend_batch 3.65e-04; 17.52 ms against 45.62
+ok   q8  pos  30000 rows 1024 scratch  40.5 MiB: 8.24e-03 from attend_batch (mean 1.0e-04, results up to 3.58); against doubles: fattn 2.25e-03, attend_batch 3.65e-04; 19.44 ms against 45.67
+ok   q8  pos  30001 rows  100 scratch   3.5 MiB: 1.34e-03 from attend_batch (mean 2.4e-05, results up to 3.58); against doubles: fattn 8.88e-04, attend_batch 9.61e-04; 6.20 ms against 4.48
+ok   q8  pos 120000 rows 1024 scratch  64.0 MiB: 6.11e-03 from attend_batch (mean 1.1e-04, results up to 2.74); against doubles: fattn 2.43e-03, attend_batch 2.04e-04; 70.65 ms against 179.17
+ok   f16 pos      0 rows   16 scratch  64.0 MiB: 2.44e-03 from attend_batch (mean 1.3e-04, results up to 4.61); against doubles: fattn 1.81e-03, attend_batch 1.05e-03; 0.02 ms against 0.06
+ok   f16 pos      0 rows   64 scratch  64.0 MiB: 3.41e-03 from attend_batch (mean 1.2e-04, results up to 4.61); against doubles: fattn 2.20e-03, attend_batch 1.17e-03; 0.02 ms against 0.04
+ok   f16 pos      0 rows 1024 scratch  64.0 MiB: 9.62e-03 from attend_batch (mean 1.4e-04, results up to 4.61); against doubles: fattn 3.78e-03, attend_batch 9.34e-04; 0.40 ms against 1.12
+ok   f16 pos      5 rows   37 scratch  64.0 MiB: 3.93e-03 from attend_batch (mean 1.2e-04, results up to 4.69); against doubles: fattn 2.38e-03, attend_batch 1.31e-03; 0.02 ms against 0.06
+ok   f16 pos   1000 rows  517 scratch  64.0 MiB: 1.06e-02 from attend_batch (mean 1.4e-04, results up to 4.20); against doubles: fattn 4.28e-03, attend_batch 8.47e-04; 0.62 ms against 1.16
+ok   f16 pos   4095 rows 1024 scratch  64.0 MiB: 1.68e-02 from attend_batch (mean 1.8e-04, results up to 3.54); against doubles: fattn 4.73e-03, attend_batch 8.05e-04; 3.01 ms against 7.67
+ok   f16 pos  30000 rows 1024 scratch  64.0 MiB: 1.71e-02 from attend_batch (mean 2.5e-04, results up to 3.58); against doubles: fattn 7.08e-03, attend_batch 2.81e-04; 17.17 ms against 44.26
+ok   f16 pos  30000 rows 1024 scratch  40.5 MiB: 1.71e-02 from attend_batch (mean 2.5e-04, results up to 3.58); against doubles: fattn 7.08e-03, attend_batch 2.81e-04; 17.22 ms against 44.21
+ok   f16 pos  30001 rows  100 scratch   3.5 MiB: 1.61e-02 from attend_batch (mean 2.6e-04, results up to 3.58); against doubles: fattn 8.64e-03, attend_batch 3.79e-04; 2.40 ms against 4.54
+ok   f16 pos 120000 rows 1024 scratch  64.0 MiB: 1.84e-02 from attend_batch (mean 2.8e-04, results up to 2.74); against doubles: fattn 5.98e-03, attend_batch 2.01e-04; 67.31 ms against 173.21
+all passed
+query heads 32, KV heads 2, group 16
+ok   q8  pos      0 rows 1: 9.77e-04 from attend() (results up to 4.58); against doubles: fdec 9.77e-04, attend 0.00e+00; same bits alone and on the card; 0.005 ms against 0.007
+ok   q8  pos      5 rows 3: 1.82e-03 from attend() (results up to 4.01); against doubles: fdec 1.82e-03, attend 6.67e-07; same bits alone and on the card; 0.015 ms against 0.021
+ok   q8  pos   1022 rows 2: 9.05e-04 from attend() (results up to 2.20); against doubles: fdec 9.06e-04, attend 9.34e-07; same bits alone and on the card; 0.056 ms against 0.029
+ok   q8  pos   1023 rows 4: 9.98e-04 from attend() (results up to 2.20); against doubles: fdec 9.79e-04, attend 6.24e-07; same bits alone and on the card; 0.111 ms against 0.064
+ok   q8  pos   1024 rows 1: 7.07e-04 from attend() (results up to 2.20); against doubles: fdec 7.08e-04, attend 9.08e-07; same bits alone and on the card; 0.028 ms against 0.018
+ok   q8  pos   2047 rows 5: 2.79e-03 from attend() (results up to 3.13); against doubles: fdec 1.09e-03, attend 9.25e-07; same bits alone and on the card; 0.141 ms against 0.142
+ok   q8  pos  30000 rows 2: 2.58e-04 from attend() (results up to 0.35); against doubles: fdec 2.58e-04, attend 3.51e-07; same bits alone and on the card; 0.094 ms against 0.786
+ok   q8  pos 120000 rows 3: 5.20e-04 from attend() (results up to 0.40); against doubles: fdec 2.84e-04, attend 3.10e-07; same bits alone and on the card; 0.794 ms against 6.151
+ok   q8  pos 140000 rows 1: 1.06e-04 from attend() (results up to 0.20); against doubles: fdec 8.31e-05, attend 1.57e-07; same bits alone and on the card; 0.420 ms against 2.572
+ok   q8  pos 140000 rows 3: 4.65e-04 from attend() (results up to 0.36); against doubles: fdec 2.47e-04, attend 2.96e-07; same bits alone and on the card; 0.876 ms against 7.169
+ok   q8  pos 170000 rows 4: 4.26e-04 from attend() (results up to 0.35); against doubles: fdec 9.97e-05, attend 4.38e-07; same bits alone and on the card; 1.128 ms against 11.902
+ok   q8  pos 170000 rows 6: 4.26e-04 from attend() (results up to 0.35); against doubles: fdec 9.97e-05, attend 2.28e-07; same bits alone and on the card; 1.690 ms against 17.422
+ok   q8  pos 170000 rows 9: 8.24e-04 from attend() (results up to 2.41); against doubles: fdec 9.97e-05, attend 3.15e-07; same bits alone and on the card; 2.769 ms against 26.160
+ok   f16 pos      0 rows 1: 0.00e+00 from attend() (results up to 4.58); against doubles: fdec 9.77e-04, attend 9.77e-04; same bits alone and on the card; 0.006 ms against 0.007
+ok   f16 pos      5 rows 3: 1.46e-03 from attend() (results up to 4.02); against doubles: fdec 2.34e-03, attend 1.86e-03; same bits alone and on the card; 0.015 ms against 0.020
+ok   f16 pos   1022 rows 2: 6.15e-04 from attend() (results up to 2.21); against doubles: fdec 1.34e-03, attend 9.28e-04; same bits alone and on the card; 0.057 ms against 0.025
+ok   f16 pos   1023 rows 4: 6.14e-04 from attend() (results up to 2.21); against doubles: fdec 1.07e-03, attend 9.40e-04; same bits alone and on the card; 0.112 ms against 0.058
+ok   f16 pos   1024 rows 1: 6.11e-04 from attend() (results up to 2.20); against doubles: fdec 1.07e-03, attend 9.28e-04; same bits alone and on the card; 0.042 ms against 0.015
+ok   f16 pos   2047 rows 5: 1.42e-03 from attend() (results up to 3.13); against doubles: fdec 1.99e-03, attend 1.32e-03; same bits alone and on the card; 0.156 ms against 0.117
+ok   f16 pos  30000 rows 2: 2.46e-04 from attend() (results up to 0.35); against doubles: fdec 3.97e-04, attend 2.73e-04; same bits alone and on the card; 0.173 ms against 0.588
+ok   f16 pos 120000 rows 3: 4.93e-04 from attend() (results up to 0.40); against doubles: fdec 2.58e-04, attend 8.14e-05; same bits alone and on the card; 1.402 ms against 4.474
+ok   f16 pos 140000 rows 1: 1.01e-04 from attend() (results up to 0.20); against doubles: fdec 1.16e-04, attend 9.37e-05; same bits alone and on the card; 0.774 ms against 1.651
+ok   f16 pos 140000 rows 3: 4.42e-04 from attend() (results up to 0.36); against doubles: fdec 2.22e-04, attend 9.37e-05; same bits alone and on the card; 1.540 ms against 5.189
+ok   f16 pos 170000 rows 4: 4.02e-04 from attend() (results up to 0.35); against doubles: fdec 1.19e-04, attend 1.14e-04; same bits alone and on the card; 1.885 ms against 8.328
+ok   f16 pos 170000 rows 6: 4.02e-04 from attend() (results up to 0.35); against doubles: fdec 9.57e-05, attend 1.14e-04; same bits alone and on the card; 2.830 ms against 12.560
+ok   f16 pos 170000 rows 9: 4.02e-04 from attend() (results up to 2.41); against doubles: fdec 1.84e-04, attend 1.39e-04; same bits alone and on the card; 4.711 ms against 18.838
+all passed

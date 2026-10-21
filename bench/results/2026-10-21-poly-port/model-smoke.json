@@ -1,0 +1,168 @@
+[
+  {
+    "model": "ornith",
+    "health": {
+      "status": "ok",
+      "max_context": 262144,
+      "model": "ornith-import-check",
+      "images": true,
+      "api_key": true,
+      "image_generation": false,
+      "loaded": true,
+      "service": "strata"
+    },
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 30,
+      "completion_tokens": 13,
+      "total_tokens": 43,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 30,
+      "prompt_ms": 419.4,
+      "prompt_per_token_ms": 13.98,
+      "prompt_per_second": 71.5,
+      "predicted_n": 13,
+      "predicted_ms": 290.4,
+      "predicted_per_token_ms": 22.338,
+      "predicted_per_second": 44.8,
+      "draft_n": 9,
+      "draft_n_accepted": 7
+    },
+    "message": {
+      "role": "assistant",
+      "content": "def add(a, b):\n    return a + b"
+    }
+  },
+  {
+    "model": "minicpm",
+    "health": {
+      "status": "ok",
+      "max_context": 262144,
+      "model": "minicpm-v-4.7-35b-a3b-q4_k_m",
+      "images": true,
+      "api_key": true,
+      "image_generation": false,
+      "loaded": true,
+      "service": "strata"
+    },
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 281,
+      "completion_tokens": 2,
+      "total_tokens": 283,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 281,
+      "prompt_ms": 639.9,
+      "prompt_per_token_ms": 2.277,
+      "prompt_per_second": 439.1,
+      "predicted_n": 2,
+      "predicted_ms": 46.1,
+      "predicted_per_token_ms": 23.05,
+      "predicted_per_second": 43.4,
+      "draft_n": 1,
+      "draft_n_accepted": 0
+    },
+    "message": {
+      "role": "assistant",
+      "content": "Red"
+    }
+  },
+  {
+    "model": "gemma",
+    "health": {
+      "status": "ok",
+      "max_context": 262144,
+      "model": "gemma-4-26b-a4b-ud-q4_k_m",
+      "images": true,
+      "api_key": true,
+      "image_generation": false,
+      "loaded": true,
+      "service": "strata"
+    },
+    "finish_reason": "tool_calls",
+    "usage": {
+      "prompt_tokens": 74,
+      "completion_tokens": 14,
+      "total_tokens": 88,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 74,
+      "prompt_ms": 314.1,
+      "prompt_per_token_ms": 4.245,
+      "prompt_per_second": 235.6,
+      "predicted_n": 14,
+      "predicted_ms": 149.5,
+      "predicted_per_token_ms": 9.344,
+      "predicted_per_second": 107.0,
+      "draft_n": 14,
+      "draft_n_accepted": 11
+    },
+    "message": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "call_847b5e644bd946108f4f9b7f",
+          "type": "function",
+          "function": {
+            "name": "weather",
+            "arguments": "{\"city\": \"Ankara\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "qwen",
+    "health": {
+      "status": "ok",
+      "max_context": 262144,
+      "model": "swift-1.5-iq3_xxs",
+      "images": true,
+      "api_key": true,
+      "image_generation": false,
+      "loaded": true,
+      "service": "strata"
+    },
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 30,
+      "completion_tokens": 13,
+      "total_tokens": 43,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 30,
+      "prompt_ms": 426.9,
+      "prompt_per_token_ms": 14.23,
+      "prompt_per_second": 70.3,
+      "predicted_n": 13,
+      "predicted_ms": 242.9,
+      "predicted_per_token_ms": 18.685,
+      "predicted_per_second": 53.5,
+      "draft_n": 9,
+      "draft_n_accepted": 9
+    },
+    "message": {
+      "role": "assistant",
+      "content": "def add(a, b):\n    return a + b"
+    }
+  }
+]

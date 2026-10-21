@@ -7,6 +7,9 @@
 
 <p align="center"><b>English</b> · <a href="README.zh-CN.md">简体中文</a> · <a href="README.ja.md">日本語</a> · <a href="README.de.md">Deutsch</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português</a></p>
 
+This fork keeps the original Strata app and Qwen engine, with optional [PolyStrata engines](docs/POLY_ENGINES.md)
+for local GGUF models. These engines require a separate source build; upstream release downloads do not include them.
+
 <h3 align="center">Run a state-of-the-art model on your own gaming PC</h3>
 
 <p align="center">Support for NVIDIA, AMD, Intel · Windows, Linux, Mac · free and open source</p>

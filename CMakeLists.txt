@@ -2197,6 +2197,12 @@ if(STRATA_BUILD_TESTS)
   add_test(NAME aux_cpus_test COMMAND aux_cpus_test)
 endif()
 
+# Extra GGUF architectures from PolyStrata, isolated from the original engine.
+option(STRATA_POLY_ENGINES "Build the optional PolyStrata GGUF engine" OFF)
+if(STRATA_POLY_ENGINES)
+  include(cmake/poly_engines.cmake)
+endif()
+
 if(STRATA_BUILD_TESTS)
   enable_testing()
   # Model-level checks may be absent from source distributions.

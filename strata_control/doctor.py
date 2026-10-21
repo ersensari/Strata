@@ -17,6 +17,7 @@ from strata_control.profiles import read_run_config
 
 
 PATH_FLAGS = {
+    "--model": "file",  # the optional strata-poly engine reads its GGUF directly
     "--pack": "directory",
     "--native": "file",
     "--ple-gguf": "file",

@@ -64,6 +64,7 @@ from serve.frontend import (THINK_END, ChatTemplate, Event, OutputParser, anthro
                             forced_call, images_of, literal_tags, mark_think_literals, openai_to_messages,
                             tool_choice_of, unmark_think_literals)
 from serve.mcp import McpCancelled, hub_from_config  # noqa: E402
+from serve import poly_backend
 from serve import runconfig  # noqa: E402
 from strata_control import engine_component  # noqa: E402
 from strata_control import hipblaslt_tuning  # noqa: E402
@@ -1434,6 +1435,8 @@ class StrataEngine:
             pn = prefix.get("tokens")
             if isinstance(pn, int) and not isinstance(pn, bool) and pn > 0:
                 keys += f" pin={pn}"
+        if isinstance(sampling.get("image_pad"), int):
+            keys += f" image_pad={sampling['image_pad']}"
         return keys + StrataEngine.projection_key(sampling) + bias_api.engine_key(sampling.get("logit_bias"))
 
     @staticmethod
@@ -2964,6 +2967,8 @@ def engine_args(cfg: dict) -> list[str]:
     # "mtp": false (the Models settings, `strata launch --mtp off`, or by hand): no draft layer, whatever the args say.  A setup run
     # that writes --mtp back into the args cannot undo it, because this is applied at every start.
     if draft_layer.is_off(cfg):
+        if poly_backend.is_poly(cfg) and "--no-draft" not in args:
+            args.append("--no-draft")
         args, removed = draft_layer.strip(args)
         if removed:
             print(f'[strata] "mtp": false - starting without the draft layer ({" ".join(removed)} left out)', flush=True)
@@ -2971,7 +2976,7 @@ def engine_args(cfg: dict) -> list[str]:
     # hand) advertised images and then refused every picture ("this engine was started without --vision").  The section
     # says images are wanted: start the engine with them, and keep the encoder's VRAM free as setup does for a GPU encoder
     # (only when the config has no reserve of its own).
-    if isinstance(cfg.get("vision"), dict) and "--vision" not in args:
+    if isinstance(cfg.get("vision"), dict) and "--vision" not in args and not poly_backend.is_poly(cfg):
         args.append("--vision")
         note = "added --vision"
         if cfg["vision"].get("gpu") and "--vram-reserve-mib" not in args:
@@ -3781,6 +3786,7 @@ class Service:
             slots = conversation_slots(engine)
             self.prompts = PromptEncoder(tokenizer, keep=slots) if slots is not None and slots > 0 \
                 else PromptEncoder(tokenizer)
+        poly_backend.configure(self, tokenizer)
 
     def loaded(self) -> bool:
         return not hasattr(self.engine, "alive") or self.engine.alive()
@@ -4559,6 +4565,8 @@ class Service:
         thinking) is rendered as a default one up to the answer - the same prompt start, so the conversation cache
         keeps it - and its effort follows in a short system turn right before the answer (thinking off: the template's
         empty thinking block).  The engine (--tail-role-token) checkpoints in front of that turn."""
+        if self.call_format != "function":
+            return poly_backend.render(self, messages, tools, kwargs)
         effort = kwargs.get("reasoning_effort")
         off = kwargs.get("enable_thinking") is False
         if not self.effort_end or (not off and effort in (None, "", "xhigh", "high")):
@@ -4660,8 +4668,10 @@ class Service:
             if self.vision is None:
                 raise ValueError("this server was started without the vision encoder (run setup again and choose "
                                  "'vision'), so it cannot read images")
-            pad = self.tok.encode(IMAGE_PAD, parse_special=True)[0]
-            start = self.tok.encode(VISION_START, parse_special=True)[0]
+            mark, before, around = self.image_marks
+            def one(text):
+                return self.tok.encode(text, parse_special=True)[0]
+            pad, start = one(mark), one(before) if before else None
             # An image URL is downloaded first, outside the FIFO: under it, a slow server held every other request
             # for as long as urlopen waited.
             def fetch(src):
@@ -4684,14 +4694,15 @@ class Service:
             # one <|image_pad|> per image -> one per image token.  Only the markers the template writes for an image
             # (right after <|vision_start|>) are images: the same text inside a message (an agent reading these docs,
             # #150) is kept as plain text, or it took an image's place and the counts no longer matched.
-            literal = self.tok.encode(IMAGE_PAD, parse_special=False)
+            literal = self.tok.encode(mark, parse_special=False)
+            begin, end = ([one(around[0])], [one(around[1])]) if around else ([], [])
             out, k = [], 0
             for j, t in enumerate(ids):
-                if t == pad and j > 0 and ids[j - 1] == start:
+                if t == pad and (k < len(encoded) if start is None else j > 0 and ids[j - 1] == start):
                     # more pairs than images: text parts that cut both markers apart (the literal marks keep whole ones text)
                     if k == len(encoded):
                         raise ValueError("the prompt and its images do not match")
-                    out += [pad] * encoded[k][1]
+                    out += begin + [pad] * encoded[k][1] + end
                     k += 1
                 elif t == pad:
                     out += literal
@@ -4735,6 +4746,7 @@ class Service:
             # request: one refused after it (the engine starting, no room) left it in the vision directory for good,
             # one more for every retry of a 503.  run() deletes it; drop_embeddings() if run() never starts.
             combined = combined_embeddings_path(self.vision.dir, sum(Path(p).stat().st_size for p, _ in encoded))
+            self.embeddings.pad = pad
             self.embeddings.path = combined             # first, so a half-written one is found as well
             # #2228: each picture's key is its normalized bytes' hash (the encoder's file name), so the engine's
             # conversation cache matches a picture by what it is, not by its embedding floats: a picture encoded again
@@ -4908,7 +4920,8 @@ class Service:
                       f"the answer (budget {budget})", flush=True)
                 budget = max(1, max_new - reserve)
         parser = OutputParser(thinking=thinking, tools=tools, stream_tools=True, recover=self.tool_call_recovery,
-                              declared_only=declared_only)
+                              declared_only=declared_only, call_format=self.call_format,
+                              opened=bool(self.think_open_ids) and ids[-len(self.think_open_ids):] == self.think_open_ids)
         detok, n, finish = Detokenizer(self.tok), 0, "length"
         run_tok, run_len, repeated = None, 0, False     # #606: the current run of one repeated token
         thinking_n = 0                                  # tokens written while thinking (Responses' reasoning_tokens)
@@ -4944,6 +4957,8 @@ class Service:
         looped, next_loop_check = False, LOOP_CHECK_EVERY       # #728: reasoning that repeats whole passages
         raw_ids = []                                    # every generated id (STRATA_DEBUG: dump raw model text)
         emb, self.embeddings.path = getattr(self.embeddings, "path", None), None   # this run's to delete now
+        if emb is not None and getattr(self.embeddings, "pad", None) is not None:
+            sampling = {**sampling, "image_pad": self.embeddings.pad}
         img_keys, self.embeddings.keys = getattr(self.embeddings, "keys", None), None
         if emb and img_keys:
             sampling = {**(sampling or {}), "strata_img_keys": img_keys}   # #2228: sent beside the embeddings file
@@ -6921,7 +6936,7 @@ def make_handler(svc: Service):
         def _openai(self, req):
             req = svc.with_shared(req, "openai")
             bias_api.normalize(req.get("logit_bias"), len(getattr(svc.tok, "tokens", ())) or None)
-            messages, tools, kw = openai_to_messages(req)
+            messages, tools, kw = openai_to_messages(req, preserve_tool_ids=svc.call_format != "function")
             self._no_local_images(messages)
             if tool_choice_of(req.get("tool_choice"))[0] == "none":   # as the Responses route: no tools are offered
                 tools = None
@@ -7165,7 +7180,7 @@ def make_handler(svc: Service):
             """Anthropic's token count, which Claude Code asks for its context figures: the prompt this server would
             read for the same request, rendered and tokenized - the model does not run."""
             req = svc.with_shared(req, "anthropic")
-            messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked)
+            messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked, preserve_tool_ids=svc.call_format != "function")
             stop_strings(req)                                 # the same 400 as the request itself would get
             check_request_sampling(req)                       # ... likewise a sampling field of the wrong type
             self._json(200, {"input_tokens": len(svc.encode_prompt(messages, tools, kw, store=False))})
@@ -7173,7 +7188,7 @@ def make_handler(svc: Service):
         def _anthropic(self, req):
             svc.load()
             req = svc.with_shared(req, "anthropic")
-            messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked)
+            messages, tools, kw = anthropic_to_messages(req, svc.anthropic_think_unasked, preserve_tool_ids=svc.call_format != "function")
             self._no_local_images(messages)
             if tool_choice_of(req.get("tool_choice"))[0] == "none":   # Anthropic's {"type": "none"}: no tools offered
                 tools = None
@@ -8097,13 +8112,16 @@ def main(argv=None, *, lifecycle_event=None, interrupt_exit_code: int = 0) -> in
         ap.error(f"the model's tokenizer is missing ({tpath / 'vocab.json'}); run setup again")
     if (tpath / "vocab.json").exists():
         import strata_tokenizer as ST
-        vocab = json.loads((tpath / "vocab.json").read_text(encoding="utf-8"))
-        tokens = [None] * len(vocab)
-        for t, i in vocab.items():
-            tokens[i] = t
-        merges = (tpath / "merges.txt").read_text(encoding="utf-8").split("\n")
-        types = json.loads((tpath / "token_type.json").read_text())
-        tok = ST.Tokenizer(tokens, merges, types)
+        if poly_backend.is_poly(cfg):
+            tok = ST.Tokenizer.from_dir(tpath)
+        else:
+            vocab = json.loads((tpath / "vocab.json").read_text(encoding="utf-8"))
+            tokens = [None] * len(vocab)
+            for t, i in vocab.items():
+                tokens[i] = t
+            merges = (tpath / "merges.txt").read_text(encoding="utf-8").split("\n")
+            types = json.loads((tpath / "token_type.json").read_text())
+            tok = ST.Tokenizer(tokens, merges, types)
     hub = hub_from_config(cfg, a.mcp_config)            # before the minutes of loading: a bad entry stops here
     if a.offline and (hub is not None or cfg.get("before_load") or a.before_load):
         ap.error("--offline requires MCP servers and before_load commands to be disabled in this profile")
@@ -8216,7 +8234,7 @@ def main(argv=None, *, lifecycle_event=None, interrupt_exit_code: int = 0) -> in
     svc.max_queue = max_queue
     svc.queue_timeout_s = float(queue_timeout) if queue_timeout is not None else None
     if a.engine == "strata":                            # the model card's sampling when nothing else is said (see MODEL_CARD_SAMPLING)
-        svc.model_arch = cfg.get("arch") or "qwen4exp"
+        svc.model_arch = None if poly_backend.is_poly(cfg) else cfg.get("arch") or "qwen4exp"
         requested = cfg.get("parallel")
         if requested is None:
             args = cfg.get("args", [])

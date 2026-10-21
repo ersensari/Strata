@@ -25,3 +25,7 @@ docker/compose/* text eol=lf
 
 # Apple tools (codesign, plutil) read these: LF only, wherever the repository is cloned
 *.plist text eol=lf
+
+# The Poly attention copy and patch are checked byte for byte by tools/test_fattn_sync.py.
+src/poly/fattn_mma.cuh text eol=lf whitespace=-blank-at-eof
+src/poly/fattn_mma.patch text eol=lf whitespace=-blank-at-eol
