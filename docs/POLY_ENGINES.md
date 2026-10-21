@@ -106,3 +106,6 @@ the Tauri desktop app, which was not packaged/deployed during this integration.
 See [the integration record](../bench/results/2026-10-21-poly-port/README.md) for the exact checks and limits.
 The short model checks establish that the new server and engines communicate correctly. They are not
 comparative throughput benchmarks, coding evaluations or long-context acceptance tests.
+
+Mellum support is prepared separately and awaits deployment approval; see
+[Mellum in Poly](MELLUM_POLY.md) for the implementation, validation and limits.

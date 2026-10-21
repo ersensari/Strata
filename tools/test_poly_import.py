@@ -33,3 +33,9 @@ class ImportPlan(unittest.TestCase):
     def test_vision_requires_both_files(self):
         mm=self.root/'mmproj.gguf';mm.touch()
         with self.assertRaisesRegex(ValueError,'both'):self.p(mmproj=mm)
+
+    def test_mellum_has_no_qwen_kv_or_vision_settings(self):
+        result=self.p({'general.architecture':'mellum'})
+        self.assertEqual(result['architecture'],'mellum')
+        self.assertNotIn('--kv',result['config']['args'])
+        self.assertNotIn('vision',result['config'])

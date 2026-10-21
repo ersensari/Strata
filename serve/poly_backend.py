@@ -1,16 +1,40 @@
 """Optional PolyStrata architectures; the original server remains the protocol owner."""
 from pathlib import Path
+import re
 from serve import frontend
 
 IMAGE_PAD = "<|image_pad|>"
 VISION_START = "<|vision_start|>"
 TURN_OPENERS = {"function": ("<|im_start|>",), "gemma": ("<|turn>",),
                 "glm": ("<|system|>", "<|user|>", "<|assistant|>", "<|observation|>"),
-                "dsml": ("<｜User｜>", "<｜Assistant｜>"), "lfm2": ("<|im_start|>",)}
+                "dsml": ("<｜User｜>", "<｜Assistant｜>"), "lfm2": ("<|im_start|>",), "mellum": ("<|im_start|>",)}
 
 
 def is_poly(cfg):
     return Path(str(cfg.get("exe") or "")).stem.lower() in ("strata-poly", "strata-glm")
+
+
+def mellum_caps(template):
+    """Probe Mellum's JSON call history with the same parser used for its output."""
+    tools = [{"name": f"strata_mellum_{i}", "description": "strata_mellum_description",
+              "parameters": {"type": "object", "properties": {"n": {"type": "integer"}}}} for i in range(2)]
+    user = {"role": "user", "content": "strata_mellum_user"}
+    def history(count):
+        calls = [{"name": tools[i]["name"], "arguments": {"n": i}} for i in range(count)]
+        messages = [user, {"role": "assistant", "content": "", "tool_calls": [{"function": c} for c in calls]}]
+        messages += [{"role": "tool", "content": f"strata_mellum_result_{i}"} for i in range(count)] + [user]
+        prompt = template.render(messages, tools=tools)
+        got = []
+        for body in re.findall(r"<tool_call>(.*?)</tool_call>", prompt, re.S):
+            got += frontend.parse_mellum_tool_call(body)
+        return [{"name": c.name, "arguments": c.arguments} for c in got] == calls and all(
+            f"strata_mellum_result_{i}" in prompt for i in range(count))
+    try:
+        prompt = template.render([user], tools=tools)
+        return {"supports_tools": all(x in prompt for x in ("strata_mellum_0", "strata_mellum_description", "<tool_call>", '"arguments"')),
+                "supports_tool_calls": history(1), "supports_parallel_tool_calls": history(2)}
+    except (ValueError, TypeError, KeyError):
+        return {"supports_tools": False, "supports_tool_calls": False, "supports_parallel_tool_calls": False}
 
 
 def configure(service, tokenizer):
@@ -19,7 +43,7 @@ def configure(service, tokenizer):
     service.think_open_ids = []
     service.template_tokens = {}
     service.image_marks = (IMAGE_PAD, VISION_START if VISION_START in getattr(service.template, "source", VISION_START) else None, None)
-    if pre not in ("glm4", "glm5", "gemma4", "joyai-llm", "deepseek-v3", "lfm2"):
+    if pre not in ("glm4", "glm5", "gemma4", "joyai-llm", "deepseek-v3", "lfm2", "mellum2"):
         return
     service.literals = frontend.literal_tags(getattr(tokenizer, "control_tokens", ()))
     im_end = tokenizer.encode("<|im_end|>", parse_special=True)
@@ -37,7 +61,9 @@ def configure(service, tokenizer):
     # how the model writes a tool call (serve/frontend.py's OutputParser)
     pre = getattr(tokenizer, "pre", "")
     service.call_format = "glm" if pre in ("glm4", "glm5") else "gemma" if pre == "gemma4" else \
-        "dsml" if pre in ("joyai-llm", "deepseek-v3") else "lfm2" if pre == "lfm2" else "function"
+        "dsml" if pre in ("joyai-llm", "deepseek-v3") else "lfm2" if pre == "lfm2" else "mellum" if pre == "mellum2" else "function"
+    if pre == "mellum2":
+        service.template.caps.update(mellum_caps(service.template))
     service.turn_ids = frozenset(t[0] for t in (tokenizer.encode(s, parse_special=True)
                                              for s in TURN_OPENERS[service.call_format]) if len(t) == 1)
     service.engine.turn_ids = service.turn_ids            # the GEN line's turn_at (StrataEngine.turn_key)
@@ -66,7 +92,7 @@ def render(service, messages, tools, kwargs):
         raise ValueError("No messages provided.")
     off = kwargs.get("enable_thinking") is False
     kwargs = {**service.template_tokens, **kwargs, "enable_thinking": not off}
-    if service.call_format in ("gemma", "dsml") and tools:
+    if service.call_format in ("gemma", "dsml", "mellum") and tools:
         tools = [{"type": "function", "function": t} for t in tools]
     prompt = service.template.render(messages, tools=tools, **kwargs)
     if service.call_format == "gemma":

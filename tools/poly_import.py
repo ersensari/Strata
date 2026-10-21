@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from gguf_reader import GGUFFile
 from strata_tokenizer import extract
 
-ARCHITECTURES = {'qwen35moe', 'gemma4', 'glm5next', 'glm5-next', 'deepseek4', 'lfm2moe'}
+ARCHITECTURES = {'qwen35moe', 'gemma4', 'glm5next', 'glm5-next', 'deepseek4', 'lfm2moe', 'mellum'}
 
 
 def plan(model: Path, engine: Path, name: str, config_dir: Path, context: int, gpu: int,

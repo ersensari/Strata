@@ -6,6 +6,7 @@
 #include "gemma4.hpp"
 #include "glm5next.hpp"
 #include "lfm2moe.hpp"
+#include "mellum.hpp"
 #include "mmq.hpp"
 #include "qwen35.hpp"
 #include "runtime.hpp"
@@ -997,6 +998,7 @@ std::unique_ptr<Engine> Engine::open(const Options& o) {
         if (name == "gemma4") return std::make_unique<Gemma4>();
         if (name == "deepseek4") return std::make_unique<DeepSeek4>();
         if (name == "lfm2moe") return std::make_unique<Lfm2Moe>();
+        if (name == "mellum") return std::make_unique<Mellum>();
         throw std::runtime_error(o.model + " is a '" + name + "' model, which this engine does not run");
     };
     int cards = 1, devices = 1;

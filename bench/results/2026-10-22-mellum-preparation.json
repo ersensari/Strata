@@ -1,0 +1,62 @@
+{
+  "status": "prepared; awaiting owner approval; not deployed",
+  "build": {
+    "backend": "CUDA",
+    "arch": "sm_120",
+    "compiler": "13.0.48",
+    "path": "/home/ersen/Source/Strata/build-mellum-staging/strata-poly",
+    "sha256": "cd1abd57679b7104c90d392ede591be2efb376d733f38ad110d1ba494dde4f46",
+    "targets": [
+      "strata-poly",
+      "poly_draft_race_test",
+      "poly_mellum_math_test",
+      "poly_workers_test"
+    ],
+    "containers_had_gpu_access": false
+  },
+  "tests": {
+    "targeted_pytest": {
+      "passed": 104,
+      "subtests": 289
+    },
+    "ctest_cpu": {
+      "passed": 2
+    },
+    "server_pytest": {
+      "passed": 350,
+      "failed": 1,
+      "subtests": 509,
+      "failure": "GpuChoice.test_hip_ordinal",
+      "same_failure_reproduced_on_clean_HEAD": true,
+      "baseline_commit": "e5eaae2b0c83f5c11bd497197e5a0c477fa894b9",
+      "warning": "TelemetryNoDisks psutil test thread warning"
+    },
+    "rope_reference": {
+      "max_abs_error": 0.0048139319,
+      "tolerance": 0.01,
+      "max_position": 131071,
+      "gpu_parity": false
+    },
+    "real_tokenizer": "code and Unicode round trips; thinking on/off and tool history rendering checked"
+  },
+  "live_before": {
+    "main_pid": "1371353",
+    "poly_sha256": "d3d58b09317920f1bf1c3a101516dcb379dca99de06df4b690f54c12d2fad049",
+    "native_sha256": "1a847ad3b21c7d035b2e90963e64ad47ac669c399adb90dafe5e56e46699b293"
+  },
+  "live_after": {
+    "main_pid": "1371353",
+    "poly_sha256": "d3d58b09317920f1bf1c3a101516dcb379dca99de06df4b690f54c12d2fad049",
+    "native_sha256": "1a847ad3b21c7d035b2e90963e64ad47ac669c399adb90dafe5e56e46699b293"
+  },
+  "live_unchanged": true,
+  "inference_started": false,
+  "installed_mellum_into_live_controller": false,
+  "staged_config": "/home/ersen/Source/Strata/build-mellum-staging/pending/strata-mellum-12b.json",
+  "limits": [
+    "FP16 KV only",
+    "SWA cache uses full row storage, not a compact ring",
+    "No MTP block in the local model",
+    "GPU correctness, performance and HIP validation pending"
+  ]
+}

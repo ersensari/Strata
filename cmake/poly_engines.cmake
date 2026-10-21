@@ -69,7 +69,7 @@ if(STRATA_NATIVE_EXPERTS AND (STRATA_ENABLE_CUDA OR STRATA_ENABLE_HIP) AND NOT S
   endif()
 
   add_executable(strata-poly src/poly/main.cpp src/poly/engine.cpp src/poly/glm5next.cpp src/poly/qwen35.cpp
-                            src/poly/gemma4.cpp src/poly/deepseek4.cpp src/poly/lfm2moe.cpp src/poly/cpu_experts.cpp
+                            src/poly/gemma4.cpp src/poly/deepseek4.cpp src/poly/lfm2moe.cpp src/poly/mellum.cpp src/poly/cpu_experts.cpp
                             src/poly/kernels.cu src/poly/kernels_dsv4.cu src/core/conversation_memory.cpp)
   target_include_directories(strata-poly PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${_strata_gpu_include_directories})
   # the driver's virtual memory calls: the attention caches grow with the conversation; on HIP they are HIP's
@@ -94,7 +94,7 @@ if(STRATA_NATIVE_EXPERTS AND (STRATA_ENABLE_CUDA OR STRATA_ENABLE_HIP) AND NOT S
   # poly_draft_race_test MODEL.gguf [RUNS] [LAYER_SPLIT]
   add_executable(poly_draft_race_test src/poly/draft_race_test.cpp src/poly/engine.cpp src/poly/glm5next.cpp
                                       src/poly/qwen35.cpp src/poly/gemma4.cpp src/poly/deepseek4.cpp
-                                      src/poly/lfm2moe.cpp src/poly/cpu_experts.cpp src/poly/kernels.cu src/poly/kernels_dsv4.cu
+                                      src/poly/lfm2moe.cpp src/poly/mellum.cpp src/poly/cpu_experts.cpp src/poly/kernels.cu src/poly/kernels_dsv4.cu
                                       src/core/conversation_memory.cpp)
   target_include_directories(poly_draft_race_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
                                                          ${_strata_gpu_include_directories})
@@ -151,6 +151,12 @@ if(STRATA_NATIVE_EXPERTS AND (STRATA_ENABLE_CUDA OR STRATA_ENABLE_HIP) AND NOT S
   target_include_directories(poly_mxfp4_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${_strata_gg}/include
                                                     ${_strata_gpu_include_directories})
   target_link_libraries(poly_mxfp4_test PRIVATE strata_poly_native strata_kernels ggml-base ${_strata_gpu_runtime_target})
+  if(STRATA_BUILD_TESTS)
+    add_executable(poly_mellum_math_test src/poly/mellum_math_test.cpp)
+    target_include_directories(poly_mellum_math_test PRIVATE ${_strata_gg}/include)
+    target_link_libraries(poly_mellum_math_test PRIVATE ggml-cpu ggml-base Threads::Threads)
+    add_test(NAME poly_mellum_math_test COMMAND poly_mellum_math_test)
+  endif()
   # the Q8_0 KV cache kernels (store_q8 / store_q8_at) against a host reference (GPU, synthetic, no model)
   if(STRATA_BUILD_TESTS)
     add_executable(poly_kv_q8_test src/poly/kv_q8_test.cpp src/poly/kernels.cu)

@@ -880,6 +880,35 @@ def json_tool_call(body: str, schemas: dict) -> ToolCall | None:
     return ToolCall(name=obj["name"], arguments=args) if isinstance(args, dict) else None
 
 
+def mellum_call_name(text: str) -> str | None:
+    try:
+        obj, _ = json.JSONDecoder().raw_decode(text.lstrip())
+        return obj.get("name") if isinstance(obj, dict) and isinstance(obj.get("name"), str) else None
+    except ValueError:
+        return None
+
+
+def mellum_call_end(text: str) -> int:
+    # A tool argument can contain the closing tag as an ordinary JSON string.
+    quoted = escaped = False
+    for i, char in enumerate(text):
+        if escaped:
+            escaped = False
+        elif quoted and char == "\\":
+            escaped = True
+        elif char == '"':
+            quoted = not quoted
+        elif not quoted and text.startswith(CALL_END, i):
+            return i
+    return -1
+
+
+def parse_mellum_tool_call(body: str, schema: dict | None = None) -> list[ToolCall]:
+    name = mellum_call_name(body)
+    call = json_tool_call(body, {name: schema}) if name else None
+    return [call] if call else []
+
+
 def param_value(value: str, declared: str | None) -> object:
     """A parameter's text as the type its schema declares: a string as written, anything else JSON-decoded, or the
     text when it is not JSON.  A boolean may come as Python's True / False, which Qwen3.6 writes now and then."""
@@ -1189,7 +1218,8 @@ class OutputParser:
         # announced when its name is complete and its arguments follow whole.  (its name, its end, its parser)
         # What tells a <function=...> call from a quoted one, or recovers one written beside the template's form
         # (a call inside the reasoning, `recover`), reads that form only and is not applied to these.
-        self.whole = {"glm": (glm_call_name, glm_call_end, parse_glm_tool_call),
+        self.whole = {"mellum": (mellum_call_name, mellum_call_end, parse_mellum_tool_call),
+                      "glm": (glm_call_name, glm_call_end, parse_glm_tool_call),
                       "gemma": (gemma_call_name, gemma_call_end, parse_gemma_tool_call),
                       "dsml": (dsml_call_name, dsml_call_end, parse_dsml_tool_call),
                       "lfm2": (lfm2_call_name, lfm2_call_end, parse_lfm2_tool_calls)}.get(call_format)
@@ -1203,7 +1233,7 @@ class OutputParser:
         # is opened by the prompt and ends with </think>.  `opened`: this prompt ended on Gemma's opening (its
         # template writes it after a tool's answer), so the reply starts inside the reasoning
         self.think_open, self.think_end = ("<|channel>thought\n", "<channel|>") if call_format == "gemma" \
-            else ("", THINK_END)
+            else ("<think>", THINK_END) if call_format == "mellum" else ("", THINK_END)
         # #537 tells a quoted </think> by the line break the end has after it.  GLM's and Gemma's answers follow
         # their end tag at once ('say "Paris."</think>Paris'), so there every end tag ends the reasoning
         self.quotes_end = call_format == "function"

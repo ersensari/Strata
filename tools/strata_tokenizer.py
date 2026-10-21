@@ -101,9 +101,15 @@ DEEPSEEK3_SEQUENCE = (
     r"|\s+",
 )
 
+# llama.cpp LLAMA_VOCAB_PRE_TYPE_MELLUM2: split single digits first, then GPT-2.
+MELLUM2_SEQUENCE = (
+    r"\p{N}",
+    r"'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)",
+)
+
 PRE_PATTERNS = {"glm4": GLM4_PATTERN, "glm5": GLM4_PATTERN,   # every other name: QWEN35_PATTERN, as before
                 "gemma4": GEMMA4_PATTERN, "lfm2": GLM4_PATTERN}
-PRE_SEQUENCES = {"joyai-llm": DEEPSEEK3_SEQUENCE, "deepseek-v3": DEEPSEEK3_SEQUENCE}
+PRE_SEQUENCES = {"joyai-llm": DEEPSEEK3_SEQUENCE, "deepseek-v3": DEEPSEEK3_SEQUENCE, "mellum2": MELLUM2_SEQUENCE}
 IGNORE_MERGES = ("glm4", "glm5", "lfm2")
 RAW = ("gemma4",)                      # vocabularies of UTF-8 pieces
 MODELS = {"gpt2": None, "gemma4": "gemma4"}   # tokenizer.ggml.model -> the pre-tokenizer it implies, if any
@@ -566,6 +572,7 @@ def extract(gguf_path, out_dir) -> dict:
         "pre_pattern": tk.pre_pattern,
         "pre_sequence": list(tk.pre_sequence) if tk.pre_sequence else None,
         "pre_pattern_source": "llama.cpp src/llama-vocab.cpp (LLAMA_VOCAB_PRE_TYPE_GEMMA4)" if tk.raw
+                              else "llama.cpp src/llama-vocab.cpp (LLAMA_VOCAB_PRE_TYPE_MELLUM2)" if tk.pre == "mellum2"
                               else "llama.cpp src/llama-vocab.cpp (LLAMA_VOCAB_PRE_TYPE_DEEPSEEK3_LLM)"
                               if tk.pre_sequence
                               else "llama.cpp src/llama-vocab.cpp (LLAMA_VOCAB_PRE_TYPE_CHATGLM4)" if tk.ignore_merges
