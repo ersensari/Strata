@@ -1,0 +1,130 @@
+[
+  {
+    "case": "arithmetic",
+    "prompt_tokens": 28,
+    "poly_tokens": [
+      54,
+      28
+    ],
+    "reference_tokens": [
+      54,
+      28
+    ],
+    "greedy_sequence_match": true,
+    "poly_text": "4<|im_end|>",
+    "top10_overlap": 10,
+    "max_abs_probability_difference_on_shared_first_token_top10": 0.0032377808259169694
+  },
+  {
+    "case": "json",
+    "prompt_tokens": 133,
+    "poly_tokens": [
+      125,
+      233,
+      255,
+      392,
+      4339,
+      621,
+      585,
+      233,
+      308,
+      391,
+      233,
+      319,
+      392,
+      728,
+      621,
+      392
+    ],
+    "reference_tokens": [
+      125,
+      233,
+      255,
+      392,
+      4339,
+      621,
+      585,
+      233,
+      308,
+      391,
+      233,
+      319,
+      392,
+      728,
+      621,
+      392
+    ],
+    "greedy_sequence_match": true,
+    "poly_text": "{\n  \"items\": [\n    {\n      \"name\": \"",
+    "top10_overlap": 9,
+    "max_abs_probability_difference_on_shared_first_token_top10": 0.015250564496108135
+  },
+  {
+    "case": "code",
+    "prompt_tokens": 122,
+    "poly_tokens": [
+      889,
+      2335,
+      233,
+      910,
+      8896,
+      97,
+      36199,
+      42,
+      36199,
+      800,
+      233,
+      308,
+      521,
+      529,
+      11192,
+      60
+    ],
+    "reference_tokens": [
+      889,
+      2335,
+      233,
+      910,
+      8896,
+      97,
+      36199,
+      42,
+      36199,
+      800,
+      233,
+      308,
+      521,
+      529,
+      11192,
+      60
+    ],
+    "greedy_sequence_match": true,
+    "poly_text": "```python\ndef merge_intervals(intervals):\n    if not intervals:",
+    "top10_overlap": 9,
+    "max_abs_probability_difference_on_shared_first_token_top10": 0.15815220990762469
+  },
+  {
+    "case": "swa-boundary",
+    "prompt_tokens": 1728,
+    "poly_tokens": [
+      53,
+      51,
+      54,
+      51,
+      55,
+      28
+    ],
+    "reference_tokens": [
+      53,
+      51,
+      54,
+      51,
+      55,
+      28
+    ],
+    "greedy_sequence_match": true,
+    "poly_text": "31415<|im_end|>",
+    "top10_overlap": 9,
+    "max_abs_probability_difference_on_shared_first_token_top10": 0.005518737156621323
+  }
+]

@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "name": "A",
+      "response": {
+        "id": "chatcmpl-450c58b526ef4957ad51466d",
+        "object": "chat.completion",
+        "created": 1792613755,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "31415"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1484,
+          "completion_tokens": 6,
+          "total_tokens": 1490,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 1484,
+          "prompt_ms": 255.9,
+          "prompt_per_token_ms": 0.172,
+          "prompt_per_second": 5799.1,
+          "predicted_n": 6,
+          "predicted_ms": 26.7,
+          "predicted_per_token_ms": 4.45,
+          "predicted_per_second": 224.7,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      }
+    },
+    {
+      "name": "B",
+      "response": {
+        "id": "chatcmpl-3b3a40c948d942f5adc788f5",
+        "object": "chat.completion",
+        "created": 1792613755,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "27182"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1484,
+          "completion_tokens": 6,
+          "total_tokens": 1490,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 1484,
+          "prompt_ms": 271.3,
+          "prompt_per_token_ms": 0.183,
+          "prompt_per_second": 5470.0,
+          "predicted_n": 6,
+          "predicted_ms": 26.7,
+          "predicted_per_token_ms": 4.45,
+          "predicted_per_second": 224.7,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      }
+    },
+    {
+      "name": "A",
+      "response": {
+        "id": "chatcmpl-781999b4dff94a459f14bd63",
+        "object": "chat.completion",
+        "created": 1792613755,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "31415"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1484,
+          "completion_tokens": 6,
+          "total_tokens": 1490,
+          "prompt_tokens_details": {
+            "cached_tokens": 1483
+          }
+        },
+        "timings": {
+          "cache_n": 1483,
+          "prompt_n": 1,
+          "prompt_ms": 34.0,
+          "prompt_per_token_ms": 34.0,
+          "prompt_per_second": 29.4,
+          "predicted_n": 6,
+          "predicted_ms": 26.6,
+          "predicted_per_token_ms": 4.433,
+          "predicted_per_second": 225.6,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      }
+    }
+  ]
+}

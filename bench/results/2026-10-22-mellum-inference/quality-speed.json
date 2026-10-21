@@ -1,0 +1,1510 @@
+{
+  "model": "mellum-12b",
+  "context": 131072,
+  "kv": "fp16",
+  "gpu": 1,
+  "temperature": 0,
+  "reasoning_effort": "none",
+  "engine_nice": 0,
+  "records": [
+    {
+      "case": "warmup",
+      "prompt": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz.",
+      "limit": 64,
+      "seconds": 0.195,
+      "response": {
+        "id": "chatcmpl-5bdcf135e1894d4b8c7e5699",
+        "object": "chat.completion",
+        "created": 1792613654,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 37,
+          "completion_tokens": 24,
+          "total_tokens": 61,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 37,
+          "prompt_ms": 50.8,
+          "prompt_per_token_ms": 1.373,
+          "prompt_per_second": 728.3,
+          "predicted_n": 24,
+          "predicted_ms": 121.3,
+          "predicted_per_token_ms": 5.054,
+          "predicted_per_second": 197.9,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72114978816,
+          "swap_used_bytes": 37703696384,
+          "swap_in_pages": 30236116,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806288
+        },
+        "after": {
+          "available_bytes": 72099721216,
+          "swap_used_bytes": 37703696384,
+          "swap_in_pages": 30236122,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806294
+        },
+        "swap_in_pages_delta": 6,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 6
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "merge",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 0.897,
+      "response": {
+        "id": "chatcmpl-0c0da5a9bb194e6bb5157283",
+        "object": "chat.completion",
+        "created": 1792613655,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    # intervals'i sırala\n    intervals.sort(key=lambda x: x[0])\n    merged = []\n    cur_start, cur_end = intervals[0]\n    for start, end in intervals[1:]:\n        if start <= cur_end:  # örtüşüyor veya aynı\n            if end > cur_end:\n                cur_end = end\n        else:\n            merged.append((cur_start, cur_end))\n            cur_start, cur_end = start, end\n    merged.append((cur_start, cur_end))\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 122,
+          "completion_tokens": 164,
+          "total_tokens": 286,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 122,
+          "prompt_ms": 37.6,
+          "prompt_per_token_ms": 0.308,
+          "prompt_per_second": 3244.7,
+          "predicted_n": 164,
+          "predicted_ms": 836.0,
+          "predicted_per_token_ms": 5.098,
+          "predicted_per_second": 196.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72099721216,
+          "swap_used_bytes": 37703696384,
+          "swap_in_pages": 30236122,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806294
+        },
+        "after": {
+          "available_bytes": 72125718528,
+          "swap_used_bytes": 37703696384,
+          "swap_in_pages": 30236125,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806297
+        },
+        "swap_in_pages_delta": 3,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 3
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/case/run.py\", line 22, in <module>\n    before=copy.deepcopy(a);assert list(map(tuple,merge_intervals(a)))==want;assert a==before\n                                                                                    ^^^^^^^^^\nAssertionError\n"
+      }
+    },
+    {
+      "case": "lru",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 2.488,
+      "response": {
+        "id": "chatcmpl-65392c852de94586917f47c9",
+        "object": "chat.completion",
+        "created": 1792613656,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "class LRUCache:\n    def __init__(self, capacity: int):\n        if capacity <= 0:\n            raise ValueError(\"Capacity must be positive\")\n        self.capacity = capacity\n        self.cache = {}  # key -> (value, node)\n        self.head = Node(0, 0)  # dummy head\n        self.tail = Node(0, 0)  # dummy tail\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node):\n        prev_node = node.prev\n        next_node = node.next\n        prev_node.next = next_node\n        next_node.prev = prev_node\n\n    def _add_to_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        self.head.next.prev = node\n        self.head.next = node\n\n    def get(self, key):\n        if key in self.cache:\n            node = self.cache[key][1]\n            self._remove(node)\n            self._add_to_front(node)\n            return self.cache[key][0]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            self._remove(self.cache[key][1])\n            del self.cache[key]\n        node = Node(key, value)\n        self.cache[key] = (value, node)\n        self._add_to_front(node)\n        if len(self.cache) > self.capacity:\n            # remove least recently used (tail.prev)\n            lru_node = self.tail.prev\n            self._remove(lru_node)\n            del self.cache[lru_node.key]\n\nclass Node:\n    def __init__(self, key, value):\n        self.key = key\n        self.value = value\n        self.prev = None\n        self.next = None"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 471,
+          "total_tokens": 607,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 136,
+          "prompt_ms": 39.6,
+          "prompt_per_token_ms": 0.291,
+          "prompt_per_second": 3434.3,
+          "predicted_n": 471,
+          "predicted_ms": 2425.7,
+          "predicted_per_token_ms": 5.15,
+          "predicted_per_second": 194.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72097779712,
+          "swap_used_bytes": 37703696384,
+          "swap_in_pages": 30236163,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806329
+        },
+        "after": {
+          "available_bytes": 72105811968,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236236,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806393
+        },
+        "swap_in_pages_delta": 73,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 64
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 1.543,
+      "response": {
+        "id": "chatcmpl-94ac6dbb92124e8aa9239729",
+        "object": "chat.completion",
+        "created": 1792613659,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "def topo_sort(graph):\n    indegree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            indegree[v] = indegree.get(v, 0) + 1\n    # düğümlerin hedeflerde olması için ekleyelim\n    for u in graph:\n        for v in graph[u]:\n            indegree.setdefault(v, 0)\n\n    # küçükten büyüğe sıralı küçük harfli düğümleri bir kuyruk olarak işleyelim\n    import heapq\n    heap = [u for u in indegree if indegree[u] == 0]\n    heapq.heapify(heap)\n    result = []\n    while heap:\n        u = heapq.heappop(heap)\n        result.append(u)\n        for v in graph.get(u, []):\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                heapq.heappush(heap, v)\n    if len(result) != len(indegree):\n        raise ValueError(\"Graph contains a cycle\")\n    return result"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 153,
+          "completion_tokens": 288,
+          "total_tokens": 441,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 153,
+          "prompt_ms": 42.1,
+          "prompt_per_token_ms": 0.275,
+          "prompt_per_second": 3634.2,
+          "predicted_n": 288,
+          "predicted_ms": 1477.6,
+          "predicted_per_token_ms": 5.131,
+          "predicted_per_second": 194.9,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72107470848,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236250,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806403
+        },
+        "after": {
+          "available_bytes": 72135315456,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236256,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806412
+        },
+        "swap_in_pages_delta": 6,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 9
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "json",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 0.564,
+      "response": {
+        "id": "chatcmpl-6c6279043baf473fb1c8c6b4",
+        "object": "chat.completion",
+        "created": 1792613660,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"items\": [\n    {\n      \"name\": \"Defter\",\n      \"qty\": 2,\n      \"unit_try\": 125.50\n    },\n    {\n      \"name\": \"Kalem\",\n      \"qty\": 3,\n      \"unit_try\": 19.90\n    }\n  ],\n  \"total_try\": 421.1\n}"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 133,
+          "completion_tokens": 99,
+          "total_tokens": 232,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 133,
+          "prompt_ms": 38.9,
+          "prompt_per_token_ms": 0.292,
+          "prompt_per_second": 3419.0,
+          "predicted_n": 99,
+          "predicted_ms": 502.1,
+          "predicted_per_token_ms": 5.072,
+          "predicted_per_second": 197.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72108158976,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236366,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806433
+        },
+        "after": {
+          "available_bytes": 72056659968,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236372,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806441
+        },
+        "swap_in_pages_delta": 6,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 8
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": false
+      }
+    },
+    {
+      "case": "tool",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 0.223,
+      "response": {
+        "id": "chatcmpl-66fe5f89364b4464a73f7944",
+        "object": "chat.completion",
+        "created": 1792613661,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_4c01f0990f07494a93f9ed07",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\": \"Melbourne\", \"unit\": \"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 240,
+          "completion_tokens": 29,
+          "total_tokens": 269,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 240,
+          "prompt_ms": 53.7,
+          "prompt_per_token_ms": 0.224,
+          "prompt_per_second": 4469.3,
+          "predicted_n": 29,
+          "predicted_ms": 143.7,
+          "predicted_per_token_ms": 4.955,
+          "predicted_per_second": 201.8,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72056659968,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236372,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806441
+        },
+        "after": {
+          "available_bytes": 72033157120,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236375,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806443
+        },
+        "swap_in_pages_delta": 3,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 2
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "architecture",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 1536,
+      "seconds": 8.091,
+      "response": {
+        "id": "chatcmpl-7ba3e502fbd1447e863596f9",
+        "object": "chat.completion",
+        "created": 1792613661,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, asistanın mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu konuda bir diyalog veya tasarım önerisi istiyor.\n\n2. **Hedef Kitle ve Amac:** Kullanıcı, muhtemelen bir geliştirme veya proje için bir sesli asistan mimarisine dair bir öneri veya adım adım rehber istiyor. Bu, teknoloji alanında bir proje planlaması veya prototipleme aşaması olabilir.\n\n3. **Mimari Elemanları:** Bir sesli asistan için temel mimari parçaları şunları içerebilir:\n   - **Akustik Model:** Ses verilerinin nasıl işlendiği (örneğin, NLP, TTS, STT).\n   - **Altyapı:** Sunucu, veritabanı, API'ler (örneğin, Google Cloud Speech-to-Text, Amazon Polly).\n   - **Kullanıcı Arabirimi:** Uygulama, web sitesi veya cihaz entegrasyonu.\n   - **Veri Yönetimi:** Veri depolama, güvenlik ve erişim kontrolleri.\n   - **Test ve Dağıtım:** QA süreçleri, yayın stratejileri.\n\n4. **Adım Adım Mimarisi:** Mimariyi basitleştirerek adım adım bir şekilde açıklayabilirim:\n   - **Adım 1: Gereksinim Analizi:** Kullanıcı hedefleri (sesli komutlar, yanıtlar, entegrasyonlar) belirleme.\n   - **Adım 2: Altyapı Seçimi:** Uygun TTS, STT ve NLP hizmetlerini seçme.\n   - **Adım 3: Akustik Model Geliştirme:** Kullanıcı ses verilerini işleyen algoritmaların tasarımı.\n   - **Adım 4: Uygulama Geliştirme:** Kullanıcı arayüzü (web, mobil) oluşturma.\n   - **Adım 5: Test ve Itüdit:** Kullanıcı deneyimini test etme ve iyileştirme.\n   - **Adım 6: Dağıtım ve Ölçek:** Üretim ortamına hazırlık.\n\n5. **Dil ve Stil:** Kullanıcı Türkçe soruyor, yani yanıtım Türkçe olmalı. Ayrıca, bilgilendirici ama akılda kalıcı bir şekilde, özellikle de proje odaklı bir yaklaşım sergileyebilirim. Görsel bir mimari diyagramı yerine, metin tabanlı bir strateji sunabilirim.\n\n6. **Sonuç:** Tüm bunları bir araya getirerek, sesli asistan mimarisinin temel taşları ve adım adım bir planı sunayım. Kullanıcıya faydalı ve anlaşılır bir şekilde bilgi vermeyi amaçlayalım.\n\nŞimdi cevapu Türkçe olarak oluşturayım.\n</think>\n\nElbette, bir sesli asistan için temel bir mimarinin nasıl kurulduğunu adım adım açıklayabilirim. İşte önerilerim:\n\n---\n\n### **1. Gereksinim Analizi**\n- **Kullanıcı Hedefleri:** \n  - Sesli komutlar (örneğin, \"Merhaba\", \"Saat kaç?\" gibi).\n  - Duygusal yanıt (umut, kızgınlık, sevecenlik).\n  - Entegrasyonlar (telefon, smart home, mobil uygulama).\n- **Ölçütler:** \n  - Gecikme süresi (response time).\n  - Doğruluk oranı (ses tanıma ve anlama).\n  - Ölçeklenebilirlik (yeni dil veya komut ekleme).\n\n---\n\n### **2. Altyapı Seçimi**\n- **Speech-to-Text (STT):** \n  - Google Cloud Speech-to-Text, Amazon Transcribe, veya Microsoft Azure Speech API gibi hizmetler.\n  - Özel modeller eğitebilirsiniz (örneğin, daha doğal konuşma tanıma).\n- **Text-to-Speech (TTS):** \n  - Google Text-to-Speech, Amazon Polly, veya bir özel TTS model kullanabilirsiniz.\n  - Duygusal tonlar için özel parametreler ayarlayabilirsiniz.\n- **Natural Language Processing (NLP):** \n  - Rasa, Dialogflow, veya bir özel NLP model kullanabilirsiniz.\n  - Kullanıcı intent'lerini analiz eder, konuşma yapısını anlar.\n\n---\n\n### **3. Akustik Model Geliştirme**\n- **Veri Toplama:** \n  - Kullanıcıların farklı ortamlarda (sessiz, gürültülü) ses verilerini toplayın.\n- **Model Eğitimi:** \n  - STT ve NLP modellerini eğitin.\n  - TTS modelini duygusal tonlara göre optimize edin.\n- **Test ve Geliştirme:** \n  - Kullanıcı deneyimini test edin ve gecikmeyi azaltın.\n\n---\n\n### **4. Uygulama Geliştirme**\n- **Kullanıcı Arabirimi (UI):** \n  - Web tabanlı arayüz (React, Vue) veya mobil uygulama (iOS, Android) geliştirin.\n  - Sesli komutlar için buton veya mikrofon entegrasyonu yapın.\n- **Sunucu Yapısı:** \n  - Backend'i Node.js, Python (Flask/Django) gibi bir framework kullanın.\n  - API'ler arasında iletişim kurun (STT, NLP, TTS).\n\n---\n\n### **5. Test ve It"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 1536,
+          "total_tokens": 1569,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 33,
+          "prompt_ms": 24.0,
+          "prompt_per_token_ms": 0.727,
+          "prompt_per_second": 1375.0,
+          "predicted_n": 1536,
+          "predicted_ms": 8044.8,
+          "predicted_per_token_ms": 5.237,
+          "predicted_per_second": 190.9,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72033157120,
+          "swap_used_bytes": 37703168000,
+          "swap_in_pages": 30236375,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806443
+        },
+        "after": {
+          "available_bytes": 71345569792,
+          "swap_used_bytes": 37703131136,
+          "swap_in_pages": 30236483,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806552
+        },
+        "swap_in_pages_delta": 108,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 109
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 1
+    },
+    {
+      "case": "merge-repeat-2",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 0.896,
+      "response": {
+        "id": "chatcmpl-4309eff87c2449d0a168b783",
+        "object": "chat.completion",
+        "created": 1792613669,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    # intervals'i sırala\n    intervals.sort(key=lambda x: x[0])\n    merged = []\n    cur_start, cur_end = intervals[0]\n    for start, end in intervals[1:]:\n        if start <= cur_end:  # örtüşüyor veya aynı\n            if end > cur_end:\n                cur_end = end\n        else:\n            merged.append((cur_start, cur_end))\n            cur_start, cur_end = start, end\n    merged.append((cur_start, cur_end))\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 122,
+          "completion_tokens": 164,
+          "total_tokens": 286,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 122,
+          "prompt_ms": 36.8,
+          "prompt_per_token_ms": 0.302,
+          "prompt_per_second": 3315.2,
+          "predicted_n": 164,
+          "predicted_ms": 835.9,
+          "predicted_per_token_ms": 5.097,
+          "predicted_per_second": 196.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71345569792,
+          "swap_used_bytes": 37703131136,
+          "swap_in_pages": 30236483,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806552
+        },
+        "after": {
+          "available_bytes": 71396564992,
+          "swap_used_bytes": 37703131136,
+          "swap_in_pages": 30236488,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806558
+        },
+        "swap_in_pages_delta": 5,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 6
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/case/run.py\", line 22, in <module>\n    before=copy.deepcopy(a);assert list(map(tuple,merge_intervals(a)))==want;assert a==before\n                                                                                    ^^^^^^^^^\nAssertionError\n"
+      }
+    },
+    {
+      "case": "lru-repeat-2",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 2.491,
+      "response": {
+        "id": "chatcmpl-df3dc4b970a74d15bd229ee2",
+        "object": "chat.completion",
+        "created": 1792613670,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "class LRUCache:\n    def __init__(self, capacity: int):\n        if capacity <= 0:\n            raise ValueError(\"Capacity must be positive\")\n        self.capacity = capacity\n        self.cache = {}  # key -> (value, node)\n        self.head = Node(0, 0)  # dummy head\n        self.tail = Node(0, 0)  # dummy tail\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node):\n        prev_node = node.prev\n        next_node = node.next\n        prev_node.next = next_node\n        next_node.prev = prev_node\n\n    def _add_to_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        self.head.next.prev = node\n        self.head.next = node\n\n    def get(self, key):\n        if key in self.cache:\n            node = self.cache[key][1]\n            self._remove(node)\n            self._add_to_front(node)\n            return self.cache[key][0]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            self._remove(self.cache[key][1])\n            del self.cache[key]\n        node = Node(key, value)\n        self.cache[key] = (value, node)\n        self._add_to_front(node)\n        if len(self.cache) > self.capacity:\n            # remove least recently used (tail.prev)\n            lru_node = self.tail.prev\n            self._remove(lru_node)\n            del self.cache[lru_node.key]\n\nclass Node:\n    def __init__(self, key, value):\n        self.key = key\n        self.value = value\n        self.prev = None\n        self.next = None"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 471,
+          "total_tokens": 607,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 136,
+          "prompt_ms": 39.5,
+          "prompt_per_token_ms": 0.29,
+          "prompt_per_second": 3443.0,
+          "predicted_n": 471,
+          "predicted_ms": 2426.3,
+          "predicted_per_token_ms": 5.151,
+          "predicted_per_second": 194.1,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71379128320,
+          "swap_used_bytes": 37703000064,
+          "swap_in_pages": 30236501,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806568
+        },
+        "after": {
+          "available_bytes": 71467704320,
+          "swap_used_bytes": 37702991872,
+          "swap_in_pages": 30236539,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806600
+        },
+        "swap_in_pages_delta": 38,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 32
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo-repeat-2",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 1.542,
+      "response": {
+        "id": "chatcmpl-5c64fc4a0286409a9c453a8f",
+        "object": "chat.completion",
+        "created": 1792613673,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "def topo_sort(graph):\n    indegree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            indegree[v] = indegree.get(v, 0) + 1\n    # düğümlerin hedeflerde olması için ekleyelim\n    for u in graph:\n        for v in graph[u]:\n            indegree.setdefault(v, 0)\n\n    # küçükten büyüğe sıralı küçük harfli düğümleri bir kuyruk olarak işleyelim\n    import heapq\n    heap = [u for u in indegree if indegree[u] == 0]\n    heapq.heapify(heap)\n    result = []\n    while heap:\n        u = heapq.heappop(heap)\n        result.append(u)\n        for v in graph.get(u, []):\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                heapq.heappush(heap, v)\n    if len(result) != len(indegree):\n        raise ValueError(\"Graph contains a cycle\")\n    return result"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 153,
+          "completion_tokens": 288,
+          "total_tokens": 441,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 153,
+          "prompt_ms": 42.0,
+          "prompt_per_token_ms": 0.275,
+          "prompt_per_second": 3642.9,
+          "predicted_n": 288,
+          "predicted_ms": 1478.3,
+          "predicted_per_token_ms": 5.133,
+          "predicted_per_second": 194.8,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71509286912,
+          "swap_used_bytes": 37702991872,
+          "swap_in_pages": 30236540,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806602
+        },
+        "after": {
+          "available_bytes": 71551463424,
+          "swap_used_bytes": 37702991872,
+          "swap_in_pages": 30236575,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806644
+        },
+        "swap_in_pages_delta": 35,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 42
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "json-repeat-2",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 0.564,
+      "response": {
+        "id": "chatcmpl-233d033ed64b4908889ea88f",
+        "object": "chat.completion",
+        "created": 1792613675,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"items\": [\n    {\n      \"name\": \"Defter\",\n      \"qty\": 2,\n      \"unit_try\": 125.50\n    },\n    {\n      \"name\": \"Kalem\",\n      \"qty\": 3,\n      \"unit_try\": 19.90\n    }\n  ],\n  \"total_try\": 421.1\n}"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 133,
+          "completion_tokens": 99,
+          "total_tokens": 232,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 133,
+          "prompt_ms": 38.9,
+          "prompt_per_token_ms": 0.292,
+          "prompt_per_second": 3419.0,
+          "predicted_n": 99,
+          "predicted_ms": 503.0,
+          "predicted_per_token_ms": 5.081,
+          "predicted_per_second": 196.8,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71565918208,
+          "swap_used_bytes": 37702991872,
+          "swap_in_pages": 30236579,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806648
+        },
+        "after": {
+          "available_bytes": 71568900096,
+          "swap_used_bytes": 37702950912,
+          "swap_in_pages": 30236592,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806660
+        },
+        "swap_in_pages_delta": 13,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 12
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": false
+      }
+    },
+    {
+      "case": "tool-repeat-2",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 0.22,
+      "response": {
+        "id": "chatcmpl-0b09867a5dcf4a4d9ea6a100",
+        "object": "chat.completion",
+        "created": 1792613675,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_b9c8d95b09874607858e837d",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\": \"Melbourne\", \"unit\": \"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 240,
+          "completion_tokens": 29,
+          "total_tokens": 269,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 240,
+          "prompt_ms": 54.0,
+          "prompt_per_token_ms": 0.225,
+          "prompt_per_second": 4444.4,
+          "predicted_n": 29,
+          "predicted_ms": 144.0,
+          "predicted_per_token_ms": 4.966,
+          "predicted_per_second": 201.4,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71568932864,
+          "swap_used_bytes": 37702950912,
+          "swap_in_pages": 30236592,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806660
+        },
+        "after": {
+          "available_bytes": 71736209408,
+          "swap_used_bytes": 37702950912,
+          "swap_in_pages": 30236605,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806667
+        },
+        "swap_in_pages_delta": 13,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 7
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 2,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "merge-repeat-3",
+      "prompt": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün.",
+      "limit": 768,
+      "seconds": 0.896,
+      "response": {
+        "id": "chatcmpl-f8ecc3e2a4774d82ac0c2731",
+        "object": "chat.completion",
+        "created": 1792613675,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    # intervals'i sırala\n    intervals.sort(key=lambda x: x[0])\n    merged = []\n    cur_start, cur_end = intervals[0]\n    for start, end in intervals[1:]:\n        if start <= cur_end:  # örtüşüyor veya aynı\n            if end > cur_end:\n                cur_end = end\n        else:\n            merged.append((cur_start, cur_end))\n            cur_start, cur_end = start, end\n    merged.append((cur_start, cur_end))\n    return merged\n```"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 122,
+          "completion_tokens": 164,
+          "total_tokens": 286,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 122,
+          "prompt_ms": 36.7,
+          "prompt_per_token_ms": 0.301,
+          "prompt_per_second": 3324.3,
+          "predicted_n": 164,
+          "predicted_ms": 836.0,
+          "predicted_per_token_ms": 5.098,
+          "predicted_per_second": 196.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71736209408,
+          "swap_used_bytes": 37702950912,
+          "swap_in_pages": 30236605,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806667
+        },
+        "after": {
+          "available_bytes": 71762190336,
+          "swap_used_bytes": 37702914048,
+          "swap_in_pages": 30236615,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806675
+        },
+        "swap_in_pages_delta": 10,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 8
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/case/run.py\", line 22, in <module>\n    before=copy.deepcopy(a);assert list(map(tuple,merge_intervals(a)))==want;assert a==before\n                                                                                    ^^^^^^^^^\nAssertionError\n"
+      }
+    },
+    {
+      "case": "lru-repeat-3",
+      "prompt": "Sadece Python kodu yaz. LRUCache(capacity) sınıfı: get(key) değeri ya da bulunamazsa None döndürsün; put(key,value) eklesin veya güncellesin. get ve put kullanımı elemanı en yeni yapsın. Kapasite aşılınca en eski kullanılan anahtar silinsin. İşlemler amortize O(1) olsun. Sıfır veya negatif kapasite ValueError vermeli.",
+      "limit": 768,
+      "seconds": 2.487,
+      "response": {
+        "id": "chatcmpl-fd4b093bd7e949de9d8f490d",
+        "object": "chat.completion",
+        "created": 1792613677,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "class LRUCache:\n    def __init__(self, capacity: int):\n        if capacity <= 0:\n            raise ValueError(\"Capacity must be positive\")\n        self.capacity = capacity\n        self.cache = {}  # key -> (value, node)\n        self.head = Node(0, 0)  # dummy head\n        self.tail = Node(0, 0)  # dummy tail\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node):\n        prev_node = node.prev\n        next_node = node.next\n        prev_node.next = next_node\n        next_node.prev = prev_node\n\n    def _add_to_front(self, node):\n        node.prev = self.head\n        node.next = self.head.next\n        self.head.next.prev = node\n        self.head.next = node\n\n    def get(self, key):\n        if key in self.cache:\n            node = self.cache[key][1]\n            self._remove(node)\n            self._add_to_front(node)\n            return self.cache[key][0]\n        return None\n\n    def put(self, key, value):\n        if key in self.cache:\n            self._remove(self.cache[key][1])\n            del self.cache[key]\n        node = Node(key, value)\n        self.cache[key] = (value, node)\n        self._add_to_front(node)\n        if len(self.cache) > self.capacity:\n            # remove least recently used (tail.prev)\n            lru_node = self.tail.prev\n            self._remove(lru_node)\n            del self.cache[lru_node.key]\n\nclass Node:\n    def __init__(self, key, value):\n        self.key = key\n        self.value = value\n        self.prev = None\n        self.next = None"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 471,
+          "total_tokens": 607,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 136,
+          "prompt_ms": 39.5,
+          "prompt_per_token_ms": 0.29,
+          "prompt_per_second": 3443.0,
+          "predicted_n": 471,
+          "predicted_ms": 2425.3,
+          "predicted_per_token_ms": 5.149,
+          "predicted_per_second": 194.2,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71763673088,
+          "swap_used_bytes": 37702914048,
+          "swap_in_pages": 30236619,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806678
+        },
+        "after": {
+          "available_bytes": 71676493824,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236634,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806695
+        },
+        "swap_in_pages_delta": 15,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 17
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "topo-repeat-3",
+      "prompt": "Sadece Python kodu yaz. topo_sort(graph) fonksiyonunu uygula. graph, string düğüm -> sonraki düğümler listesi sözlüğüdür; yalnızca hedeflerde geçen düğümleri de dahil et. Leksikografik olarak en küçük geçerli topolojik sıralamayı liste olarak döndür. Döngü varsa ValueError fırlat. Girdiyi değiştirme. Aynı kenarın tekrarına dayanıklı olsun.",
+      "limit": 768,
+      "seconds": 1.541,
+      "response": {
+        "id": "chatcmpl-ad9bfdfb00cb40bf962499f9",
+        "object": "chat.completion",
+        "created": 1792613679,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "def topo_sort(graph):\n    indegree = {u: 0 for u in graph}\n    for u in graph:\n        for v in graph[u]:\n            indegree[v] = indegree.get(v, 0) + 1\n    # düğümlerin hedeflerde olması için ekleyelim\n    for u in graph:\n        for v in graph[u]:\n            indegree.setdefault(v, 0)\n\n    # küçükten büyüğe sıralı küçük harfli düğümleri bir kuyruk olarak işleyelim\n    import heapq\n    heap = [u for u in indegree if indegree[u] == 0]\n    heapq.heapify(heap)\n    result = []\n    while heap:\n        u = heapq.heappop(heap)\n        result.append(u)\n        for v in graph.get(u, []):\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                heapq.heappush(heap, v)\n    if len(result) != len(indegree):\n        raise ValueError(\"Graph contains a cycle\")\n    return result"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 153,
+          "completion_tokens": 288,
+          "total_tokens": 441,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 153,
+          "prompt_ms": 42.3,
+          "prompt_per_token_ms": 0.276,
+          "prompt_per_second": 3617.0,
+          "predicted_n": 288,
+          "predicted_ms": 1477.0,
+          "predicted_per_token_ms": 5.128,
+          "predicted_per_second": 195.0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71636353024,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236757,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806751
+        },
+        "after": {
+          "available_bytes": 71538880512,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236783,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806781
+        },
+        "swap_in_pages_delta": 26,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 30
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true,
+        "stdout": "PASS\n",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "json-repeat-3",
+      "prompt": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok.",
+      "limit": 256,
+      "seconds": 0.563,
+      "response": {
+        "id": "chatcmpl-c975ddfbb0ea447eb009df93",
+        "object": "chat.completion",
+        "created": 1792613681,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "{\n  \"items\": [\n    {\n      \"name\": \"Defter\",\n      \"qty\": 2,\n      \"unit_try\": 125.50\n    },\n    {\n      \"name\": \"Kalem\",\n      \"qty\": 3,\n      \"unit_try\": 19.90\n    }\n  ],\n  \"total_try\": 421.1\n}"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 133,
+          "completion_tokens": 99,
+          "total_tokens": 232,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 133,
+          "prompt_ms": 38.9,
+          "prompt_per_token_ms": 0.292,
+          "prompt_per_second": 3419.0,
+          "predicted_n": 99,
+          "predicted_ms": 502.2,
+          "predicted_per_token_ms": 5.073,
+          "predicted_per_second": 197.1,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71545622528,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236790,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806788
+        },
+        "after": {
+          "available_bytes": 71490060288,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236804,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806798
+        },
+        "swap_in_pages_delta": 14,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 10
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": false
+      }
+    },
+    {
+      "case": "tool-repeat-3",
+      "prompt": "Melbourne için güncel hava sıcaklığını Celsius olarak öğren. Bunun için verilen get_weather aracını çağır; hava durumunu tahmin etme.",
+      "limit": 128,
+      "seconds": 0.221,
+      "response": {
+        "id": "chatcmpl-c51bc4f6eaca43aea7c9dfde",
+        "object": "chat.completion",
+        "created": 1792613682,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [
+                {
+                  "id": "call_31287eefe3854bd4a26fbac3",
+                  "type": "function",
+                  "function": {
+                    "name": "get_weather",
+                    "arguments": "{\"location\": \"Melbourne\", \"unit\": \"celsius\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 240,
+          "completion_tokens": 29,
+          "total_tokens": 269,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 240,
+          "prompt_ms": 53.8,
+          "prompt_per_token_ms": 0.224,
+          "prompt_per_second": 4461.0,
+          "predicted_n": 29,
+          "predicted_ms": 143.8,
+          "predicted_per_token_ms": 4.959,
+          "predicted_per_second": 201.7,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71490060288,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236804,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806798
+        },
+        "after": {
+          "available_bytes": 71453806592,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236810,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806805
+        },
+        "swap_in_pages_delta": 6,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 7
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      },
+      "quality_trial": 3,
+      "validation": {
+        "pass": true
+      }
+    },
+    {
+      "case": "speed-warmup",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.678,
+      "response": {
+        "id": "chatcmpl-27e5bca08c1b46088828f97a",
+        "object": "chat.completion",
+        "created": 1792613682,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, asistanın mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu konuda bir diyalog veya tasarım önerisi istiyor.\n\n2. **Hedef Kitle ve Amac:** Kullanıcı, muhtemelen bir geliştirme veya proje için bir sesli asistan mimarisine dair bir öneri veya adım adım rehber istiyor. Bu, teknoloji alanında bir proje planlaması veya prototipleme aşaması olabilir.\n\n3. **Mimari Elemanları:** Bir sesli asistan için temel mimari parçaları şunları içerebilir:\n   - **Akustik Model:** Ses verilerinin nasıl işlendiği (örneğin, NLP, TTS, STT).\n   - **Altyapı:** Sunucu, veritabanı, API'ler (örneğin, Google Cloud Speech-to-Text, Amazon Polly).\n   - **Kullanıcı Arabirimi:** Uygulama, web sitesi veya cihaz entegrasyonu.\n   - **Veri Yönetimi:** Veri depolama, güvenlik ve erişim kontrolleri.\n   - **Test ve Dağıtım:** QA süreçleri, yayın stratejileri.\n\n4. **Adım Adım Mimarisi:** Mimariyi basitleştirerek adım adım bir şekilde açıklayabilirim:\n   - **Adım 1: Gereksinim Analizi:** Kullanıcı hedefleri (sesli komutlar, yanıtlar, entegrasyonlar) belirleme.\n   - **Adım 2: Altyapı Seçimi:** Uygun TTS, STT ve NLP hizmetlerini seçme.\n   - **Adım"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 33,
+          "prompt_ms": 23.9,
+          "prompt_per_token_ms": 0.724,
+          "prompt_per_second": 1380.8,
+          "predicted_n": 512,
+          "predicted_ms": 2631.0,
+          "predicted_per_token_ms": 5.139,
+          "predicted_per_second": 194.6,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71453806592,
+          "swap_used_bytes": 37702909952,
+          "swap_in_pages": 30236810,
+          "swap_out_pages": 49873021,
+          "major_faults": 32806805
+        },
+        "after": {
+          "available_bytes": 71650758656,
+          "swap_used_bytes": 37702574080,
+          "swap_in_pages": 30237304,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807147
+        },
+        "swap_in_pages_delta": 494,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 342
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-1",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.656,
+      "response": {
+        "id": "chatcmpl-5970444aafda4fc783a42606",
+        "object": "chat.completion",
+        "created": 1792613684,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, asistanın mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu konuda bir diyalog veya tasarım önerisi istiyor.\n\n2. **Hedef Kitle ve Amac:** Kullanıcı, muhtemelen bir geliştirme veya proje için bir sesli asistan mimarisine dair bir öneri veya adım adım rehber istiyor. Bu, teknoloji alanında bir proje planlaması veya prototipleme aşaması olabilir.\n\n3. **Mimari Elemanları:** Bir sesli asistan için temel mimari parçaları şunları içerebilir:\n   - **Akustik Model:** Ses verilerinin nasıl işlendiği (örneğin, NLP, TTS, STT).\n   - **Altyapı:** Sunucu, veritabanı, API'ler (örneğin, Google Cloud Speech-to-Text, Amazon Polly).\n   - **Kullanıcı Arabirimi:** Uygulama, web sitesi veya cihaz entegrasyonu.\n   - **Veri Yönetimi:** Veri depolama, güvenlik ve erişim kontrolleri.\n   - **Test ve Dağıtım:** QA süreçleri, yayın stratejileri.\n\n4. **Adım Adım Mimarisi:** Mimariyi basitleştirerek adım adım bir şekilde açıklayabilirim:\n   - **Adım 1: Gereksinim Analizi:** Kullanıcı hedefleri (sesli komutlar, yanıtlar, entegrasyonlar) belirleme.\n   - **Adım 2: Altyapı Seçimi:** Uygun TTS, STT ve NLP hizmetlerini seçme.\n   - **Adım"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.1,
+          "prompt_per_token_ms": 5.1,
+          "prompt_per_second": 196.1,
+          "predicted_n": 512,
+          "predicted_ms": 2628.8,
+          "predicted_per_token_ms": 5.134,
+          "predicted_per_second": 194.8,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71650758656,
+          "swap_used_bytes": 37702574080,
+          "swap_in_pages": 30237304,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807147
+        },
+        "after": {
+          "available_bytes": 71771394048,
+          "swap_used_bytes": 37702553600,
+          "swap_in_pages": 30237311,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807157
+        },
+        "swap_in_pages_delta": 7,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 10
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-2",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.66,
+      "response": {
+        "id": "chatcmpl-00ae9f7cd37b4b778006131c",
+        "object": "chat.completion",
+        "created": 1792613687,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, asistanın mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu konuda bir diyalog veya tasarım önerisi istiyor.\n\n2. **Hedef Kitle ve Amac:** Kullanıcı, muhtemelen bir geliştirme veya proje için bir sesli asistan mimarisine dair bir öneri veya adım adım rehber istiyor. Bu, teknoloji alanında bir proje planlaması veya prototipleme aşaması olabilir.\n\n3. **Mimari Elemanları:** Bir sesli asistan için temel mimari parçaları şunları içerebilir:\n   - **Akustik Model:** Ses verilerinin nasıl işlendiği (örneğin, NLP, TTS, STT).\n   - **Altyapı:** Sunucu, veritabanı, API'ler (örneğin, Google Cloud Speech-to-Text, Amazon Polly).\n   - **Kullanıcı Arabirimi:** Uygulama, web sitesi veya cihaz entegrasyonu.\n   - **Veri Yönetimi:** Veri depolama, güvenlik ve erişim kontrolleri.\n   - **Test ve Dağıtım:** QA süreçleri, yayın stratejileri.\n\n4. **Adım Adım Mimarisi:** Mimariyi basitleştirerek adım adım bir şekilde açıklayabilirim:\n   - **Adım 1: Gereksinim Analizi:** Kullanıcı hedefleri (sesli komutlar, yanıtlar, entegrasyonlar) belirleme.\n   - **Adım 2: Altyapı Seçimi:** Uygun TTS, STT ve NLP hizmetlerini seçme.\n   - **Adım"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.1,
+          "prompt_per_token_ms": 5.1,
+          "prompt_per_second": 196.1,
+          "predicted_n": 512,
+          "predicted_ms": 2628.9,
+          "predicted_per_token_ms": 5.135,
+          "predicted_per_second": 194.8,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71771394048,
+          "swap_used_bytes": 37702553600,
+          "swap_in_pages": 30237311,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807157
+        },
+        "after": {
+          "available_bytes": 71911960576,
+          "swap_used_bytes": 37702549504,
+          "swap_in_pages": 30237311,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807158
+        },
+        "swap_in_pages_delta": 0,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 1
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-3",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.66,
+      "response": {
+        "id": "chatcmpl-db08020edf994bb78a5009d3",
+        "object": "chat.completion",
+        "created": 1792613690,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, asistanın mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu konuda bir diyalog veya tasarım önerisi istiyor.\n\n2. **Hedef Kitle ve Amac:** Kullanıcı, muhtemelen bir geliştirme veya proje için bir sesli asistan mimarisine dair bir öneri veya adım adım rehber istiyor. Bu, teknoloji alanında bir proje planlaması veya prototipleme aşaması olabilir.\n\n3. **Mimari Elemanları:** Bir sesli asistan için temel mimari parçaları şunları içerebilir:\n   - **Akustik Model:** Ses verilerinin nasıl işlendiği (örneğin, NLP, TTS, STT).\n   - **Altyapı:** Sunucu, veritabanı, API'ler (örneğin, Google Cloud Speech-to-Text, Amazon Polly).\n   - **Kullanıcı Arabirimi:** Uygulama, web sitesi veya cihaz entegrasyonu.\n   - **Veri Yönetimi:** Veri depolama, güvenlik ve erişim kontrolleri.\n   - **Test ve Dağıtım:** QA süreçleri, yayın stratejileri.\n\n4. **Adım Adım Mimarisi:** Mimariyi basitleştirerek adım adım bir şekilde açıklayabilirim:\n   - **Adım 1: Gereksinim Analizi:** Kullanıcı hedefleri (sesli komutlar, yanıtlar, entegrasyonlar) belirleme.\n   - **Adım 2: Altyapı Seçimi:** Uygun TTS, STT ve NLP hizmetlerini seçme.\n   - **Adım"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.2,
+          "prompt_per_token_ms": 5.2,
+          "prompt_per_second": 192.3,
+          "predicted_n": 512,
+          "predicted_ms": 2632.4,
+          "predicted_per_token_ms": 5.141,
+          "predicted_per_second": 194.5,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71911960576,
+          "swap_used_bytes": 37702549504,
+          "swap_in_pages": 30237311,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807158
+        },
+        "after": {
+          "available_bytes": 71963680768,
+          "swap_used_bytes": 37702094848,
+          "swap_in_pages": 30237342,
+          "swap_out_pages": 49873021,
+          "major_faults": 32807174
+        },
+        "swap_in_pages_delta": 31,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 16
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    }
+  ],
+  "file_cache_warmup": {
+    "bytes_read": 6971366112,
+    "seconds": 0.281
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "host_service_and_previous_binaries_unchanged": true,
+  "serving": {
+    "model": "mellum-12b",
+    "gpus": [
+      1
+    ]
+  },
+  "settings": {
+    "context": 131072,
+    "kv": "fp16",
+    "window": 1,
+    "lookup": 0,
+    "MTP_present": false
+  },
+  "reference_container_removed": true
+}

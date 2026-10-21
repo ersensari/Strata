@@ -1,0 +1,345 @@
+{
+  "model": "mellum-12b",
+  "context": 131072,
+  "kv": "fp16",
+  "gpu": 1,
+  "temperature": 0,
+  "reasoning_effort": "none",
+  "engine_nice": 0,
+  "records": [
+    {
+      "case": "warmup",
+      "prompt": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz.",
+      "limit": 64,
+      "seconds": 0.354,
+      "response": {
+        "id": "chatcmpl-394eff4a6df44858bd70fc0c",
+        "object": "chat.completion",
+        "created": 1792613879,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Sadece 1 ile 30 arasındaki sayıları sırayla yaz.\n\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 37,
+          "completion_tokens": 64,
+          "total_tokens": 101,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 37,
+          "prompt_ms": 46.9,
+          "prompt_per_token_ms": 1.268,
+          "prompt_per_second": 788.9,
+          "predicted_n": 64,
+          "predicted_ms": 285.5,
+          "predicted_per_token_ms": 4.461,
+          "predicted_per_second": 224.2,
+          "draft_n": 20,
+          "draft_n_accepted": 17
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72074330112,
+          "swap_used_bytes": 37527384064,
+          "swap_in_pages": 30285390,
+          "swap_out_pages": 49873021,
+          "major_faults": 32835017
+        },
+        "after": {
+          "available_bytes": 71930933248,
+          "swap_used_bytes": 37527384064,
+          "swap_in_pages": 30285390,
+          "swap_out_pages": 49873021,
+          "major_faults": 32835017
+        },
+        "swap_in_pages_delta": 0,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 0
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-warmup",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.619,
+      "response": {
+        "id": "chatcmpl-9ad5347ca17f44d9b12e6e3b",
+        "object": "chat.completion",
+        "created": 1792613879,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, bir sesli asistan uygulamasının mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu alanı hakkında bilgi istiyor, yani mimarinin adım adım yaşatılabilir mi, öneriler sunabilir mi, veya en azından genel bir strateji öğrenebilir mi.\n\n2. **Hedef Kitle ve Amacı:** Kullanıcı, muhtemelen bir geliştirici veya proje yöneticisi olabilir, yeni bir sesli asistan projesi başlatmak istiyor. Mimari, altyapı (altyapı), kullanıcı arayüzü (UI), ses altyapısı, entegrasyonlar ve ölçeklenebilirlik gibi birçok farklılık içerebilir. Kullanıcı, bu bileşenleri nasıl organize edebileceğini öğrenmek istiyor.\n\n3. **Mimari Nasıl Oluşunur?:** Sesli asistan mimarisi genellikle şu bileşenler içerir:\n   - **Giriş ve Çıkış:** Mikrofon, kulaklık, ses kaydedici, ses akışı.\n   - **İletişim Ağıı (Network):** Bulut tabanlı (örn. AWS, Google Cloud) veya lokal barındırma.\n   - **İletişim Protokolü:** WebSocket, MQTT, etc.\n   - **İş Akışı Yönetimi:** Komutları işlemek, özellikleri yönetmek, kullanıcı etkileşimlerini işlemek.\n   - **Özellikler:** Duygu algılama, özelleştirme, diller, vb.\n   - **Test ve Dağıtım:** Test ortamları, CI"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 33,
+          "prompt_ms": 23.9,
+          "prompt_per_token_ms": 0.724,
+          "prompt_per_second": 1380.8,
+          "predicted_n": 512,
+          "predicted_ms": 2573.1,
+          "predicted_per_token_ms": 5.026,
+          "predicted_per_second": 199.0,
+          "draft_n": 62,
+          "draft_n_accepted": 37
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71930933248,
+          "swap_used_bytes": 37527384064,
+          "swap_in_pages": 30285390,
+          "swap_out_pages": 49873021,
+          "major_faults": 32835017
+        },
+        "after": {
+          "available_bytes": 72042594304,
+          "swap_used_bytes": 37527363584,
+          "swap_in_pages": 30285393,
+          "swap_out_pages": 49873021,
+          "major_faults": 32835021
+        },
+        "swap_in_pages_delta": 3,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 4
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-1",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.58,
+      "response": {
+        "id": "chatcmpl-165bcdff615d4b80bbc0b7d3",
+        "object": "chat.completion",
+        "created": 1792613882,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, bir sesli asistan uygulamasının mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu alanı hakkında bilgi istiyor, yani mimarinin adım adım yaşatılabilir mi, öneriler sunabilir mi, veya en azından genel bir strateji öğrenebilir mi.\n\n2. **Hedef Kitle ve Amacı:** Kullanıcı, muhtemelen bir geliştirici veya proje yöneticisi olabilir, yeni bir sesli asistan projesi başlatmak istiyor. Mimari, altyapı (altyapı), kullanıcı arayüzü (UI), ses altyapısı, entegrasyonlar ve ölçeklenebilirlik gibi birçok farklılık içerebilir. Kullanıcı, bu bileşenleri nasıl organize edebileceğini öğrenmek istiyor.\n\n3. **Mimari Nasıl Oluşunur?:** Sesli asistan mimarisi genellikle şu bileşenler içerir:\n   - **Giriş ve Çıkış:** Mikrofon, kulaklık, ses kaydedici, ses akışı.\n   - **İletişim Ağıı (Network):** Bulut tabanlı (örn. AWS, Google Cloud) veya lokal barındırma.\n   - **İletişim Protokolü:** WebSocket, MQTT, etc.\n   - **İş Akışı Yönetimi:** Komutları işlemek, özellikleri yönetmek, kullanıcı etkileşimlerini işlemek.\n   - **Özellikler:** Duygu algılama, özelleştirme, diller, vb.\n   - **Test ve Dağıtım:** Test ortamları, CI"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.2,
+          "prompt_per_token_ms": 5.2,
+          "prompt_per_second": 192.3,
+          "predicted_n": 512,
+          "predicted_ms": 2554.0,
+          "predicted_per_token_ms": 4.988,
+          "predicted_per_second": 200.5,
+          "draft_n": 47,
+          "draft_n_accepted": 34
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72042594304,
+          "swap_used_bytes": 37527363584,
+          "swap_in_pages": 30285393,
+          "swap_out_pages": 49873021,
+          "major_faults": 32835021
+        },
+        "after": {
+          "available_bytes": 71912083456,
+          "swap_used_bytes": 37521936384,
+          "swap_in_pages": 30290080,
+          "swap_out_pages": 49873021,
+          "major_faults": 32838431
+        },
+        "swap_in_pages_delta": 4687,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 3410
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-2",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.578,
+      "response": {
+        "id": "chatcmpl-a4129dc63d434bc78fbce226",
+        "object": "chat.completion",
+        "created": 1792613885,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, bir sesli asistan uygulamasının mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu alanı hakkında bilgi istiyor, yani mimarinin adım adım yaşatılabilir mi, öneriler sunabilir mi, veya en azından genel bir strateji öğrenebilir mi.\n\n2. **Hedef Kitle ve Amacı:** Kullanıcı, muhtemelen bir geliştirici veya proje yöneticisi olabilir, yeni bir sesli asistan projesi başlatmak istiyor. Mimari, altyapı (altyapı), kullanıcı arayüzü (UI), ses altyapısı, entegrasyonlar ve ölçeklenebilirlik gibi birçok farklılık içerebilir. Kullanıcı, bu bileşenleri nasıl organize edebileceğini öğrenmek istiyor.\n\n3. **Mimari Nasıl Oluşunur?:** Sesli asistan mimarisi genellikle şu bileşenler içerir:\n   - **Giriş ve Çıkış:** Mikrofon, kulaklık, ses kaydedici, ses akışı.\n   - **İletişim Ağıı (Network):** Bulut tabanlı (örn. AWS, Google Cloud) veya lokal barındırma.\n   - **İletişim Protokolü:** WebSocket, MQTT, etc.\n   - **İş Akışı Yönetimi:** Komutları işlemek, özellikleri yönetmek, kullanıcı etkileşimlerini işlemek.\n   - **Özellikler:** Duygu algılama, özelleştirme, diller, vb.\n   - **Test ve Dağıtım:** Test ortamları, CI"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.1,
+          "prompt_per_token_ms": 5.1,
+          "prompt_per_second": 196.1,
+          "predicted_n": 512,
+          "predicted_ms": 2551.9,
+          "predicted_per_token_ms": 4.984,
+          "predicted_per_second": 200.6,
+          "draft_n": 45,
+          "draft_n_accepted": 33
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 71912083456,
+          "swap_used_bytes": 37521936384,
+          "swap_in_pages": 30290080,
+          "swap_out_pages": 49873021,
+          "major_faults": 32838431
+        },
+        "after": {
+          "available_bytes": 72009383936,
+          "swap_used_bytes": 37506551808,
+          "swap_in_pages": 30297345,
+          "swap_out_pages": 49873021,
+          "major_faults": 32844702
+        },
+        "swap_in_pages_delta": 7265,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 6271
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    },
+    {
+      "case": "speed-3",
+      "prompt": "Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?",
+      "limit": 512,
+      "seconds": 2.58,
+      "response": {
+        "id": "chatcmpl-6e2a2c4f68d04118a75cfff9",
+        "object": "chat.completion",
+        "created": 1792613887,
+        "model": "mellum-12b",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "1. **Analiz Et:** Kullanıcı, \"Eger bir sesli asistan yapsaydin nasil bir mimari kurardin?\" diye soruyor. Bu, Türkçe bir taleptir: \"Eğer bir sesli asistan yaptıysan, nasıl bir mimari kurardın?\" Anlamı, bir sesli asistan uygulamasının mimarisini nasıl oluşturulduğunu öğrenmektir. Kullanıcı, bu alanı hakkında bilgi istiyor, yani mimarinin adım adım yaşatılabilir mi, öneriler sunabilir mi, veya en azından genel bir strateji öğrenebilir mi.\n\n2. **Hedef Kitle ve Amacı:** Kullanıcı, muhtemelen bir geliştirici veya proje yöneticisi olabilir, yeni bir sesli asistan projesi başlatmak istiyor. Mimari, altyapı (altyapı), kullanıcı arayüzü (UI), ses altyapısı, entegrasyonlar ve ölçeklenebilirlik gibi birçok farklılık içerebilir. Kullanıcı, bu bileşenleri nasıl organize edebileceğini öğrenmek istiyor.\n\n3. **Mimari Nasıl Oluşunur?:** Sesli asistan mimarisi genellikle şu bileşenler içerir:\n   - **Giriş ve Çıkış:** Mikrofon, kulaklık, ses kaydedici, ses akışı.\n   - **İletişim Ağıı (Network):** Bulut tabanlı (örn. AWS, Google Cloud) veya lokal barındırma.\n   - **İletişim Protokolü:** WebSocket, MQTT, etc.\n   - **İş Akışı Yönetimi:** Komutları işlemek, özellikleri yönetmek, kullanıcı etkileşimlerini işlemek.\n   - **Özellikler:** Duygu algılama, özelleştirme, diller, vb.\n   - **Test ve Dağıtım:** Test ortamları, CI"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 33,
+          "completion_tokens": 512,
+          "total_tokens": 545,
+          "prompt_tokens_details": {
+            "cached_tokens": 32
+          }
+        },
+        "timings": {
+          "cache_n": 32,
+          "prompt_n": 1,
+          "prompt_ms": 5.1,
+          "prompt_per_token_ms": 5.1,
+          "prompt_per_second": 196.1,
+          "predicted_n": 512,
+          "predicted_ms": 2553.6,
+          "predicted_per_token_ms": 4.987,
+          "predicted_per_second": 200.5,
+          "draft_n": 45,
+          "draft_n_accepted": 33
+        }
+      },
+      "host_memory": {
+        "before": {
+          "available_bytes": 72009383936,
+          "swap_used_bytes": 37506551808,
+          "swap_in_pages": 30297345,
+          "swap_out_pages": 49873021,
+          "major_faults": 32844702
+        },
+        "after": {
+          "available_bytes": 72083722240,
+          "swap_used_bytes": 37461897216,
+          "swap_in_pages": 30303811,
+          "swap_out_pages": 49873021,
+          "major_faults": 32848957
+        },
+        "swap_in_pages_delta": 6466,
+        "swap_out_pages_delta": 0,
+        "major_faults_delta": 4255
+      },
+      "engine_io": {
+        "nice": 0,
+        "storage_read_bytes": 0
+      }
+    }
+  ],
+  "file_cache_warmup": {
+    "bytes_read": 6971366112,
+    "seconds": 0.247
+  }
+}

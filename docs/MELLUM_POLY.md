@@ -1,7 +1,8 @@
 # Mellum in the optional Poly engine
 
-This fork now has an experimental `mellum` backend. It is not installed into the
-running host service. Deployment and GPU inference require the owner's approval.
+This fork has an experimental `mellum` backend. The owner approved GPU tests,
+and the local model is now registered in the host UI as `mellum-12b`. It uses a
+separate binary; native Qwen and the previous Poly engine were not replaced.
 
 The local model is `/mnt/llm-models/mellum-12b/Mellum2.1-12B-A2.5B-Thinking-IQ4_XS.gguf`.
 Its header declares 28 layers, 64 experts (8 used per token), width 2304, 32 query
@@ -23,22 +24,24 @@ attention window; seven use full attention. The trained context is 131072 tokens
 - Mellum opens `<think>` itself. The parser handles that opener and the template's
   `enable_thinking` on/off switch. Reasoning levels are not a measured quality scale.
 
-## Prepared, not deployed
+## Separate model-specific deployment
 
 The separate CUDA build is `build-mellum-staging/strata-poly` (sm_120, CUDA 13.0.48).
 The active `build-poly-host/strata-poly` and native `engine/strata` were not replaced.
 The service was not restarted. The build containers had no GPU access.
 
-A private staged config and tokenizer are under `build-mellum-staging/pending/`.
-They are outside the live controller's config discovery path and are git ignored.
-The config selects physical GPU 1, 128K context, FP16 KV, window 1, lookup off,
+The original staged config and tokenizer remain under `build-mellum-staging/pending/`.
+The approved private config is `strata-mellum-12b.json` at the checkout root; its
+tokenizer is in `Strata-data/packs/mellum-12b`. Both are git ignored.
+The selected config uses physical GPU 1, 128K context, FP16 KV, window 1, lookup off,
 no draft, no expert skipping, and frozen expert placement for initial validation.
 There is no MTP block in this model. No weights were downloaded or moved.
 
-After approval, first run a short, separate comparison against llama.cpp on the
-same token IDs. Check logits/top tokens, prompt batching, the sliding-window
-boundary, sequence save/restore and generated text before adopting it in the UI.
-Do not claim an inference speed or end-to-end correctness from compilation alone.
+GPU results and their limits are recorded in
+[the inference report](../bench/results/2026-10-22-mellum-inference/README.md).
+Measured decode: median 194.8 tok/s without speculation, 200.5 with lookup.
+The conservative no-lookup config is selected. The host startup default and
+provider routing were not changed.
 
 ## Validation and limits
 
@@ -54,10 +57,12 @@ FP16 KV allocation can reach 7 GiB, rather than about 1.8 GiB with compact rings
 Allocation grows with actual context, sharing VRAM with the expert cache. A compact
 ring must preserve speculative rollback and conversation snapshots before adoption.
 
-GPU model loading, output quality, throughput, long-context inference and comparison
-against llama.cpp have not been run. HIP is not built or validated here. The local
-real vocabulary was checked for code/Unicode round trips and template rendering,
-including tools and thinking on/off; these are not model-generated answers.
+GPU loading, a small functional battery, short throughput runs, cache restore,
+batched sequence checks and four short llama.cpp continuation comparisons passed
+or produced the recorded results. Thinking off passed 9/15 functional checks; a
+thinking-on followup passed the two failed task types once each. Numerical
+probabilities differ from llama.cpp (largest observed top-10 gap 0.1582), so full
+parity is not established. Long-context inference and HIP remain unvalidated.
 
 The targeted Python suite passed 104 tests and 289 subtests. Both CPU CTest
 checks passed. The broader server suite passed 350 tests and 509 subtests, with

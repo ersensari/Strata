@@ -107,5 +107,5 @@ See [the integration record](../bench/results/2026-10-21-poly-port/README.md) fo
 The short model checks establish that the new server and engines communicate correctly. They are not
 comparative throughput benchmarks, coding evaluations or long-context acceptance tests.
 
-Mellum support is prepared separately and awaits deployment approval; see
+Experimental Mellum support uses a separately built model-specific engine; see
 [Mellum in Poly](MELLUM_POLY.md) for the implementation, validation and limits.

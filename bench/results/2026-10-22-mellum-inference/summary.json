@@ -1,0 +1,49 @@
+{
+  "model": "Mellum2.1-12B-A2.5B-Thinking-IQ4_XS",
+  "backend": "custom Strata Poly Mellum",
+  "gpu": 1,
+  "context_configured": 131072,
+  "kv": "fp16",
+  "MTP_present": false,
+  "baseline_speed_tps": [
+    194.8,
+    194.8,
+    194.5
+  ],
+  "baseline_median_tps": 194.8,
+  "lookup_speed_tps": [
+    200.5,
+    200.6,
+    200.5
+  ],
+  "lookup_median_tps": 200.5,
+  "thinking_off_quality": {
+    "passed": 9,
+    "total": 15,
+    "merge": 0,
+    "lru": 3,
+    "topo": 3,
+    "json": 0,
+    "tool": 3,
+    "trials_per_case": 3
+  },
+  "thinking_on_followup": {
+    "passed": 2,
+    "total": 2,
+    "cases": [
+      "json",
+      "merge"
+    ],
+    "trials_per_case": 1
+  },
+  "cache_restore": "A/B/A matched; 1483 prompt tokens reused",
+  "multi_sequence": "2 sequences, 16/16 greedy tokens each matched standalone",
+  "reference_comparison": "4 short continuations and tokenizer IDs matched llama.cpp; one prompt crossed 1024-token SWA boundary; numerical probabilities differed",
+  "long_context_tested": false,
+  "final_settings": {
+    "window": 1,
+    "lookup": 0,
+    "MTP": false
+  },
+  "default_startup_model_changed": false
+}

@@ -1,0 +1,128 @@
+[
+  {
+    "case": "json",
+    "payload": {
+      "model": "mellum-12b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Aşağıdaki siparişi yalnızca geçerli JSON olarak dönüştür. Şema: {\"items\":[{\"name\":string,\"qty\":integer,\"unit_try\":number}],\"total_try\":number}. Başka alan veya Markdown ekleme. Sipariş: Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL. İndirim ve vergi yok."
+        }
+      ],
+      "max_tokens": 2048,
+      "temperature": 0,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repetition_penalty": 1.0,
+      "reasoning_effort": "medium"
+    },
+    "seconds": 2.0673217010335065,
+    "response": {
+      "id": "chatcmpl-d6141ec6d01340f5bd2f4737",
+      "object": "chat.completion",
+      "created": 1792613724,
+      "model": "mellum-12b",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"items\":[{\"name\":\"Defter\",\"qty\":2,\"unit_try\":125.5},{\"name\":\"Kalem\",\"qty\":3,\"unit_try\":19.9}],\"total_try\":310.7}",
+            "reasoning_content": "\nWe need to output only valid JSON, matching schema: items array with objects each having name (string), qty (integer), unit_try (number). total_try (number) is total amount (presumably sum of qty * unit_try). No other text.\n\nWe have order: \"Defter 2 adet, birim fiyatı 125,50 TL; Kalem 3 adet, birim fiyatı 19,90 TL.\" No discount or tax.\n\nSo items:\n- name: \"Defter\", qty: 2, unit_try: 125.50\n- name: \"Kalem\", qty: 3, unit_try: 19.90\n\nTotal = 2*125.50 = 251.00; 3*19.90 = 59.70; sum = 310.70\n\nWe need to output JSON only.\n\nMake sure numbers are not quoted. Use proper JSON.\n\nThus:\n\n{\n  \"items\": [\n    {\"name\": \"Defter\", \"qty\": 2, \"unit_try\": 125.50},\n    {\"name\": \"Kalem\", \"qty\": 3, \"unit_try\": 19.90}\n  ],\n  \"total_try\": 310.70\n}\n\nCheck schema: total_try number. Good.\n\nReturn only that.\n"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 127,
+        "completion_tokens": 391,
+        "total_tokens": 518,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 127,
+        "prompt_ms": 48.5,
+        "prompt_per_token_ms": 0.382,
+        "prompt_per_second": 2618.6,
+        "predicted_n": 391,
+        "predicted_ms": 2009.6,
+        "predicted_per_token_ms": 5.14,
+        "predicted_per_second": 194.6,
+        "draft_n": 0,
+        "draft_n_accepted": 0
+      }
+    },
+    "validation": {
+      "pass": true
+    }
+  },
+  {
+    "case": "merge",
+    "payload": {
+      "model": "mellum-12b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Sadece Python kodu yaz. merge_intervals(intervals) fonksiyonunu uygula. Girdi kapalı aralıklardan oluşan bir liste; sırasız olabilir. Örtüşen veya aynı uç noktada buluşan aralıkları birleştir, başlangıca göre sıralı döndür. Girdiyi değiştirme. Boş girdi boş liste dönsün."
+        }
+      ],
+      "max_tokens": 2048,
+      "temperature": 0,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repetition_penalty": 1.0,
+      "reasoning_effort": "medium"
+    },
+    "seconds": 5.698922645999119,
+    "response": {
+      "id": "chatcmpl-ea76f706d561470699410118",
+      "object": "chat.completion",
+      "created": 1792613726,
+      "model": "mellum-12b",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = []\n    for interval in sorted_intervals:\n        if not merged or interval[0] > merged[-1][1]:\n            merged.append([interval[0], interval[1]])\n        else:\n            merged[-1][1] = max(merged[-1][1], interval[1])\n    return merged\n```",
+            "reasoning_content": "\nWe need to respond with only Python code, implementing merge_intervals(intervals) function that merges overlapping intervals, input is a list of closed intervals, unsorted, may overlap, need to merge and return sorted by start. Input list may be modified? It says \"Girdiyi değiştirme.\" which means \"Do not modify input\"? Actually \"Girdiyi değiştirme.\" could mean \"Do not modify input.\" The phrase \"Girdiyi değiştirme.\" ambiguous. It could be \"Do not modify input.\" Usually they say \"Do not modify input.\" So we should not modify the input list. We'll just work on a copy.\n\nWe need to output only Python code, no extra text. So we need to define function merge_intervals(intervals). It should handle empty input returning empty list.\n\nImplementation steps:\n- If not intervals: return []\n- Sort intervals by start (maybe using sorted)\n- Initialize result list with first interval\n- Iterate over sorted intervals, for each interval, compare with last in result:\n   - If interval[0] <= last[1] (overlap or touch), then merge: last[1] = max(last[1], interval[1])\n   - Else append new interval\n- Return result\n\nWe must not modify input, so we sort a copy.\n\nWrite code accordingly.\n\nWe need to output only the code block? The instruction: \"Sadece Python kodu yaz.\" Means \"Only write Python code.\" So we should output just the code, maybe with function definition.\n\nThus final answer:\n\n```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    # Sort intervals by start without modifying original\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = [list(sorted_intervals[0])]  # make a mutable copy\n    for current in sorted_intervals[1:]:\n        last = merged[-1]\n        if current[0] <= last[1]:  # overlap or touch\n            last[1] = max(last[1], current[1])\n        else:\n            merged.append(list(current))\n    # Convert inner lists back to tuples if desired, but keep as lists? Not specified.\n    # Return as list of lists or tuples? We'll return list of lists.\n    return merged\n```\n\nBut we might want to return list of tuples? The problem doesn't specify. Usually intervals are represented as lists or tuples. We'll just return list of lists.\n\nAlternatively, we could avoid converting to list and just compare and assign to last[1] if last is a list. But if intervals are tuples, we cannot modify. So better to convert first interval to list, and then for subsequent intervals, if they are tuples, we can convert to list when appending. Or we can just work with values and create new merged intervals as lists.\n\nSimpler: Use sorted list of intervals, then iterate and build new list of merged intervals as lists.\n\nPseudo:\n\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = []\n    for interval in sorted_intervals:\n        if not merged or interval[0] > merged[-1][1]:\n            merged.append([interval[0], interval[1]])\n        else:\n            merged[-1][1] = max(merged[-1][1], interval[1])\n    return merged\n\nThis doesn't modify input because we create new lists for merged.\n\nThat's fine.\n\nThus final code:\n\n```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = []\n    for interval in sorted_intervals:\n        if not merged or interval[0] > merged[-1][1]:\n            merged.append([interval[0], interval[1]])\n        else:\n            merged[-1][1] = max(merged[-1][1], interval[1])\n    return merged\n```\n\nThat should satisfy.\n\nWe'll output just that.\n"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 116,
+        "completion_tokens": 1054,
+        "total_tokens": 1170,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 116,
+        "prompt_ms": 36.1,
+        "prompt_per_token_ms": 0.311,
+        "prompt_per_second": 3213.3,
+        "predicted_n": 1054,
+        "predicted_ms": 5495.9,
+        "predicted_per_token_ms": 5.214,
+        "predicted_per_second": 191.8,
+        "draft_n": 0,
+        "draft_n_accepted": 0
+      }
+    },
+    "validation": {
+      "pass": true,
+      "stdout": "PASS\n",
+      "stderr": ""
+    }
+  }
+]

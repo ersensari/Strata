@@ -98,12 +98,12 @@ def sandbox(content, tests):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--model',required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--base',default='http://127.0.0.1:10104');parser.add_argument('--key-env',default='STRATA_API_KEY');parser.add_argument('--speed-only',action='store_true');parser.add_argument('--quality-only',action='store_true');parser.add_argument('--quality-repeats',type=int,default=1);parser.add_argument('--warm-files',action='store_true')
+    parser=argparse.ArgumentParser();parser.add_argument('--model',required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--base',default='http://127.0.0.1:10104');parser.add_argument('--key-env',default='STRATA_API_KEY');parser.add_argument('--speed-only',action='store_true');parser.add_argument('--quality-only',action='store_true');parser.add_argument('--quality-repeats',type=int,default=1);parser.add_argument('--warm-files',action='store_true');parser.add_argument('--expected-context',type=int,default=262144);parser.add_argument('--expected-kv',default='q8_0');parser.add_argument('--reasoning-effort',default='none')
     a=parser.parse_args();key=os.environ[a.key_env]
     state=load(a.base,a.model)
     entry=next(m for m in state['installed']['models'] if m['model']==a.model)
-    assert entry.get('context')==262144 and entry.get('kv')=='q8_0',entry
-    report={'model':a.model,'context':entry['context'],'kv':entry['kv'],'gpu':1,'temperature':0,'reasoning_effort':'none','engine_nice':0,'records':[]}
+    assert entry.get('context')==a.expected_context and entry.get('kv')==a.expected_kv,entry
+    report={'model':a.model,'context':entry['context'],'kv':entry['kv'],'gpu':1,'temperature':0,'reasoning_effort':a.reasoning_effort,'engine_nice':0,'records':[]}
     def save():a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     if a.warm_files:
         config=json.loads((Path(__file__).resolve().parent.parent/f'strata-{a.model}.json').read_text())
@@ -125,11 +125,19 @@ def main():
             return {'pid':pids[0],'nice':os.getpriority(os.PRIO_PROCESS,pids[0]),'read_bytes':int(values['read_bytes'])}
         except (OSError,KeyError):return None
 
+    def host_memory():
+        """Host-wide counters; other processes can contribute to these deltas."""
+        memory={line.split(':',1)[0]:int(line.split()[1])*1024 for line in Path('/proc/meminfo').read_text().splitlines() if len(line.split())>=3 and line.split()[2]=='kB'}
+        vm=dict(line.split() for line in Path('/proc/vmstat').read_text().splitlines())
+        return {'available_bytes':memory['MemAvailable'],'swap_used_bytes':memory['SwapTotal']-memory['SwapFree'],
+                'swap_in_pages':int(vm['pswpin']),'swap_out_pages':int(vm['pswpout']),'major_faults':int(vm['pgmajfault'])}
+
     def generate(name,prompt,limit,tools=None):
-        payload={'model':a.model,'messages':[{'role':'user','content':prompt}],'max_tokens':limit,'temperature':0,'top_p':.95,'top_k':20,'min_p':0.,'presence_penalty':0.,'repetition_penalty':1.,'reasoning_effort':'none'}
+        payload={'model':a.model,'messages':[{'role':'user','content':prompt}],'max_tokens':limit,'temperature':0,'top_p':.95,'top_k':20,'min_p':0.,'presence_penalty':0.,'repetition_penalty':1.,'reasoning_effort':a.reasoning_effort}
         if tools:payload.update(tools=tools,tool_choice='auto')
-        io_before=engine_io();start=time.monotonic();response=api(a.base,'/v1/chat/completions',payload,key);io_after=engine_io()
+        memory_before=host_memory();io_before=engine_io();start=time.monotonic();response=api(a.base,'/v1/chat/completions',payload,key);io_after=engine_io();memory_after=host_memory()
         row={'case':name,'prompt':prompt,'limit':limit,'seconds':round(time.monotonic()-start,3),'response':response}
+        row['host_memory']={'before':memory_before,'after':memory_after,'swap_in_pages_delta':memory_after['swap_in_pages']-memory_before['swap_in_pages'],'swap_out_pages_delta':memory_after['swap_out_pages']-memory_before['swap_out_pages'],'major_faults_delta':memory_after['major_faults']-memory_before['major_faults']}
         if io_before and io_after and io_before['pid']==io_after['pid']:row['engine_io']={'nice':io_after['nice'],'storage_read_bytes':io_after['read_bytes']-io_before['read_bytes']}
         report['records'].append(row);save();return row
     generate('warmup','Sadece 1 ile 30 arasındaki sayıları sırayla yaz.',64)
