@@ -41,7 +41,7 @@ def main():
         raise RuntimeError('Set STRATA_NODE to Node.js 24.12 or newer')
     if not os.environ.get('STRATA_API_KEY'):
         raise RuntimeError('Set the existing provider key in the private service environment file')
-    model = os.environ.get('DEFAULT_MODEL', 'ornith-iq3')
+    model = os.environ.get('DEFAULT_MODEL', 'ornith-i1-iq3-m')
     if not (ROOT / f'strata-{model}.json').is_file():
         raise RuntimeError(f'Missing saved model config: strata-{model}.json')
     base = f"http://127.0.0.1:{int(os.environ.get('STRATA_PORT', '10104'))}"

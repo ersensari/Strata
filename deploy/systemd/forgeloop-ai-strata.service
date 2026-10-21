@@ -23,7 +23,7 @@ Environment=STRATA_NO_BUNDLED_ENGINE=1
 Environment=STRATA_BIND=127.0.0.1
 Environment=STRATA_PORT=10104
 Environment=STRATA_APP_VERSION=0.2.2+poly.host
-Environment=DEFAULT_MODEL=ornith-iq3
+Environment=DEFAULT_MODEL=ornith-i1-iq3-m
 Environment=PATH=%h/Source/Strata/.venv/bin:%h/.nvm/versions/node/v24.14.0/bin:/usr/local/bin:/usr/bin:/bin
 EnvironmentFile=%h/.config/strata-fork/service.env
 ExecStart=%h/Source/Strata/.venv/bin/python %h/Source/Strata/tools/host_service.py

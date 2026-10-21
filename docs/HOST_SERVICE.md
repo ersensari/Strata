@@ -19,7 +19,7 @@ its actual local binary version and source hashes. Poly has its separate CPU
 vision encoder; the native engine and encoder remain independently updateable.
 All dynamic CUDA libraries are in `.venv/lib/python*/site-packages/nvidia/cu13/lib`.
 
-The six private `strata-*.json` configs live at the checkout root (git ignored).
+The private `strata-*.json` configs live at the checkout root (git ignored).
 Their absolute Docker paths were translated to host paths, their GPU changed
 from container index 0 to physical index 1, and context, KV, MTP and sampling
 settings were preserved. Strata's data folder is now
@@ -52,7 +52,9 @@ journalctl --user -u forgeloop-ai-strata.service -n 40
 This account already has lingering enabled, so its enabled user units run without
 an interactive login. The service uses Node 24.14.0, Type=notify, a private umask,
 and systemd cgroup cleanup. It announces ready only after the original app host
-loads its default Ornith IQ3 config. Startup never runs a model downloader. The
+loads its default original Ornith i1 IQ3_M config. The other Ornith quants were
+removed at the owner's request; Swift, Gemma and both MiniCPM variants remain.
+Startup never runs a model downloader. The
 original native controller owns model switching and engine children.
 
 ## Connections

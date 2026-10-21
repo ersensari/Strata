@@ -1,0 +1,28 @@
+{
+  "retained_model": "ornith-i1-iq3-m",
+  "removed": [
+    "/mnt/llm-models/Strata-data/models/ornith-1.5-122b-uncensored-atomicchat/Ornith-1.5-122B-Uncensored-AD-IQ3_XXS",
+    "/home/ersen/Source/Strata/strata-ornith-iq3.json",
+    "/mnt/llm-models/Strata-data/packs/ornith122b-uncensored-ad-iq3_xxs",
+    "/mnt/llm-models/Strata-data/models/ornith-1.5-122b-uncensored-atomicchat/Ornith-1.5-122B-Uncensored-AD-IQ4_XS_S",
+    "/home/ersen/Source/Strata/strata-ornith-iq4.json",
+    "/mnt/llm-models/Strata-data/packs/ornith122b-uncensored-ad-iq4_xs_s",
+    "/mnt/llm-models/Strata-data/models/ornith-1.5-122b-mradermacher-i1/Ornith-1.5-122B.i1-Q4_K_M.gguf",
+    "/home/ersen/Source/Strata/strata-ornith-i1-q4-k-m.json",
+    "/mnt/llm-models/Strata-data/packs/ornith-i1-q4-k-m",
+    "/mnt/llm-models/ornith-1.5-122b-kt-gpu",
+    "/mnt/llm-models/ornith-1.5-122b-bartowski"
+  ],
+  "weight_bytes_removed": 214560022551,
+  "preserved_vision": "/mnt/llm-models/Strata-data/models/ornith-1.5-122b-mradermacher-i1/mmproj-Ornith-1.5-122B-F16.gguf",
+  "installed_models": [
+    "ornith-i1-iq3-m",
+    "qwen",
+    "gemma",
+    "minicpm-uncensored",
+    "minicpm"
+  ],
+  "active_models": [
+    "ornith-i1-iq3-m"
+  ]
+}
