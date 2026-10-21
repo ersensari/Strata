@@ -40,6 +40,7 @@ async function load(){
  await build({
   stdin:{contents:`export {GuidedSetup} from ${JSON.stringify(resolve(root,'src/components/GuidedSetup.tsx'))};
    export {NativeModels} from ${JSON.stringify(resolve(root,'src/components/NativeModels.tsx'))};
+   export {availableModelFamilies} from ${JSON.stringify(resolve(root,'src/lib/native-catalog.ts'))};
    export {renderToString} from 'react-dom/server'; export {createElement} from 'react';`,resolveDir:root,sourcefile:'entry.tsx',loader:'tsx'},
   bundle:true,format:'cjs',platform:'node',outfile:out,jsx:'automatic',logLevel:'silent',plugins:[stubPlugin],
   loader:{'.svg':'dataurl','.png':'dataurl','.css':'empty'},
@@ -100,3 +101,18 @@ for (const catalog of [null, {families:[{family:'qwen',title:'Qwen3.8-Flash-Next
   assert.doesNotMatch(iq4,/disabled=""/);assert.match(iq4,/>Load<\/button>/);
  });
 }
+
+test('model-family selector includes saved variants without mutating the download catalog',async()=>{
+ const m=await load();
+ const catalog=[{family:'qwen',title:'Qwen3.8-Flash-Next',images:true,sizes:[{id:'iq3_xxs',model:'IQ3_XXS'}]}];
+ const installed=['ornith-iq3','ornith-iq4','minicpm','minicpm-uncensored','gemma','qwen','another-engine'].map(model=>({model,model_name:model,ready:true,diskGb:54}));
+ const groups=m.availableModelFamilies(catalog,installed);
+ assert.deepEqual(groups.filter(g=>g.sizes.length).map(g=>g.title),['Qwen3.8-Flash-Next','Ornith 1.5 122B','MiniCPM-V 4.7','Gemma 4 26B','another-engine']);
+ assert.deepEqual(groups.find(g=>g.family==='local-ornith').sizes.map(v=>v.id),['ornith-iq3','ornith-iq4']);
+ assert.equal(groups.find(g=>g.family==='local-minicpm').sizes.length,2);
+ assert.equal(groups.flatMap(g=>g.sizes).filter(v=>v.localConfig).length,7);
+ assert.equal(catalog[0].sizes.length,1);
+ assert.equal(m.availableModelFamilies([],installed).flatMap(g=>g.sizes).length,7);
+ const known=m.availableModelFamilies(catalog,[{model:'iq3_xxs',ready:true}]);
+ assert.equal(known.flatMap(g=>g.sizes).length,1);
+});

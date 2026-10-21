@@ -46,25 +46,26 @@ export function VersionPicker({ versions, selectedId, hardware, onSelect, onOwnG
   // A group is open when the person opened it; until they touch it, only the group that holds the selected version is open.
   const [opened, setOpened] = useState<Record<string, boolean>>({});
   const selected = versions.find(v => v.id === selectedId);
-  const recommended = recommendedVersions(versions, pick);
+  const recommended = recommendedVersions(versions.filter(v=>!v.localConfig), pick);
   // Where the recommended four are shown outside the menu, the menu holds only the others.
   const apart = new Set(showRecommended ? [] : recommended.map(x => x.v.id));
-  const rest = versions.filter(v => !apart.has(v.id));
+  const rest = versions.filter(v => !v.localConfig && !apart.has(v.id));
   const groups = [
+    { id: 'installed', title: 'Downloaded models', items: versions.filter(v=>v.localConfig) },
     ...VERSION_GROUPS.map(g => ({ id: g.id, title: g.title, items: rest.filter(v => g.families.includes(v.sourceFamily)) })),
     { id: 'other', title: 'Qwen3.6 models', items: rest.filter(v => !VERSION_GROUPS.some(g => g.families.includes(v.sourceFamily))) },
   ].filter(g => g.items.length);
   const row = (v: CatalogVersion, label: string, note?: string) => {
-    const fit = fitOn(v, hardware);
+    const fit = v.localConfig ? null : fitOn(v, hardware);
     const on = v.id === selectedId;
     const line = versionNote(v.model);
     return <button key={`${label}-${v.id}`} role="menuitemradio" aria-checked={on} className={cx('version-row', on && 'is-on')} onClick={() => { onSelect(v.id); setOpen(false); }}>
-      <span className="version-row__name"><span className="version-row__title">{tr(on ? <Icon name="check" size={14}/> : null)}<strong>{label}</strong>{tr(note ? <span className="muted"> · {tr(note)}</span> : null)}{tr(downloaded?.has(v.id) ? <span className="version-row__have">{tr("Downloaded")}</span> : null)}{tr(fit.known && fit.spillGb >= 1 ? <span className="version-row__ssd">{tr("Uses SSD {0} GB", [Math.round(fit.spillGb)])}</span> : null)}</span>{tr(line ? <small className="version-row__note muted">{line}</small> : null)}</span>
-      <span className="version-row__ram">{gb(fit.memoryGb)}</span>
+      <span className="version-row__name"><span className="version-row__title">{tr(on ? <Icon name="check" size={14}/> : null)}<strong>{label}</strong>{tr(note ? <span className="muted"> · {tr(note)}</span> : null)}{tr(downloaded?.has(v.id) ? <span className="version-row__have">{tr("Downloaded")}</span> : null)}{tr(fit?.known && fit.spillGb >= 1 ? <span className="version-row__ssd">{tr("Uses SSD {0} GB", [Math.round(fit.spillGb)])}</span> : null)}</span>{tr(line ? <small className="version-row__note muted">{line}</small> : null)}</span>
+      <span className="version-row__ram">{fit ? gb(fit.memoryGb) : '—'}</span>
       <span className="version-row__dl">{gb(v.download_gb)}</span>
     </button>;
   };
-  const fit = selected && !apart.has(selected.id) ? fitOn(selected, hardware) : null;
+  const fit = selected && !selected.localConfig && !apart.has(selected.id) ? fitOn(selected, hardware) : null;
   return <>
     <button ref={trigger} type="button" className="version-trigger" aria-haspopup="menu" aria-expanded={open} aria-label={tr("Model version")} onClick={() => setOpen(v => !v)}>
       <strong>{selected && !apart.has(selected.id) ? versionName(selected, true) : tr(moreLabel ?? "Choose a version")}</strong>{tr(selected && !apart.has(selected.id) && downloaded?.has(selected.id) ? <span className="version-row__have">{tr("Downloaded")}</span> : null)}
