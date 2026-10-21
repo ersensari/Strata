@@ -82,3 +82,21 @@ test('GuidedSetup lists the real catalog when it has one',async()=>{
  const html=m.renderToString(m.createElement(m.GuidedSetup));
  assert.match(html,/IQ3_XXS/);
 });
+
+
+for (const catalog of [null, {families:[{family:'qwen',title:'Qwen3.8-Flash-Next',sizes:[{id:'catalog-only',model:'IQ3_XXS',download_gb:75.8,ram_gb:60,about:'',on_this_pc:'fits'}]}],contexts:[32768],recommendation:{family:'qwen',model:'IQ3_XXS'}}]) {
+ test(`NativeModels shows six installed configs outside the catalog (${catalog ? 'unrelated catalog' : 'no catalog'})`,async()=>{
+  const m=await load();
+  const models=['ornith-iq3','ornith-iq4','minicpm','minicpm-uncensored','gemma','qwen'].map(model=>({model,model_name:model,ready:true,context:262144,kv:'q8_0',diskGb:54}));
+  globalThis.__native={...base,catalog,installed:{...base.installed,models},instances:[{id:'active',model:'ornith-iq3',status:'ready',gpus:[0]}]};globalThis.__store=store(true);
+  const html=m.renderToString(m.createElement(m.NativeModels));
+  assert.match(html,/aria-label="Downloaded models"/);
+  assert.equal((html.match(/data-model="/g)||[]).length,6);
+  for(const model of models)assert.ok(html.includes(`data-model="${model.model}"`),model.model);
+  assert.match(html,/256K context.*Q8 KV/);
+  const iq3=html.match(/data-model="ornith-iq3"[\s\S]*?<\/button>/)?.[0];
+  assert.match(iq3,/disabled=""/);assert.match(iq3,/>Loaded<\/button>/);
+  const iq4=html.match(/data-model="ornith-iq4"[\s\S]*?<\/button>/)?.[0];
+  assert.doesNotMatch(iq4,/disabled=""/);assert.match(iq4,/>Load<\/button>/);
+ });
+}

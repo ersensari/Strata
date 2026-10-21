@@ -771,3 +771,9 @@ html[data-motion='reduced'] .task-tree-row[data-leaving] { opacity: 0; }
 .models-dialog .dialog-body { display:grid; gap:14px; }
 .models-path { font-family:var(--st-font-mono); font-size:12px; font-weight:400; background:var(--st-surface-2); padding:2px 6px; border-radius:6px; overflow-wrap:anywhere; }
 .models-dialog .storage-directory__path { margin:0; }
+
+/* Saved configs, including imported Poly models, are visible before the download catalog. */
+.native-downloaded { display:grid; gap:14px; margin-bottom:20px; }
+.native-downloaded-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.native-downloaded-row { grid-template-columns:minmax(0,1fr) auto; gap:12px; padding:12px; }
+@media(max-width:850px){ .native-downloaded-list { grid-template-columns:1fr; } }

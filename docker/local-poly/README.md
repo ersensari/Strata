@@ -13,7 +13,7 @@ The inference worker itself stays on container loopback. Existing PolyStrata and
 
 The separate named volume `forgeloop-ai-strata-local-data` stores configs, profiles, chats and workspace.
 The existing `forgeloop-ai_forgeloop-ai-polystrata-data` volume is mounted **read-only** for prepared packs.
-All model directories are also read-only. Retain that legacy volume: this container depends on its packs.
+Existing individual model aliases are read-only. The shared /mnt/llm-models mount is writable for persistent new downloads. Retain the legacy volume: this container depends on its packs.
 Six configs are registered: Ornith IQ3, Ornith IQ4, MiniCPM, uncensored MiniCPM, Gemma and Qwen.
 Only Ornith IQ3 loads at boot. The UI or provider router switches the single loaded model.
 Qwen uses this fork's original native engine; the other models use its optional Poly engine.
@@ -107,3 +107,14 @@ configs outside the download catalog, using the saved config without applying se
 from the unrelated catalog selection. No upstream PR was opened.
 
 Historical Q4 trial notes above describe the earlier experiment, not the active model.
+
+## Model download storage (2026-10-22)
+
+The complete host /mnt/llm-models folder is mounted at the same path read/write.
+STRATA_MODELS_DIR sets the app's model directory, and the native installer's initial
+download folder uses the same path. Settings > Storage therefore shows the host
+model library; new downloads persist on that SSD across container replacement.
+Existing per-model mounts and saved weight paths remain valid. The model files
+are intentionally writable through the common root; the older individual aliases
+remain read-only. The Models screen now lists installed configs directly, including
+ones outside the upstream download catalog.

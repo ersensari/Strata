@@ -18,9 +18,11 @@ services:
       - "127.0.0.1:10104:8791"
     environment:
       DEFAULT_MODEL: ornith-iq3
+      STRATA_MODELS_DIR: /mnt/llm-models
       STRATA_API_KEY: ${STRATA_API_KEY:?Set STRATA_API_KEY from the homelab env file}
     volumes:
       - forgeloop-ai-strata-local-data:/data
+      - /mnt/llm-models:/mnt/llm-models:rw
       - forgeloop-ai-polystrata-legacy-data:/legacy-data:ro
       - /mnt/llm-models/ornith-1.5-122b-uncensored-atomicchat:/models-ornith:ro
       - /mnt/llm-models/minicpm-v-4.7-35b-a3b:/models:ro

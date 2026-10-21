@@ -70,8 +70,15 @@ def seed():
         private_json(dest, cfg)
     # The owner retired the Bartowski Q4_K_M experiment; never re-register it.
     (INSTALL / 'strata-ornith-bartowski-q4_k_m.json').unlink(missing_ok=True)
-    if not (UI / 'native-host.json').exists():
-        private_json(UI / 'native-host.json', {'repo': str(INSTALL)})
+    preferences_file = UI / 'native-host.json'
+    preferences = json.loads(preferences_file.read_text()) if preferences_file.exists() else {'repo': str(INSTALL)}
+    model_directory = os.environ.get('STRATA_MODELS_DIR')
+    if model_directory:
+        if not Path(model_directory).is_dir() or not os.access(model_directory, os.R_OK | os.W_OK):
+            raise RuntimeError(f'Mounted model directory is not writable: {model_directory}')
+        if not preferences.get('downloadDirectory'):
+            preferences['downloadDirectory'] = model_directory
+    private_json(preferences_file, preferences)
 
 
 def call(path, payload=None, method=None):
